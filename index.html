@@ -3,70 +3,172 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Portal Login — Cephas GM</title>
+<title>Home — Cephas GM</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 body{
   font-family:'Poppins',sans-serif;
+  background:url('https://images.trailfinders.com/asset/34508f/TF3428494/shutterstock_1766609975_960x960.jpg?width=600') center/cover fixed no-repeat;
   color:#fff;
-  background:linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.8)),
-  url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1470&q=80') center/cover no-repeat fixed;
-  display:flex;justify-content:center;align-items:center;min-height:100vh;text-align:center;
 }
-.login-box{
+.nav{
+  background:rgba(0,0,0,0.6);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:14px 30px;
+  position:sticky;
+  top:0;
+  z-index:100;
+}
+.brand{font-weight:700;font-size:1.2rem;}
+.nav-links{display:flex;gap:16px;flex-wrap:wrap;}
+.nav-links a{
+  color:#fff;
+  text-decoration:none;
+  padding:8px 12px;
+  border-radius:6px;
+  transition:.3s;
+}
+.nav-links a:hover,
+.nav-links a.active{background:rgba(255,255,255,0.15);}
+header{
+  text-align:center;
+  background:rgba(0,0,0,0.55);
+  padding:4rem 1rem;
+}
+header h1{font-size:2.5rem;margin-bottom:1rem;}
+header p{color:#ddd;font-size:1rem;}
+
+/* Impact section */
+.impact{
+  text-align:center;
+  background:rgba(0,0,0,0.6);
+  padding:3rem 1rem;
+  margin:3rem 0;
+}
+.impact h2{font-size:2rem;color:#0b7a59;margin-bottom:2rem;}
+.stats{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:2rem;
+  justify-content:center;
+  align-items:center;
+  padding:0 10%;
+}
+.stat{
   background:rgba(255,255,255,0.1);
-  padding:2rem 3rem;border-radius:14px;box-shadow:0 0 20px rgba(0,0,0,0.4);
+  border-radius:14px;
+  padding:2rem 1rem;
+  box-shadow:0 6px 20px rgba(0,0,0,0.3);
+  transition:transform .4s ease, box-shadow .4s ease;
+  opacity:0;
+  transform:translateY(40px);
+  animation:fadeUp 1s forwards;
 }
-h1{color:#0b7a59;margin-bottom:1.5rem;}
-input{
-  display:block;width:100%;margin:0.7rem 0;padding:0.7rem;border:none;border-radius:8px;
+.stat:nth-child(1){animation-delay:.2s;}
+.stat:nth-child(2){animation-delay:.4s;}
+.stat:nth-child(3){animation-delay:.6s;}
+.stat:nth-child(4){animation-delay:.8s;}
+.stat:hover{transform:translateY(-8px);box-shadow:0 10px 25px rgba(0,0,0,0.45);}
+.stat h3{font-size:2.5rem;color:#0b7a59;margin-bottom:.5rem;}
+.stat p{color:#ddd;font-size:1rem;}
+@keyframes fadeUp{to{opacity:1;transform:translateY(0);}}
+
+.btn{
+  display:inline-block;
+  background:#0b7a59;
+  color:#fff;
+  padding:.8rem 1.5rem;
+  margin-top:2rem;
+  border-radius:8px;
+  text-decoration:none;
+  font-weight:500;
+  transition:0.3s;
 }
-button{
-  width:100%;padding:0.8rem;margin-top:1rem;background:#0b7a59;color:#fff;
-  border:none;border-radius:8px;font-weight:600;cursor:pointer;transition:0.3s;
-}
-button:hover{background:#099268;}
-a{color:#ddd;text-decoration:none;font-size:0.9rem;display:block;margin-top:1rem;}
+.btn:hover{background:#099268;}
 footer{
-  position:absolute;bottom:0;width:100%;text-align:center;padding:1rem;
-  background:rgba(0,0,0,0.85);font-size:.9rem;
+  background:rgba(0,0,0,0.85);
+  text-align:center;
+  padding:1rem;
+  font-size:.9rem;
+  margin-top:2rem;
 }
 </style>
 </head>
 <body>
 
-<div class="login-box">
-  <h1>Portal Login</h1>
-  <form onsubmit="handleLogin(event)">
-    <input type="text" id="username" placeholder="Username" required>
-    <input type="password" id="password" placeholder="Password" required>
-    <button type="submit">Login</button>
-  </form>
-  <a href="index.html">← Back to Portal Home</a>
-</div>
+<nav class="nav">
+  <div class="brand">Cephas GM</div>
+  <div class="nav-links">
+    <a href="index.html" class="active">Home</a>
+    <a href="projects.html">Projects</a>
+    <a href="services.html">Services</a>
+    <a href="gallery.html">Gallery</a>
+    <a href="impact.html">Impact</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+    <a href="https://cephasgm.github.io/cephasgm-portal/" class="btn">🔒 Portal Access</a>
+  </div>
+</nav>
+
+<header>
+  <h1>Welcome to Cephas GM</h1>
+  <p>Innovating for a smarter, sustainable and connected future across Smart Cities, AI, Cloud and Renewable Energy.</p>
+</header>
+
+<section class="impact">
+  <h2>🌍 Cephas GM Impact Overview</h2>
+  <div class="stats">
+    <div class="stat">
+      <h3 class="counter" data-target="12">0</h3>
+      <p>Smart Cities Connected</p>
+    </div>
+    <div class="stat">
+      <h3 class="counter" data-target="8">0</h3>
+      <p>Cloud Deployments (Regions)</p>
+    </div>
+    <div class="stat">
+      <h3 class="counter" data-target="25">0</h3>
+      <p>AI Models Trained</p>
+    </div>
+    <div class="stat">
+      <h3 class="counter" data-target="15">0</h3>
+      <p>Green Energy (MW Generated)</p>
+    </div>
+  </div>
+  <a href="impact.html" class="btn">View Full Dashboard</a>
+</section>
 
 <footer>Copyright © 2025 😀 | </footer>
 
 <script>
-function handleLogin(e){
-  e.preventDefault();
-  const username=document.getElementById("username").value.trim();
-  const password=document.getElementById("password").value.trim();
-  const isStaff=window.location.search.includes("staff=true");
-
-  if(username && password){
-    localStorage.setItem("cephasUser", username);
-    localStorage.setItem("cephasRole", isStaff ? "staff" : "client");
-    if(isStaff){
-      window.location.href="portaladmin.html";
-    }else{
-      window.location.href="portaldashboard.html";
+// Counter animation logic
+const counters=document.querySelectorAll('.counter');
+const options={threshold:0.5};
+const animate=(counter)=>{
+  const target=+counter.getAttribute('data-target');
+  const speed=200;
+  const update=()=>{
+    const val=+counter.innerText;
+    const inc=target/speed;
+    if(val<target){
+      counter.innerText=Math.ceil(val+inc);
+      setTimeout(update,20);
+    }else{counter.innerText=target;}
+  };
+  update();
+};
+const observer=new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      animate(entry.target);
+      observer.unobserve(entry.target);
     }
-  }else{
-    alert("Please fill in all fields!");
-  }
-}
+  });
+},options);
+counters.forEach(c=>observer.observe(c));
 </script>
 
 </body>
