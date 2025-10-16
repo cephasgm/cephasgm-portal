@@ -1,275 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Client Signup / Staff Login — Cephas GM Portal</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portal Login — Cephas GM</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
 <style>
-  :root{ --accent:#0b7a59; --accent-2:#099268; --glass-bg: rgba(255,255,255,0.06); --panel: rgba(255,255,255,0.08); --text-light: #e9f5ef; }
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{
-    min-height:100vh;
-    font-family:"Poppins",system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
-    color:#fff;
-    background: linear-gradient(180deg, rgba(6,10,20,0.45), rgba(6,10,20,0.6)), url('https://info.oregon.aaa.com/wp-content/uploads/2023/10/south-african-national-park.jpg') center/cover fixed no-repeat;
-    -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;padding-bottom:40px;
-  }
-  .nav{ background: rgba(0,0,0,0.45); padding:14px 28px; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:40; box-shadow:0 2px 8px rgba(0,0,0,0.25); }
-  .brand{font-weight:700;font-size:1.15rem}
-  .nav-links{display:flex;gap:12px}
-  .nav-links a{color:#fff;text-decoration:none;padding:8px 12px;border-radius:8px;transition:.18s}
-  .nav-links a:hover{background:rgba(255,255,255,0.06)}
-  .wrap{ max-width:1100px; margin:48px auto; padding:18px; display:grid; grid-template-columns:1fr 440px; gap:30px; }
-  .info{ background: linear-gradient(135deg, rgba(11,122,89,0.14), rgba(9,146,104,0.06)); border-radius:16px; padding:28px; box-shadow: 0 12px 40px rgba(3,6,8,0.45); display:flex;flex-direction:column;justify-content:center; min-height:420px; backdrop-filter: blur(4px); }
-  .info h1{font-size:1.8rem;margin-bottom:8px;color:var(--text-light)}
-  .info p{color:rgba(230,240,235,0.9);line-height:1.5;margin-bottom:14px}
-  .features{display:grid;grid-template-columns:repeat(2, minmax(120px,1fr));gap:12px;margin-top:8px}
-  .feat{background:var(--panel);padding:10px;border-radius:10px;color:#eaf7f0;font-size:.95rem;border:1px solid rgba(255,255,255,0.03)}
-  .hint{font-size:.88rem;color:rgba(230,240,235,0.8);margin-top:12px}
-  .panel{ border-radius:16px; padding:20px; background: linear-gradient(180deg, rgba(0,0,0,0.45), rgba(255,255,255,0.02)); box-shadow: 0 12px 30px rgba(0,0,0,0.45); border: 1px solid rgba(255,255,255,0.04); backdrop-filter: blur(6px); }
-  .tabs{display:flex;gap:6px;margin-bottom:14px}
-  .tab{ flex:1;text-align:center;padding:10px 8px;border-radius:10px;background:transparent;color:#fff;cursor:pointer;border:1px solid transparent;font-weight:600; }
-  .tab.active{background:linear-gradient(90deg,var(--accent),var(--accent-2));box-shadow:0 8px 20px rgba(11,122,89,0.16);}
-  form{display:flex;flex-direction:column;gap:12px}
-  label{font-size:.85rem;color:#e6f6ee}
-  input[type="text"],input[type="email"],input[type="password"],select{ width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.03);color:#fff; outline:none;font-size:1rem; }
-  .row{display:flex;gap:10px}.row .col{flex:1}
-  .small{font-size:.85rem;color:#dbeee0}
-  .btn{ background:var(--accent);border:none;color:#fff;padding:10px 12px;border-radius:10px;font-weight:700;cursor:pointer; transition:all .18s; }
-  .btn.secondary{background:transparent;border:1px solid rgba(255,255,255,0.06)}
-  .btn:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(11,122,89,0.14)}
-  .note{font-size:.9rem;color:#f6fdf8;margin-top:6px}
-  .error{color:#ffcccb;font-size:.9rem;margin-top:6px}
-  .success{color:#d6f7df;font-size:.95rem;margin-top:6px}
-  .linkish{background:transparent;border:none;color:var(--accent);cursor:pointer;text-decoration:underline;padding:0;font-weight:600}
-  footer{margin-top:30px;padding:18px;text-align:center;color:#fff;background:transparent} footer small{opacity:.85}
-  @media (max-width:980px){ .wrap{grid-template-columns:1fr; padding:18px} .panel{order:2} .info{order:1} }
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:'Poppins',sans-serif;
+  color:#fff;
+  background:linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.8)),
+  url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1470&q=80') center/cover no-repeat fixed;
+  display:flex;justify-content:center;align-items:center;min-height:100vh;text-align:center;
+}
+.login-box{
+  background:rgba(255,255,255,0.1);
+  padding:2rem 3rem;border-radius:14px;box-shadow:0 0 20px rgba(0,0,0,0.4);
+}
+h1{color:#0b7a59;margin-bottom:1.5rem;}
+input{
+  display:block;width:100%;margin:0.7rem 0;padding:0.7rem;border:none;border-radius:8px;
+}
+button{
+  width:100%;padding:0.8rem;margin-top:1rem;background:#0b7a59;color:#fff;
+  border:none;border-radius:8px;font-weight:600;cursor:pointer;transition:0.3s;
+}
+button:hover{background:#099268;}
+a{color:#ddd;text-decoration:none;font-size:0.9rem;display:block;margin-top:1rem;}
+footer{
+  position:absolute;bottom:0;width:100%;text-align:center;padding:1rem;
+  background:rgba(0,0,0,0.85);font-size:.9rem;
+}
 </style>
 </head>
 <body>
 
-  <nav class="nav">
-    <div class="brand">Cephas GM</div>
-    <div class="nav-links">
-      <!-- main public site: absolute URL -->
-      <a href="https://cephasgm.github.io/cephasgm-site/">Home</a>
-      <a href="https://cephasgm.github.io/cephasgm-site/projects.html">Projects</a>
-      <a href="https://cephasgm.github.io/cephasgm-site/services.html">Services</a>
-      <a href="https://cephasgm.github.io/cephasgm-site/gallery.html">Gallery</a>
-      <a href="https://cephasgm.github.io/cephasgm-site/impact.html">Impact</a>
-      <a href="https://cephasgm.github.io/cephasgm-site/about.html">About</a>
-      <a href="https://cephasgm.github.io/cephasgm-site/contact.html">Contact</a>
-    </div>
-  </nav>
+<div class="login-box">
+  <h1>Portal Login</h1>
+  <form onsubmit="handleLogin(event)">
+    <input type="text" id="username" placeholder="Username" required>
+    <input type="password" id="password" placeholder="Password" required>
+    <button type="submit">Login</button>
+  </form>
+  <a href="index.html">← Back to Portal Home</a>
+</div>
 
-  <main class="wrap">
-
-    <!-- left: info -->
-    <section class="info" aria-labelledby="portal-heading">
-      <h1 id="portal-heading">Client Signup / Staff Login</h1>
-      <p>Secure area for Cephas GM clients and staff. Clients can sign up and access project resources, downloads and status updates. Staff can log in to access the admin tools and internal dashboards.</p>
-
-      <div class="features" aria-hidden="false">
-        <div class="feat">Secure Downloads</div>
-        <div class="feat">Project Status</div>
-        <div class="feat">Announcements</div>
-        <div class="feat">Role-based Access</div>
-      </div>
-
-      <p class="hint">Demo credentials (for testing):<br>
-      <strong>Client</strong> — client@example.com / clientpass<br>
-      <strong>Staff</strong> — staff@example.com / staffpass</p>
-
-      <p class="hint">Signing up stores a mock account on this browser (localStorage) — real server auth can be connected later.</p>
-    </section>
-
-    <!-- right: auth panel -->
-    <aside class="panel" aria-label="Authentication panel">
-      <div class="tabs" role="tablist">
-        <button id="tab-signin" class="tab active" role="tab" aria-selected="true">Sign In</button>
-        <button id="tab-signup" class="tab" role="tab" aria-selected="false">Sign Up</button>
-      </div>
-
-      <!-- SIGN IN -->
-      <div id="signin">
-        <form id="signin-form" autocomplete="on" novalidate>
-          <label for="si-email">Email or Username</label>
-          <input id="si-email" name="si-email" type="email" placeholder="you@example.com" required>
-
-          <label for="si-pass">Password</label>
-          <div class="row">
-            <div class="col"><input id="si-pass" name="si-pass" type="password" placeholder="••••••••" required></div>
-            <div style="display:flex;align-items:center"><button type="button" id="si-toggle" class="linkish">Show</button></div>
-          </div>
-
-          <label class="small"><input type="checkbox" id="remember"> Remember me (demo)</label>
-
-          <div style="display:flex;gap:10px;margin-top:8px">
-            <button type="submit" class="btn">Sign In</button>
-            <button type="button" id="to-signup" class="btn secondary">Create Account</button>
-          </div>
-
-          <div id="si-msg" class="error" role="status" aria-live="polite" style="display:none"></div>
-        </form>
-        <p class="note">If you're staff, use the staff credentials. Client sign up creates a browser-only account and will be redirected to the Client Dashboard.</p>
-      </div>
-
-      <!-- SIGN UP -->
-      <div id="signup" style="display:none">
-        <form id="signup-form" autocomplete="on" novalidate>
-          <label for="su-name">Full name</label>
-          <input id="su-name" name="su-name" type="text" placeholder="Jane Doe" required>
-
-          <label for="su-email">Email</label>
-          <input id="su-email" name="su-email" type="email" placeholder="you@example.com" required>
-
-          <label for="su-pass">Password</label>
-          <input id="su-pass" name="su-pass" type="password" placeholder="Choose a password" required>
-
-          <label for="su-role">Role</label>
-          <select id="su-role" name="su-role" aria-label="Role">
-            <option value="client" selected>Client</option>
-            <option value="staff">Staff (request access)</option>
-          </select>
-
-          <div style="display:flex;gap:10px;margin-top:10px">
-            <button type="submit" class="btn">Create Account</button>
-            <button type="button" id="to-signin" class="btn secondary">Back to Sign In</button>
-          </div>
-
-          <div id="su-msg" class="success" role="status" aria-live="polite" style="display:none"></div>
-        </form>
-
-        <p class="note">Note: staff signups appear as requests only in this demo. For production you would add server-side verification and approval.</p>
-      </div>
-
-    </aside>
-  </main>
-
-  <footer>
-    <small>Copyright © 2025        | </small>
-  </footer>
+<footer>Copyright © 2025 😀 | </footer>
 
 <script>
-/* -------------- tabs -------------- */
-const tabSignin = document.getElementById('tab-signin');
-const tabSignup = document.getElementById('tab-signup');
-const signinEl = document.getElementById('signin');
-const signupEl = document.getElementById('signup');
-tabSignin.addEventListener('click', ()=>{ tabSignin.classList.add('active'); tabSignup.classList.remove('active'); signinEl.style.display='block'; signupEl.style.display='none';});
-tabSignup.addEventListener('click', ()=>{ tabSignup.classList.add('active'); tabSignin.classList.remove('active'); signinEl.style.display='none'; signupEl.style.display='block';});
-
-/* -------------- helper: mock accounts -------------- */
-/* Pre-created demo accounts (for testing) */
-const DEMO_ACCOUNTS = [
-  { email:'client@example.com', password:'clientpass', role:'client', name:'Demo Client' },
-  { email:'staff@example.com', password:'staffpass', role:'staff', name:'Demo Staff' }
-];
-
-/* Save demo accounts into localStorage if missing (non-destructive) */
-(function seedDemo(){
-  const key='cephas_accounts_v1';
-  const raw = localStorage.getItem(key);
-  let accounts = raw ? JSON.parse(raw) : [];
-  // add demo if not present
-  DEMO_ACCOUNTS.forEach(d=>{
-    if(!accounts.find(a=>a.email===d.email)){
-      accounts.push(d);
-    }
-  });
-  localStorage.setItem(key, JSON.stringify(accounts));
-})();
-
-/* -------------- sign in logic -------------- */
-const signinForm = document.getElementById('signin-form');
-const siMsg = document.getElementById('si-msg');
-const siToggle = document.getElementById('si-toggle');
-
-siToggle.addEventListener('click', ()=>{
-  const pass = document.getElementById('si-pass');
-  if(pass.type==='password'){ pass.type='text'; siToggle.textContent='Hide'; } else { pass.type='password'; siToggle.textContent='Show'; }
-});
-
-signinForm.addEventListener('submit', (e)=>{
+function handleLogin(e){
   e.preventDefault();
-  siMsg.style.display='none';
-  const email = document.getElementById('si-email').value.trim().toLowerCase();
-  const pass = document.getElementById('si-pass').value;
-  if(!email || !pass){ siMsg.style.display='block'; siMsg.textContent='Please enter your email and password.'; return; }
+  const username=document.getElementById("username").value.trim();
+  const password=document.getElementById("password").value.trim();
+  const isStaff=window.location.search.includes("staff=true");
 
-  const key='cephas_accounts_v1';
-  const accounts = JSON.parse(localStorage.getItem(key) || '[]');
-  const match = accounts.find(a=>a.email.toLowerCase()===email && a.password===pass);
-  if(!match){
-    siMsg.style.display='block';
-    siMsg.textContent='Invalid credentials. Use demo (client@example.com / clientpass or staff@example.com / staffpass) or sign up.';
-    return;
-  }
-
-  // Remember me (demo)
-  if(document.getElementById('remember').checked){
-    localStorage.setItem('cephas_last_user', match.email);
-  } else {
-    localStorage.removeItem('cephas_last_user');
-  }
-
-  // Role-based redirect
-  if(match.role === 'client'){
-    // store session (mock)
-    sessionStorage.setItem('cephas_user', JSON.stringify({email:match.email,role:match.role,name:match.name}));
-    // portal root
-    window.location.href = 'dashboard.html';
-  } else if(match.role === 'staff'){
-    sessionStorage.setItem('cephas_user', JSON.stringify({email:match.email,role:match.role,name:match.name}));
-    window.location.href = 'admin.html';
-  } else {
-    siMsg.style.display='block';
-    siMsg.textContent='Unknown role.';
-  }
-});
-
-/* -------------- signup logic (mock) -------------- */
-const signupForm = document.getElementById('signup-form');
-const suMsg = document.getElementById('su-msg');
-
-signupForm.addEventListener('submit', (e)=>{
-  e.preventDefault();
-  suMsg.style.display='none';
-  const name = document.getElementById('su-name').value.trim();
-  const email = document.getElementById('su-email').value.trim().toLowerCase();
-  const pass = document.getElementById('su-pass').value;
-  const role = document.getElementById('su-role').value;
-
-  if(!name || !email || !pass){ suMsg.style.display='block'; suMsg.style.color='#ffcccb'; suMsg.textContent='Please fill name, email and password.'; return; }
-
-  const key='cephas_accounts_v1';
-  const accounts = JSON.parse(localStorage.getItem(key) || '[]');
-  if(accounts.find(a=>a.email===email)){ suMsg.style.display='block'; suMsg.style.color='#ffcccb'; suMsg.textContent='An account with this email already exists. Try signing in.'; return; }
-
-  // create new account (mock)
-  const newAcc = { email, password:pass, role, name };
-  accounts.push(newAcc);
-  localStorage.setItem(key, JSON.stringify(accounts));
-  suMsg.style.display='block'; suMsg.style.color='#d6f7df'; suMsg.textContent='Account created! Redirecting...';
-
-  // auto-login flow for clients
-  setTimeout(()=>{
-    sessionStorage.setItem('cephas_user', JSON.stringify({email:newAcc.email,role:newAcc.role,name:newAcc.name}));
-    if(newAcc.role === 'client'){
-      window.location.href = 'dashboard.html';
-    } else {
-      // staff signups are "requests" in this demo
-      window.location.href = 'admin.html';
+  if(username && password){
+    localStorage.setItem("cephasUser", username);
+    localStorage.setItem("cephasRole", isStaff ? "staff" : "client");
+    if(isStaff){
+      window.location.href="portaladmin.html";
+    }else{
+      window.location.href="portaldashboard.html";
     }
-  },900);
-});
-
-/* -------------- convenience: prefill last user -------------- */
-window.addEventListener('DOMContentLoaded', ()=>{
-  const last = localStorage.getItem('cephas_last_user');
-  if(last){ document.getElementById('si-email').value = last; }
-});
+  }else{
+    alert("Please fill in all fields!");
+  }
+}
 </script>
+
 </body>
 </html>
