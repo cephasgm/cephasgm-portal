@@ -3,92 +3,194 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Dashboard — Cephas GM</title>
+<title>Admin Analytics — Cephas GM Portal</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
 <style>
+:root {
+  --bg:#0b0c10;
+  --card-bg:rgba(255,255,255,0.08);
+  --text:#fff;
+  --accent:#0b7a59;
+}
+body.dark {
+  --bg:#f4f4f4;
+  --card-bg:#fff;
+  --text:#111;
+}
 *{margin:0;padding:0;box-sizing:border-box;}
 body{
   font-family:'Poppins',sans-serif;
-  color:#fff;
-  background:linear-gradient(rgba(0,0,0,0.55),rgba(0,0,0,0.8)),
-  url('https://cdn.pixabay.com/photo/2017/08/02/01/01/tanzania-2560486_1280.jpg') center/cover no-repeat fixed;
-  min-height:100vh;
+  background:var(--bg) url('https://scx2.b-cdn.net/gfx/news/hires/2019/2-nature.jpg') center/cover fixed no-repeat;
+  color:var(--text);
+  transition:background .4s,color .4s;
 }
-header{
+
+/* Navbar */
+.nav{
   background:rgba(0,0,0,0.7);
-  padding:1rem 2rem;
   display:flex;
   justify-content:space-between;
   align-items:center;
+  padding:14px 30px;
+  position:sticky;
+  top:0;
+  z-index:100;
 }
-header h1{font-size:1.6rem;color:#0b7a59;}
-header button{
-  background:#0b7a59;
-  border:none;
+.nav-links{display:flex;gap:16px;}
+.nav a{
   color:#fff;
-  padding:0.6rem 1.2rem;
+  text-decoration:none;
+  padding:8px 12px;
+  border-radius:6px;
+  transition:.3s;
+}
+.nav a:hover,.nav a.active{background:rgba(255,255,255,0.15);}
+.theme-toggle{
+  background:var(--accent);
+  color:#fff;
+  border:none;
+  padding:6px 10px;
   border-radius:6px;
   cursor:pointer;
-  transition:0.3s;
+  font-size:.8rem;
 }
-header button:hover{background:#099268;}
+.theme-toggle:hover{opacity:.8;}
 
-main{
+header{
   text-align:center;
+  background:rgba(0,0,0,0.6);
   padding:3rem 1rem;
 }
-.card{
-  background:rgba(255,255,255,0.1);
-  padding:2rem;
-  margin:1rem auto;
-  border-radius:12px;
-  max-width:700px;
-  box-shadow:0 0 15px rgba(0,0,0,0.4);
+header h1{font-size:2.2rem;margin-bottom:.5rem;}
+header p{color:#ccc;font-size:.95rem;}
+
+/* Analytics Grid */
+.dashboard{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:1.5rem;
+  margin:2rem 10%;
 }
-.card h2{color:#0b7a59;margin-bottom:0.5rem;}
+.card{
+  background:var(--card-bg);
+  border-radius:12px;
+  padding:1.5rem;
+  text-align:center;
+  box-shadow:0 6px 15px rgba(0,0,0,0.4);
+  transition:.3s;
+}
+.card:hover{transform:translateY(-5px);}
+.card h2{color:var(--accent);font-size:2.4rem;}
+.card p{margin-top:.4rem;color:#ccc;}
+
+/* Charts */
+.chart-container{
+  margin:3rem 10%;
+  background:rgba(0,0,0,0.5);
+  border-radius:12px;
+  padding:2rem;
+  color:#fff;
+}
+.chart-title{text-align:center;margin-bottom:1rem;color:var(--accent);}
+
+canvas{
+  width:100%;
+  height:300px;
+}
+
 footer{
-  background:rgba(0,0,0,0.85);
+  background:rgba(0,0,0,0.8);
   text-align:center;
   padding:1rem;
   font-size:.9rem;
   margin-top:2rem;
+  color:#ccc;
 }
 </style>
 </head>
 <body>
 
+<nav class="nav">
+  <div class="brand">Cephas GM Admin</div>
+  <div class="nav-links">
+    <a href="portaldashboard.html">Dashboard</a>
+    <a href="portaldownloads.html">Downloads</a>
+    <a href="portaladmin.html" class="active">Admin</a>
+    <a href="portallogin.html">Logout</a>
+    <a href="https://cephasgm.github.io/cephasgm-site/" target="_blank">🌍 Main Site</a>
+  </div>
+  <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+</nav>
+
 <header>
-  <h1>Staff Admin Dashboard</h1>
-  <button onclick="logout()">Logout</button>
+  <h1>📊 Admin Analytics Dashboard</h1>
+  <p>Monitor project performance, team activity, and resource distribution — powered by simulated JSON data for demonstration.</p>
 </header>
 
-<main>
+<section class="dashboard">
   <div class="card">
-    <h2>Welcome, <span id="usernameDisplay"></span> 👨‍💼</h2>
-    <p>Manage client approvals, project uploads, and status reports here.</p>
+    <h2 id="projects">0</h2>
+    <p>Active Projects</p>
   </div>
+  <div class="card">
+    <h2 id="downloads">0</h2>
+    <p>Monthly Downloads</p>
+  </div>
+  <div class="card">
+    <h2 id="staff">0</h2>
+    <p>Staff Online</p>
+  </div>
+  <div class="card">
+    <h2 id="uptime">0%</h2>
+    <p>System Uptime</p>
+  </div>
+</section>
 
-  <div class="card">
-    <h2>Staff Tools</h2>
-    <ul style="list-style:none;padding:0;">
-      <li>📂 Review Pending Signups</li>
-      <li>📊 Upload Reports</li>
-      <li>📝 Track Ongoing Projects</li>
-    </ul>
-  </div>
-</main>
+<section class="chart-container">
+  <h2 class="chart-title">Project Progress Overview</h2>
+  <canvas id="chart"></canvas>
+</section>
 
 <footer>Copyright © 2025 😀 | </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-const user=localStorage.getItem("cephasUser");
-const role=localStorage.getItem("cephasRole");
-if(!user || role!=="staff"){window.location.href="portallogin.html?staff=true";}
-document.getElementById("usernameDisplay").textContent=user;
+// Mock data
+const mockData = {
+  projects: 8,
+  downloads: 256,
+  staff: 12,
+  uptime: 99.7,
+  progress: [65, 78, 85, 92, 60, 74]
+};
 
-function logout(){
-  localStorage.clear();
-  window.location.href="portallogin.html?staff=true";
+document.getElementById('projects').textContent = mockData.projects;
+document.getElementById('downloads').textContent = mockData.downloads;
+document.getElementById('staff').textContent = mockData.staff;
+document.getElementById('uptime').textContent = mockData.uptime + "%";
+
+// Chart.js mock
+const ctx = document.getElementById('chart');
+new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: ['AlphaLimaG01','DeltaYankee02','QubecLimaD07','TangoRomeaoK09','AI Hub','GreenTech'],
+    datasets: [{
+      label:'% Completion',
+      data: mockData.progress,
+      backgroundColor:'rgba(11,122,89,0.7)'
+    }]
+  },
+  options: {
+    scales: {
+      y: { beginAtZero:true, max:100 }
+    }
+  }
+});
+
+// Theme toggle
+function toggleTheme(){
+  document.body.classList.toggle('dark');
 }
 </script>
 
