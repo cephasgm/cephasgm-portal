@@ -23,8 +23,6 @@
     -moz-osx-font-smoothing:grayscale;
     padding-bottom:40px;
   }
-
-  /* top nav (keeps consistent look) */
   .nav{
     background: rgba(0,0,0,0.45);
     padding:14px 28px;
@@ -40,8 +38,6 @@
   .nav-links{display:flex;gap:12px}
   .nav-links a{color:#fff;text-decoration:none;padding:8px 12px;border-radius:8px;transition:.18s}
   .nav-links a:hover{background:rgba(255,255,255,0.06)}
-
-  /* layout */
   .wrap{
     max-width:1100px;
     margin:48px auto;
@@ -50,8 +46,6 @@
     grid-template-columns:1fr 440px;
     gap:30px;
   }
-
-  /* left info column */
   .info{
     background: linear-gradient(135deg, rgba(11,122,89,0.14), rgba(9,146,104,0.06));
     border-radius:16px;
@@ -66,8 +60,6 @@
   .features{display:grid;grid-template-columns:repeat(2, minmax(120px,1fr));gap:12px;margin-top:8px}
   .feat{background:var(--panel);padding:10px;border-radius:10px;color:#eaf7f0;font-size:.95rem;border:1px solid rgba(255,255,255,0.03)}
   .hint{font-size:.88rem;color:rgba(230,240,235,0.8);margin-top:12px}
-
-  /* right panel: forms */
   .panel{
     border-radius:16px;
     padding:20px;
@@ -82,7 +74,6 @@
     border:1px solid transparent;font-weight:600;
   }
   .tab.active{background:linear-gradient(90deg,var(--accent),var(--accent-2));box-shadow:0 8px 20px rgba(11,122,89,0.16);}
-
   form{display:flex;flex-direction:column;gap:12px}
   label{font-size:.85rem;color:#e6f6ee}
   input[type="text"],input[type="email"],input[type="password"],select{
@@ -98,17 +89,12 @@
   }
   .btn.secondary{background:transparent;border:1px solid rgba(255,255,255,0.06)}
   .btn:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(11,122,89,0.14)}
-
   .note{font-size:.9rem;color:#f6fdf8;margin-top:6px}
   .error{color:#ffcccb;font-size:.9rem;margin-top:6px}
   .success{color:#d6f7df;font-size:.95rem;margin-top:6px}
-
   .linkish{background:transparent;border:none;color:var(--accent);cursor:pointer;text-decoration:underline;padding:0;font-weight:600}
-
   footer{margin-top:30px;padding:18px;text-align:center;color:#fff;background:transparent}
   footer small{opacity:.85}
-
-  /* responsive */
   @media (max-width:980px){
     .wrap{grid-template-columns:1fr; padding:18px}
     .panel{order:2}
@@ -121,13 +107,11 @@
   <nav class="nav">
     <div class="brand">Cephas GM</div>
     <div class="nav-links">
-      <a href="../index.html">Home</a>
-      <a href="../projects.html">Projects</a>
-      <a href="../services.html">Services</a>
-      <a href="../gallery.html">Gallery</a>
-      <a href="../impact.html">Impact</a>
-      <a href="../about.html">About</a>
-      <a href="../contact.html">Contact</a>
+      <!-- Main Site must point to the public site absolute URL (not ../index.html) -->
+      <a href="https://cephasgm.github.io/cephasgm-site/">Main Site</a>
+      <!-- Portal internal links are same-folder -->
+      <a href="index.html">Portal Home</a>
+      <a href="login.html" class="active">Login</a>
     </div>
   </nav>
 
@@ -216,11 +200,11 @@
   </main>
 
   <footer>
-    <small>Copyright © 2025 😀 | </small>
+    <small>Copyright © 2025        | </small>
   </footer>
 
 <script>
-/* -------------- tabs -------------- */
+/* tabs */
 const tabSignin = document.getElementById('tab-signin');
 const tabSignup = document.getElementById('tab-signup');
 const signinEl = document.getElementById('signin');
@@ -228,44 +212,36 @@ const signupEl = document.getElementById('signup');
 tabSignin.addEventListener('click', ()=>{ tabSignin.classList.add('active'); tabSignup.classList.remove('active'); signinEl.style.display='block'; signupEl.style.display='none';});
 tabSignup.addEventListener('click', ()=>{ tabSignup.classList.add('active'); tabSignin.classList.remove('active'); signinEl.style.display='none'; signupEl.style.display='block';});
 
-/* -------------- helper: mock accounts -------------- */
-/* Pre-created demo accounts (for testing) */
+/* demo accounts */
 const DEMO_ACCOUNTS = [
   { email:'client@example.com', password:'clientpass', role:'client', name:'Demo Client' },
   { email:'staff@example.com', password:'staffpass', role:'staff', name:'Demo Staff' }
 ];
 
-/* Save demo accounts into localStorage if missing (non-destructive) */
 (function seedDemo(){
   const key='cephas_accounts_v1';
   const raw = localStorage.getItem(key);
   let accounts = raw ? JSON.parse(raw) : [];
-  // add demo if not present
   DEMO_ACCOUNTS.forEach(d=>{
-    if(!accounts.find(a=>a.email===d.email)){
-      accounts.push(d);
-    }
+    if(!accounts.find(a=>a.email===d.email)){ accounts.push(d); }
   });
   localStorage.setItem(key, JSON.stringify(accounts));
 })();
 
-/* -------------- sign in logic -------------- */
+/* sign in logic */
 const signinForm = document.getElementById('signin-form');
 const siMsg = document.getElementById('si-msg');
 const siToggle = document.getElementById('si-toggle');
-
 siToggle.addEventListener('click', ()=>{
   const pass = document.getElementById('si-pass');
   if(pass.type==='password'){ pass.type='text'; siToggle.textContent='Hide'; } else { pass.type='password'; siToggle.textContent='Show'; }
 });
-
 signinForm.addEventListener('submit', (e)=>{
   e.preventDefault();
   siMsg.style.display='none';
   const email = document.getElementById('si-email').value.trim().toLowerCase();
   const pass = document.getElementById('si-pass').value;
   if(!email || !pass){ siMsg.style.display='block'; siMsg.textContent='Please enter your email and password.'; return; }
-
   const key='cephas_accounts_v1';
   const accounts = JSON.parse(localStorage.getItem(key) || '[]');
   const match = accounts.find(a=>a.email.toLowerCase()===email && a.password===pass);
@@ -274,32 +250,27 @@ signinForm.addEventListener('submit', (e)=>{
     siMsg.textContent='Invalid credentials. Use demo (client@example.com / clientpass or staff@example.com / staffpass) or sign up.';
     return;
   }
-
-  // Remember me (demo)
   if(document.getElementById('remember').checked){
     localStorage.setItem('cephas_last_user', match.email);
   } else {
     localStorage.removeItem('cephas_last_user');
   }
-
-  // Role-based redirect
+  // Role-based redirect (now same-folder)
   if(match.role === 'client'){
-    // store session (mock)
     sessionStorage.setItem('cephas_user', JSON.stringify({email:match.email,role:match.role,name:match.name}));
-    window.location.href = '../portal/dashboard.html';
+    window.location.href = 'dashboard.html';
   } else if(match.role === 'staff'){
     sessionStorage.setItem('cephas_user', JSON.stringify({email:match.email,role:match.role,name:match.name}));
-    window.location.href = '../portal/admin.html';
+    window.location.href = 'admin.html';
   } else {
     siMsg.style.display='block';
     siMsg.textContent='Unknown role.';
   }
 });
 
-/* -------------- signup logic (mock) -------------- */
+/* signup logic */
 const signupForm = document.getElementById('signup-form');
 const suMsg = document.getElementById('su-msg');
-
 signupForm.addEventListener('submit', (e)=>{
   e.preventDefault();
   suMsg.style.display='none';
@@ -307,32 +278,26 @@ signupForm.addEventListener('submit', (e)=>{
   const email = document.getElementById('su-email').value.trim().toLowerCase();
   const pass = document.getElementById('su-pass').value;
   const role = document.getElementById('su-role').value;
-
   if(!name || !email || !pass){ suMsg.style.display='block'; suMsg.style.color='#ffcccb'; suMsg.textContent='Please fill name, email and password.'; return; }
-
   const key='cephas_accounts_v1';
   const accounts = JSON.parse(localStorage.getItem(key) || '[]');
   if(accounts.find(a=>a.email===email)){ suMsg.style.display='block'; suMsg.style.color='#ffcccb'; suMsg.textContent='An account with this email already exists. Try signing in.'; return; }
-
-  // create new account (mock)
   const newAcc = { email, password:pass, role, name };
   accounts.push(newAcc);
   localStorage.setItem(key, JSON.stringify(accounts));
   suMsg.style.display='block'; suMsg.style.color='#d6f7df'; suMsg.textContent='Account created! Redirecting...';
-
-  // auto-login flow for clients
   setTimeout(()=>{
     sessionStorage.setItem('cephas_user', JSON.stringify({email:newAcc.email,role:newAcc.role,name:newAcc.name}));
     if(newAcc.role === 'client'){
-      window.location.href = '../portal/dashboard.html';
+      window.location.href = 'dashboard.html';
     } else {
       // staff signups are "requests" in this demo
-      window.location.href = '../portal/admin.html';
+      window.location.href = 'admin.html';
     }
   },900);
 });
 
-/* -------------- convenience: prefill last user -------------- */
+/* prefill last user */
 window.addEventListener('DOMContentLoaded', ()=>{
   const last = localStorage.getItem('cephas_last_user');
   if(last){ document.getElementById('si-email').value = last; }
