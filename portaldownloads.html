@@ -1,32 +1,123 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Downloads — Cephas GM Portal</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Downloads Center — Cephas GM Portal</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
 <style>
-:root{ --accent:#0b7a59; --accent-2:#099268; --danger:#d62828; }
-*{margin:0;padding:0;box-sizing:border-box}
-body{ font-family:'Poppins',sans-serif;color:#fff;background:linear-gradient(180deg,rgba(0,0,0,0.5),rgba(0,0,0,0.7)),url('https://seeafricatoday.com/wp-content/uploads/2019/07/Namibrand-Nature-Reserve-Namibia-Africa-596398501-1.jpg') center/cover fixed no-repeat;min-height:100vh;}
-.nav{ background:rgba(0,0,0,0.45); padding:14px 28px; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:10;}
-.brand{font-weight:700;font-size:1.1rem;}
-.nav-links{display:flex;gap:12px;}
-.nav-links a{color:#fff;text-decoration:none;padding:8px 12px;border-radius:8px;transition:.2s;}
-.nav-links a:hover{background:rgba(255,255,255,0.08);}
-main{ max-width:1100px;margin:40px auto;padding:20px;background:rgba(0,0,0,0.45);border-radius:16px;box-shadow:0 12px 30px rgba(0,0,0,0.45);backdrop-filter:blur(4px);}
-h1{font-size:1.8rem;margin-bottom:10px;}
-p{color:#dcefe5;}
-.downloads{ display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:18px; margin-top:24px;}
-.card{ background:rgba(255,255,255,0.07); padding:18px; border-radius:14px; text-align:center; box-shadow:0 6px 15px rgba(0,0,0,0.3); transition:transform .3s,box-shadow .3s;}
-.card:hover{transform:translateY(-6px);box-shadow:0 10px 25px rgba(0,0,0,0.4);}
-.card h3{color:#0b7a59;margin-bottom:8px;}
-.card p{font-size:.95rem;margin-bottom:14px;}
-a.btn{ display:inline-block;background:#0b7a59;color:#fff;padding:.6rem 1.2rem;border-radius:8px;text-decoration:none;font-weight:600;transition:0.3s;}
-a.btn:hover{background:#099268;}
-.logout{ margin-top:30px;background:var(--danger);color:#fff;border:none;padding:.6rem 1.2rem;border-radius:8px;cursor:pointer;font-weight:600;}
-.logout:hover{background:#a71d2a;}
-footer{background:rgba(0,0,0,0.85);text-align:center;padding:1rem;font-size:.9rem;margin-top:2rem;}
+:root {
+  --bg-color:#0b0c10;
+  --card-bg:rgba(255,255,255,0.08);
+  --text-color:#fff;
+  --accent:#0b7a59;
+}
+body.dark {
+  --bg-color:#f4f4f4;
+  --card-bg:#fff;
+  --text-color:#111;
+  --accent:#0b7a59;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:'Poppins',sans-serif;
+  background:var(--bg-color) url('https://seeafricatoday.com/wp-content/uploads/2019/07/Namibrand-Nature-Reserve-Namibia-Africa-596398501-1.jpg') center/cover fixed no-repeat;
+  color:var(--text-color);
+  transition:background .4s,color .4s;
+}
+
+/* Navbar */
+.nav{
+  background:rgba(0,0,0,0.7);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:14px 30px;
+  position:sticky;top:0;z-index:100;
+}
+.nav-links{display:flex;gap:16px;}
+.nav a{
+  color:#fff;
+  text-decoration:none;
+  padding:8px 12px;
+  border-radius:6px;
+  transition:.3s;
+}
+.nav a:hover,.nav a.active{background:rgba(255,255,255,0.15);}
+.theme-toggle{
+  background:var(--accent);
+  color:#fff;
+  border:none;
+  padding:6px 10px;
+  border-radius:6px;
+  cursor:pointer;
+  font-size:.8rem;
+}
+.theme-toggle:hover{opacity:.8;}
+
+/* Main */
+header{
+  text-align:center;
+  background:rgba(0,0,0,0.6);
+  padding:3rem 1rem;
+}
+header h1{font-size:2.2rem;margin-bottom:.5rem;}
+header p{color:#ccc;font-size:.95rem;}
+
+/* Analytics */
+.analytics{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:1.5rem;
+  margin:2rem 10%;
+}
+.stat{
+  background:var(--card-bg);
+  border-radius:12px;
+  padding:1.5rem;
+  text-align:center;
+  box-shadow:0 6px 15px rgba(0,0,0,0.4);
+}
+.stat h2{color:var(--accent);font-size:2rem;}
+.stat p{margin-top:.3rem;font-size:.9rem;color:#ccc;}
+
+/* Downloads */
+.downloads{
+  background:rgba(0,0,0,0.6);
+  padding:3rem 10%;
+  margin:2rem 0;
+  border-radius:12px;
+}
+.downloads h2{text-align:center;margin-bottom:2rem;color:var(--accent);}
+.file{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:var(--card-bg);
+  margin:.8rem 0;
+  padding:1rem;
+  border-radius:8px;
+}
+.file span{display:flex;align-items:center;gap:10px;}
+.file i{font-size:1.3rem;color:var(--accent);}
+.file small{color:#aaa;}
+.btn{
+  background:var(--accent);
+  color:#fff;
+  border:none;
+  padding:.5rem 1rem;
+  border-radius:6px;
+  cursor:pointer;
+}
+.btn:hover{opacity:.8;}
+footer{
+  background:rgba(0,0,0,0.8);
+  text-align:center;
+  padding:1rem;
+  font-size:.9rem;
+  margin-top:2rem;
+  color:#ccc;
+}
 </style>
 </head>
 <body>
@@ -34,60 +125,72 @@ footer{background:rgba(0,0,0,0.85);text-align:center;padding:1rem;font-size:.9re
 <nav class="nav">
   <div class="brand">Cephas GM Portal</div>
   <div class="nav-links">
-    <a href="https://cephasgm.github.io/cephasgm-site/">Main Site</a>
-    <a href="dashboard.html">Dashboard</a>
-    <a href="downloads.html" class="active">Downloads</a>
-    <a href="admin.html">Admin</a>
+    <a href="portaldashboard.html">Dashboard</a>
+    <a href="portaldownloads.html" class="active">Downloads</a>
+    <a href="portaladmin.html">Admin</a>
+    <a href="portallogin.html">Logout</a>
+    <a href="https://cephasgm.github.io/cephasgm-site/" target="_blank">🌍 Main Site</a>
   </div>
+  <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
 </nav>
 
-<main>
-  <h1 id="welcome">Downloads Center</h1>
-  <p>Access secure documents and technical files provided by Cephas GM. Only authorized users can view and download materials.</p>
+<header>
+  <h1>📁 Secure Downloads Center</h1>
+  <p>Access your latest project reports, technical documents, and company updates. Files are refreshed weekly.</p>
+</header>
 
-  <div class="downloads">
-    <div class="card">
-      <h3>📘 Project Overview Report</h3>
-      <p>Comprehensive summary of ongoing smart infrastructure initiatives.</p>
-      <a href="#" class="btn">Download PDF</a>
-    </div>
-    <div class="card">
-      <h3>🌍 Green Energy Plan</h3>
-      <p>Details of renewable energy installations and capacity roadmap.</p>
-      <a href="#" class="btn">Download PDF</a>
-    </div>
-    <div class="card">
-      <h3>☁️ Cloud Implementation Guide</h3>
-      <p>Best practices and steps for digital transformation projects.</p>
-      <a href="#" class="btn">Download PDF</a>
-    </div>
-    <div class="card">
-      <h3>🤖 AI Model Insights</h3>
-      <p>Latest updates on AI research and innovation projects.</p>
-      <a href="#" class="btn">Download PDF</a>
-    </div>
+<section class="analytics">
+  <div class="stat">
+    <h2 id="files">0</h2>
+    <p>Total Files Available</p>
+  </div>
+  <div class="stat">
+    <h2 id="downloads">0</h2>
+    <p>Total Downloads</p>
+  </div>
+  <div class="stat">
+    <h2 id="updates">0</h2>
+    <p>Reports Updated This Week</p>
+  </div>
+</section>
+
+<section class="downloads">
+  <h2>Available Documents</h2>
+  
+  <div class="file">
+    <span><i>📘</i> Project Progress Report – Q1 2025 <br><small>Last Updated: Feb 15, 2025</small></span>
+    <button class="btn">Download PDF</button>
   </div>
 
-  <button class="logout" id="logout-btn">Logout</button>
-</main>
+  <div class="file">
+    <span><i>📗</i> AI Research & Development Overview <br><small>Last Updated: Mar 03, 2025</small></span>
+    <button class="btn">Download PDF</button>
+  </div>
+
+  <div class="file">
+    <span><i>📙</i> Renewable Energy Expansion Plan <br><small>Last Updated: Apr 21, 2025</small></span>
+    <button class="btn">Download PDF</button>
+  </div>
+
+  <div class="file">
+    <span><i>📕</i> Annual Corporate Strategy Document <br><small>Last Updated: May 10, 2025</small></span>
+    <button class="btn">Download PDF</button>
+  </div>
+</section>
 
 <footer>Copyright © 2025 😀 | </footer>
 
 <script>
-// Session gate
-const user = JSON.parse(sessionStorage.getItem('cephas_user') || 'null');
-if(!user){
-  window.location.href = 'login.html';
+// Mock analytics
+const mockData = {files: 4, downloads: 87, updates: 3};
+document.getElementById('files').textContent = mockData.files;
+document.getElementById('downloads').textContent = mockData.downloads;
+document.getElementById('updates').textContent = mockData.updates;
+
+// Light/Dark theme toggle
+function toggleTheme(){
+  document.body.classList.toggle('dark');
 }
-
-// Personalize header
-document.getElementById('welcome').textContent = `Downloads Center — ${user?.name || 'User'} (${user?.role || 'Guest'})`;
-
-// Logout
-document.getElementById('logout-btn').addEventListener('click', ()=>{
-  sessionStorage.removeItem('cephas_user');
-  window.location.href = 'login.html';
-});
 </script>
 
 </body>
