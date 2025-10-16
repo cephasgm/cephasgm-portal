@@ -6,109 +6,34 @@
 <title>Admin Portal — Cephas GM</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
 <style>
-:root{
-  --accent:#0b7a59;
-  --accent-2:#099268;
-  --danger:#d62828;
-}
+:root{ --accent:#0b7a59; --accent-2:#099268; --danger:#d62828; }
 *{margin:0;padding:0;box-sizing:border-box}
-body{
-  font-family:'Poppins',sans-serif;
-  color:#fff;
-  background:linear-gradient(180deg,rgba(0,0,0,0.5),rgba(0,0,0,0.7)),url('https://www.nature-reserve.co.za/images/kosi-forest-lodge-location-786x500.jpg') center/cover fixed no-repeat;
-  min-height:100vh;
-}
-.nav{
-  background:rgba(0,0,0,0.45);
-  padding:14px 28px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  position:sticky;
-  top:0;
-  z-index:10;
-}
+body{ font-family:'Poppins',sans-serif;color:#fff;background:linear-gradient(180deg,rgba(0,0,0,0.5),rgba(0,0,0,0.7)),url('https://www.nature-reserve.co.za/images/kosi-forest-lodge-location-786x500.jpg') center/cover fixed no-repeat;min-height:100vh;}
+.nav{ background:rgba(0,0,0,0.45); padding:14px 28px; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:10;}
 .brand{font-weight:700;font-size:1.1rem;}
 .nav-links{display:flex;gap:12px;}
 .nav-links a{color:#fff;text-decoration:none;padding:8px 12px;border-radius:8px;transition:.2s;}
 .nav-links a:hover{background:rgba(255,255,255,0.08);}
-main{
-  max-width:1100px;
-  margin:40px auto;
-  padding:20px;
-  background:rgba(0,0,0,0.45);
-  border-radius:16px;
-  box-shadow:0 12px 30px rgba(0,0,0,0.45);
-  backdrop-filter:blur(4px);
-}
+main{ max-width:1100px;margin:40px auto;padding:20px;background:rgba(0,0,0,0.45);border-radius:16px;box-shadow:0 12px 30px rgba(0,0,0,0.45);backdrop-filter:blur(4px);}
 h1{font-size:1.8rem;margin-bottom:10px;}
 h2{margin-top:24px;font-size:1.3rem;color:#c3f2da;}
-.cards{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-  gap:18px;
-  margin-top:16px;
-}
-.card{
-  background:rgba(255,255,255,0.07);
-  padding:18px;
-  border-radius:14px;
-  text-align:center;
-  box-shadow:0 6px 15px rgba(0,0,0,0.3);
-  transition:transform .3s,box-shadow .3s;
-}
+.cards{ display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:18px; margin-top:16px;}
+.card{ background:rgba(255,255,255,0.07); padding:18px; border-radius:14px; text-align:center; box-shadow:0 6px 15px rgba(0,0,0,0.3); transition:transform .3s,box-shadow .3s;}
 .card:hover{transform:translateY(-6px);box-shadow:0 10px 25px rgba(0,0,0,0.4);}
 .card h3{color:#0b7a59;margin-bottom:6px;}
-.approvals{
-  margin-top:30px;
-  background:rgba(255,255,255,0.07);
-  border-radius:14px;
-  padding:16px;
-}
-table{
-  width:100%;
-  border-collapse:collapse;
-  margin-top:10px;
-  font-size:.95rem;
-}
-th,td{
-  padding:10px;
-  border-bottom:1px solid rgba(255,255,255,0.1);
-  text-align:left;
-}
+.approvals{ margin-top:30px; background:rgba(255,255,255,0.07); border-radius:14px; padding:16px;}
+table{ width:100%; border-collapse:collapse; margin-top:10px; font-size:.95rem;}
+th,td{ padding:10px; border-bottom:1px solid rgba(255,255,255,0.1); text-align:left;}
 th{color:#0b7a59;}
 tr:hover{background:rgba(255,255,255,0.05);}
-.btn-small{
-  padding:6px 10px;
-  border:none;
-  border-radius:8px;
-  cursor:pointer;
-  font-weight:600;
-  transition:.2s;
-}
+.btn-small{ padding:6px 10px; border:none; border-radius:8px; cursor:pointer; font-weight:600; transition:.2s;}
 .btn-approve{background:#0b7a59;color:#fff;}
 .btn-approve:hover{background:#099268;}
 .btn-reject{background:#d62828;color:#fff;}
 .btn-reject:hover{background:#a71d2a;}
-.logout{
-  display:inline-block;
-  margin-top:30px;
-  background:var(--danger);
-  color:#fff;
-  padding:.6rem 1.2rem;
-  border:none;
-  border-radius:8px;
-  cursor:pointer;
-  font-weight:600;
-}
+.logout{ display:inline-block; margin-top:30px; background:var(--danger); color:#fff; padding:.6rem 1.2rem; border:none; border-radius:8px; cursor:pointer; font-weight:600;}
 .logout:hover{background:#a71d2a;}
-footer{
-  background:rgba(0,0,0,0.85);
-  text-align:center;
-  padding:1rem;
-  font-size:.9rem;
-  margin-top:2rem;
-}
+footer{background:rgba(0,0,0,0.85);text-align:center;padding:1rem;font-size:.9rem;margin-top:2rem;}
 </style>
 </head>
 <body>
@@ -116,7 +41,7 @@ footer{
 <nav class="nav">
   <div class="brand">Cephas GM Admin</div>
   <div class="nav-links">
-    <a href="../index.html">Home</a>
+    <a href="https://cephasgm.github.io/cephasgm-site/">Home</a>
     <a href="dashboard.html">Dashboard</a>
     <a href="downloads.html">Downloads</a>
     <a href="admin.html" class="active">Admin</a>
@@ -126,6 +51,7 @@ footer{
 <main>
   <h1 id="welcome">Admin Control Panel</h1>
   <h2>Overview</h2>
+
   <div class="cards">
     <div class="card">
       <h3>👥 Registered Users</h3>
@@ -160,6 +86,7 @@ footer{
 // Session gate: allow only staff
 const user = JSON.parse(sessionStorage.getItem('cephas_user') || 'null');
 if(!user || user.role !== 'staff'){
+  // send to portal login
   window.location.href = 'login.html';
 }
 document.getElementById('welcome').textContent = `Welcome, ${user.name} (Staff)`;
