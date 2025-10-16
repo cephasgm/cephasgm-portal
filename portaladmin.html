@@ -1,134 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Admin Portal — Cephas GM</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard — Cephas GM</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
 <style>
-:root{ --accent:#0b7a59; --accent-2:#099268; --danger:#d62828; }
-*{margin:0;padding:0;box-sizing:border-box}
-body{ font-family:'Poppins',sans-serif;color:#fff;background:linear-gradient(180deg,rgba(0,0,0,0.5),rgba(0,0,0,0.7)),url('https://www.nature-reserve.co.za/images/kosi-forest-lodge-location-786x500.jpg') center/cover fixed no-repeat;min-height:100vh;}
-.nav{ background:rgba(0,0,0,0.45); padding:14px 28px; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:10;}
-.brand{font-weight:700;font-size:1.1rem;}
-.nav-links{display:flex;gap:12px;}
-.nav-links a{color:#fff;text-decoration:none;padding:8px 12px;border-radius:8px;transition:.2s;}
-.nav-links a:hover{background:rgba(255,255,255,0.08);}
-main{ max-width:1100px;margin:40px auto;padding:20px;background:rgba(0,0,0,0.45);border-radius:16px;box-shadow:0 12px 30px rgba(0,0,0,0.45);backdrop-filter:blur(4px);}
-h1{font-size:1.8rem;margin-bottom:10px;}
-h2{margin-top:24px;font-size:1.3rem;color:#c3f2da;}
-.cards{ display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:18px; margin-top:16px;}
-.card{ background:rgba(255,255,255,0.07); padding:18px; border-radius:14px; text-align:center; box-shadow:0 6px 15px rgba(0,0,0,0.3); transition:transform .3s,box-shadow .3s;}
-.card:hover{transform:translateY(-6px);box-shadow:0 10px 25px rgba(0,0,0,0.4);}
-.card h3{color:#0b7a59;margin-bottom:6px;}
-.approvals{ margin-top:30px; background:rgba(255,255,255,0.07); border-radius:14px; padding:16px;}
-table{ width:100%; border-collapse:collapse; margin-top:10px; font-size:.95rem;}
-th,td{ padding:10px; border-bottom:1px solid rgba(255,255,255,0.1); text-align:left;}
-th{color:#0b7a59;}
-tr:hover{background:rgba(255,255,255,0.05);}
-.btn-small{ padding:6px 10px; border:none; border-radius:8px; cursor:pointer; font-weight:600; transition:.2s;}
-.btn-approve{background:#0b7a59;color:#fff;}
-.btn-approve:hover{background:#099268;}
-.btn-reject{background:#d62828;color:#fff;}
-.btn-reject:hover{background:#a71d2a;}
-.logout{ display:inline-block; margin-top:30px; background:var(--danger); color:#fff; padding:.6rem 1.2rem; border:none; border-radius:8px; cursor:pointer; font-weight:600;}
-.logout:hover{background:#a71d2a;}
-footer{background:rgba(0,0,0,0.85);text-align:center;padding:1rem;font-size:.9rem;margin-top:2rem;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:'Poppins',sans-serif;
+  color:#fff;
+  background:linear-gradient(rgba(0,0,0,0.55),rgba(0,0,0,0.8)),
+  url('https://cdn.pixabay.com/photo/2017/08/02/01/01/tanzania-2560486_1280.jpg') center/cover no-repeat fixed;
+  min-height:100vh;
+}
+header{
+  background:rgba(0,0,0,0.7);
+  padding:1rem 2rem;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+header h1{font-size:1.6rem;color:#0b7a59;}
+header button{
+  background:#0b7a59;
+  border:none;
+  color:#fff;
+  padding:0.6rem 1.2rem;
+  border-radius:6px;
+  cursor:pointer;
+  transition:0.3s;
+}
+header button:hover{background:#099268;}
+
+main{
+  text-align:center;
+  padding:3rem 1rem;
+}
+.card{
+  background:rgba(255,255,255,0.1);
+  padding:2rem;
+  margin:1rem auto;
+  border-radius:12px;
+  max-width:700px;
+  box-shadow:0 0 15px rgba(0,0,0,0.4);
+}
+.card h2{color:#0b7a59;margin-bottom:0.5rem;}
+footer{
+  background:rgba(0,0,0,0.85);
+  text-align:center;
+  padding:1rem;
+  font-size:.9rem;
+  margin-top:2rem;
+}
 </style>
 </head>
 <body>
 
-<nav class="nav">
-  <div class="brand">Cephas GM Admin</div>
-  <div class="nav-links">
-    <a href="https://cephasgm.github.io/cephasgm-site/">Home</a>
-    <a href="dashboard.html">Dashboard</a>
-    <a href="downloads.html">Downloads</a>
-    <a href="admin.html" class="active">Admin</a>
-  </div>
-</nav>
+<header>
+  <h1>Staff Admin Dashboard</h1>
+  <button onclick="logout()">Logout</button>
+</header>
 
 <main>
-  <h1 id="welcome">Admin Control Panel</h1>
-  <h2>Overview</h2>
-
-  <div class="cards">
-    <div class="card">
-      <h3>👥 Registered Users</h3>
-      <p id="count-users">Loading...</p>
-    </div>
-    <div class="card">
-      <h3>📁 Downloads Shared</h3>
-      <p>24 Files</p>
-    </div>
-    <div class="card">
-      <h3>🌍 Projects Monitored</h3>
-      <p>12 Active Smart Projects</p>
-    </div>
+  <div class="card">
+    <h2>Welcome, <span id="usernameDisplay"></span> 👨‍💼</h2>
+    <p>Manage client approvals, project uploads, and status reports here.</p>
   </div>
 
-  <section class="approvals">
-    <h2>Pending Client Approvals</h2>
-    <table id="approval-table">
-      <thead>
-        <tr><th>Name</th><th>Email</th><th>Role</th><th>Action</th></tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </section>
-
-  <button class="logout" id="logout-btn">Logout</button>
+  <div class="card">
+    <h2>Staff Tools</h2>
+    <ul style="list-style:none;padding:0;">
+      <li>📂 Review Pending Signups</li>
+      <li>📊 Upload Reports</li>
+      <li>📝 Track Ongoing Projects</li>
+    </ul>
+  </div>
 </main>
 
 <footer>Copyright © 2025 😀 | </footer>
 
 <script>
-// Session gate: allow only staff
-const user = JSON.parse(sessionStorage.getItem('cephas_user') || 'null');
-if(!user || user.role !== 'staff'){
-  // send to portal login
-  window.location.href = 'login.html';
+const user=localStorage.getItem("cephasUser");
+const role=localStorage.getItem("cephasRole");
+if(!user || role!=="staff"){window.location.href="portallogin.html?staff=true";}
+document.getElementById("usernameDisplay").textContent=user;
+
+function logout(){
+  localStorage.clear();
+  window.location.href="portallogin.html?staff=true";
 }
-document.getElementById('welcome').textContent = `Welcome, ${user.name} (Staff)`;
-
-// Load all accounts
-const accounts = JSON.parse(localStorage.getItem('cephas_accounts_v1') || '[]');
-const tableBody = document.querySelector('#approval-table tbody');
-
-// Display pending clients (role === client)
-const clients = accounts.filter(acc => acc.role === 'client');
-tableBody.innerHTML = clients.map(c=>`
-  <tr>
-    <td>${c.name}</td>
-    <td>${c.email}</td>
-    <td>${c.role}</td>
-    <td>
-      <button class="btn-small btn-approve">Approve</button>
-      <button class="btn-small btn-reject">Reject</button>
-    </td>
-  </tr>
-`).join('');
-
-// Count users
-document.getElementById('count-users').textContent = accounts.length + ' Accounts';
-
-// Approve/Reject (mock)
-tableBody.addEventListener('click', e=>{
-  if(e.target.classList.contains('btn-approve')){
-    e.target.closest('tr').style.background='rgba(0,255,0,0.1)';
-    e.target.closest('tr').querySelector('td:nth-child(3)').textContent='Approved';
-  }
-  if(e.target.classList.contains('btn-reject')){
-    e.target.closest('tr').style.background='rgba(255,0,0,0.1)';
-    e.target.closest('tr').querySelector('td:nth-child(3)').textContent='Rejected';
-  }
-});
-
-// Logout
-document.getElementById('logout-btn').addEventListener('click', ()=>{
-  sessionStorage.removeItem('cephas_user');
-  window.location.href = 'login.html';
-});
 </script>
 
 </body>
