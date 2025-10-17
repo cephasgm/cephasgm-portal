@@ -11,32 +11,34 @@ body{
   font-family:'Poppins',sans-serif;
   color:#fff;
   background:linear-gradient(rgba(0,0,0,0.55),rgba(0,0,0,0.8)),
-  url('https://res.cloudinary.com/enchanting/q_70,f_auto,w_2500,h_1650,c_fit/exodus-web/2021/12/26806_Madagascar_GeorgePotter.jpg') center/cover no-repeat fixed;
+  url('https://images.travelandleisureasia.com/wp-content/uploads/sites/3/2023/11/20202626/lauterbrunnen.jpg') center/cover no-repeat fixed;
   min-height:100vh;
 }
-header{
+.nav{
   background:rgba(0,0,0,0.7);
-  padding:1rem 2rem;
   display:flex;
   justify-content:space-between;
   align-items:center;
+  padding:14px 30px;
+  position:sticky;
+  top:0;
 }
-header h1{font-size:1.6rem;color:#0b7a59;}
-header button{
-  background:#0b7a59;
-  border:none;
+.nav-links{display:flex;gap:16px;}
+.nav a{
   color:#fff;
-  padding:0.6rem 1.2rem;
+  text-decoration:none;
+  padding:8px 12px;
   border-radius:6px;
-  cursor:pointer;
-  transition:0.3s;
+  transition:.3s;
 }
-header button:hover{background:#099268;}
-
-main{
+.nav a:hover,.nav a.active{background:rgba(255,255,255,0.15);}
+header{
   text-align:center;
-  padding:3rem 1rem;
+  padding:2rem 1rem;
+  background:rgba(0,0,0,0.5);
 }
+header h1{color:#0b7a59;font-size:2rem;margin-bottom:.3rem;}
+main{text-align:center;padding:2rem 1rem;}
 .card{
   background:rgba(255,255,255,0.1);
   padding:2rem;
@@ -53,39 +55,89 @@ footer{
   font-size:.9rem;
   margin-top:2rem;
 }
+/* AI Chat */
+#ai-section{
+  display:none;
+  background:rgba(0,0,0,0.6);
+  padding:2rem;
+  margin:2rem 10%;
+  border-radius:12px;
+}
+#chat-box{height:300px;overflow-y:auto;background:rgba(255,255,255,0.1);border-radius:10px;padding:1rem;margin-bottom:1rem;}
+.message{margin:6px 0;}
+.user{color:#0b7a59;}
+.assistant{color:#fff;}
+input,button{border:none;padding:.7rem 1rem;border-radius:8px;}
+#user-input{width:75%;}
+#send-btn{background:#0b7a59;color:#fff;cursor:pointer;}
 </style>
 </head>
 <body>
 
+<nav class="nav">
+  <div class="brand">Cephas GM Client</div>
+  <div class="nav-links">
+    <a href="portaldashboard.html" class="active">Dashboard</a>
+    <a href="portaldownloads.html">Downloads</a>
+    <a href="#" onclick="toggleAI()">🤖 CephasAI</a>
+    <a href="portallogin.html">Logout</a>
+    <a href="https://cephasgm.github.io/cephasgm-site/" target="_blank">🌍 Main Site</a>
+  </div>
+</nav>
+
 <header>
-  <h1>Client Dashboard</h1>
-  <button onclick="logout()">Logout</button>
+  <h1>Welcome, Cephas Client 👋</h1>
+  <p>Here’s your project summary and access to CephasAI for help.</p>
 </header>
 
 <main>
   <div class="card">
-    <h2>Welcome, <span id="usernameDisplay"></span> 👋</h2>
-    <p>Access your latest project updates, downloads, and announcements.</p>
-  </div>
-
-  <div class="card">
-    <h2>Quick Links</h2>
-    <p><a href="portaldownloads.html" style="color:#0b7a59;text-decoration:none;">📥 Access Downloads</a></p>
+    <h2>Active Projects: <span id="projects">0</span></h2>
+    <p>Reports available: <span id="reports">0</span> | Updates: <span id="updates">0</span></p>
   </div>
 </main>
+
+<section id="ai-section">
+  <h2 style="color:#0b7a59;text-align:center;">🤖 CephasAI Assistant</h2>
+  <div id="chat-box"></div>
+  <div style="text-align:center;">
+    <input type="text" id="user-input" placeholder="Ask CephasAI...">
+    <button id="send-btn">Send</button>
+  </div>
+</section>
 
 <footer>Copyright © 2025 😀 | </footer>
 
 <script>
-const user=localStorage.getItem("cephasUser");
-const role=localStorage.getItem("cephasRole");
-if(!user || role!=="client"){window.location.href="portallogin.html";}
-document.getElementById("usernameDisplay").textContent=user;
+const mockStats={projects:4,reports:12,updates:3};
+document.getElementById('projects').textContent=mockStats.projects;
+document.getElementById('reports').textContent=mockStats.reports;
+document.getElementById('updates').textContent=mockStats.updates;
 
-function logout(){
-  localStorage.clear();
-  window.location.href="portallogin.html";
+function toggleAI(){
+  const ai=document.getElementById("ai-section");
+  ai.style.display = ai.style.display==="none"?"block":"none";
 }
+
+// Mock AI replies
+const chat=document.getElementById("chat-box");
+document.getElementById("send-btn").onclick=function(){
+  const val=document.getElementById("user-input").value.trim();
+  if(!val)return;
+  chat.innerHTML+=`<div class="message user"><b>You:</b> ${val}</div>`;
+  document.getElementById("user-input").value="";
+  setTimeout(()=>{
+    const replies=[
+      "Your latest project AlphaLimaG01 is 85% complete.",
+      "All reports are up to date.",
+      "CephasAI recommends reviewing project QubecLimaD07.",
+      "There are 3 new updates since your last visit."
+    ];
+    const reply=replies[Math.floor(Math.random()*replies.length)];
+    chat.innerHTML+=`<div class="message assistant"><b>CephasAI:</b> ${reply}</div>`;
+    chat.scrollTop=chat.scrollHeight;
+  },1000);
+};
 </script>
 
 </body>
