@@ -24,8 +24,6 @@ body{
   color:var(--text);
   transition:background .4s,color .4s;
 }
-
-/* Navbar */
 .nav{
   background:rgba(0,0,0,0.7);
   display:flex;
@@ -36,7 +34,7 @@ body{
   top:0;
   z-index:100;
 }
-.nav-links{display:flex;gap:16px;}
+.nav-links{display:flex;gap:16px;flex-wrap:wrap;}
 .nav a{
   color:#fff;
   text-decoration:none;
@@ -64,7 +62,6 @@ header{
 header h1{font-size:2.2rem;margin-bottom:.5rem;}
 header p{color:#ccc;font-size:.95rem;}
 
-/* Analytics Grid */
 .dashboard{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
@@ -83,7 +80,6 @@ header p{color:#ccc;font-size:.95rem;}
 .card h2{color:var(--accent);font-size:2.4rem;}
 .card p{margin-top:.4rem;color:#ccc;}
 
-/* Charts */
 .chart-container{
   margin:3rem 10%;
   background:rgba(0,0,0,0.5);
@@ -92,11 +88,7 @@ header p{color:#ccc;font-size:.95rem;}
   color:#fff;
 }
 .chart-title{text-align:center;margin-bottom:1rem;color:var(--accent);}
-
-canvas{
-  width:100%;
-  height:300px;
-}
+canvas{width:100%;height:300px;}
 
 footer{
   background:rgba(0,0,0,0.8);
@@ -105,6 +97,37 @@ footer{
   font-size:.9rem;
   margin-top:2rem;
   color:#ccc;
+}
+
+/* AI Chat Section */
+#ai-section {
+  display:none;
+  background:rgba(0,0,0,0.6);
+  padding:2rem;
+  margin:2rem 10%;
+  border-radius:12px;
+}
+#chat-box {
+  height:300px;
+  overflow-y:auto;
+  background:rgba(255,255,255,0.1);
+  border-radius:10px;
+  padding:1rem;
+  margin-bottom:1rem;
+}
+.message {margin:6px 0;}
+.user {color:var(--accent);}
+.assistant {color:#fff;}
+input,button{
+  border:none;
+  padding:.7rem 1rem;
+  border-radius:8px;
+}
+#user-input{width:75%;}
+#send-btn{
+  background:var(--accent);
+  color:#fff;
+  cursor:pointer;
 }
 </style>
 </head>
@@ -116,6 +139,7 @@ footer{
     <a href="portaldashboard.html">Dashboard</a>
     <a href="portaldownloads.html">Downloads</a>
     <a href="portaladmin.html" class="active">Admin</a>
+    <a href="#" onclick="toggleAI()">🤖 CephasAI</a>
     <a href="portallogin.html">Logout</a>
     <a href="https://cephasgm.github.io/cephasgm-site/" target="_blank">🌍 Main Site</a>
   </div>
@@ -124,26 +148,14 @@ footer{
 
 <header>
   <h1>📊 Admin Analytics Dashboard</h1>
-  <p>Monitor project performance, team activity, and resource distribution — powered by simulated JSON data for demonstration.</p>
+  <p>Welcome, Cephas Staff! You have access to analytics, reports, and AI support assistant.</p>
 </header>
 
 <section class="dashboard">
-  <div class="card">
-    <h2 id="projects">0</h2>
-    <p>Active Projects</p>
-  </div>
-  <div class="card">
-    <h2 id="downloads">0</h2>
-    <p>Monthly Downloads</p>
-  </div>
-  <div class="card">
-    <h2 id="staff">0</h2>
-    <p>Staff Online</p>
-  </div>
-  <div class="card">
-    <h2 id="uptime">0%</h2>
-    <p>System Uptime</p>
-  </div>
+  <div class="card"><h2 id="projects">0</h2><p>Active Projects</p></div>
+  <div class="card"><h2 id="downloads">0</h2><p>Monthly Downloads</p></div>
+  <div class="card"><h2 id="staff">0</h2><p>Staff Online</p></div>
+  <div class="card"><h2 id="uptime">0%</h2><p>System Uptime</p></div>
 </section>
 
 <section class="chart-container">
@@ -151,47 +163,57 @@ footer{
   <canvas id="chart"></canvas>
 </section>
 
+<section id="ai-section">
+  <h2 style="color:var(--accent);text-align:center;">🤖 CephasAI Assistant</h2>
+  <div id="chat-box"></div>
+  <div style="text-align:center;">
+    <input type="text" id="user-input" placeholder="Ask CephasAI...">
+    <button id="send-btn">Send</button>
+  </div>
+</section>
+
 <footer>Copyright © 2025 😀 | </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-// Mock data
-const mockData = {
-  projects: 8,
-  downloads: 256,
-  staff: 12,
-  uptime: 99.7,
-  progress: [65, 78, 85, 92, 60, 74]
-};
+const mockData={projects:8,downloads:256,staff:12,uptime:99.7,progress:[65,78,85,92,60,74]};
+document.getElementById('projects').textContent=mockData.projects;
+document.getElementById('downloads').textContent=mockData.downloads;
+document.getElementById('staff').textContent=mockData.staff;
+document.getElementById('uptime').textContent=mockData.uptime+"%";
 
-document.getElementById('projects').textContent = mockData.projects;
-document.getElementById('downloads').textContent = mockData.downloads;
-document.getElementById('staff').textContent = mockData.staff;
-document.getElementById('uptime').textContent = mockData.uptime + "%";
-
-// Chart.js mock
-const ctx = document.getElementById('chart');
-new Chart(ctx, {
-  type: 'bar',
-  data: {
-    labels: ['AlphaLimaG01','DeltaYankee02','QubecLimaD07','TangoRomeaoK09','AI Hub','GreenTech'],
-    datasets: [{
-      label:'% Completion',
-      data: mockData.progress,
-      backgroundColor:'rgba(11,122,89,0.7)'
-    }]
-  },
-  options: {
-    scales: {
-      y: { beginAtZero:true, max:100 }
-    }
-  }
+new Chart(document.getElementById('chart'),{
+  type:'bar',
+  data:{labels:['AlphaLimaG01','DeltaYankee02','QubecLimaD07','TangoRomeaoK09','AI Hub','GreenTech'],
+  datasets:[{label:'% Completion',data:mockData.progress,backgroundColor:'rgba(11,122,89,0.7)'}]},
+  options:{scales:{y:{beginAtZero:true,max:100}}}
 });
 
-// Theme toggle
-function toggleTheme(){
-  document.body.classList.toggle('dark');
+function toggleTheme(){document.body.classList.toggle('dark');}
+function toggleAI(){
+  const ai=document.getElementById("ai-section");
+  ai.style.display = ai.style.display==="none"?"block":"none";
 }
+
+// Simple mock CephasAI
+const chat=document.getElementById("chat-box");
+document.getElementById("send-btn").onclick=function(){
+  const val=document.getElementById("user-input").value.trim();
+  if(!val)return;
+  chat.innerHTML+=`<div class="message user"><b>You:</b> ${val}</div>`;
+  document.getElementById("user-input").value="";
+  setTimeout(()=>{
+    const replies=[
+      "Project stats updated successfully.",
+      "System health at 99.7%.",
+      "No new errors detected in logs.",
+      "AI Assistant ready for report generation!"
+    ];
+    const reply=replies[Math.floor(Math.random()*replies.length)];
+    chat.innerHTML+=`<div class="message assistant"><b>CephasAI:</b> ${reply}</div>`;
+    chat.scrollTop=chat.scrollHeight;
+  },1000);
+};
 </script>
 
 </body>
