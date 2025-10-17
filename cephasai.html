@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>CephasAI — Demo Assistant</title>
+
+<!-- Minimal styling for a polished, modern look -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b0c10; --panel:rgba(255,255,255,0.04); --accent:#0b7a59; --muted:#bfc9c1; --text:#e9f6ef;
+  }
+  body{font-family:'Poppins',sans-serif;background:linear-gradient(180deg,#071014 0%, #0b0c10 100%);color:var(--text);margin:0;min-height:100vh;display:flex;align-items:stretch;gap:20px;padding:28px;}
+  .app{max-width:1100px;margin:auto;width:100%;display:grid;grid-template-columns:360px 1fr;gap:20px;align-items:start;}
+  .sidebar{background:var(--panel);padding:18px;border-radius:12px;box-shadow:0 8px 30px rgba(2,6,8,0.6);}
+  h1{font-size:20px;margin:0 0 6px 0;color:var(--accent);}
+  p.lead{margin:0 0 14px 0;color:var(--muted);font-size:13px;}
+  .section{margin-top:12px;}
+  label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px;}
+  input[type="text"], input[type="password"], select, textarea{width:100%;padding:8px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.05);background:transparent;color:var(--text);outline:none;box-sizing:border-box;}
+  textarea{min-height:88px;resize:vertical;}
+  .btn{display:inline-block;background:var(--accent);color:#fff;padding:8px 12px;border-radius:8px;border:none;cursor:pointer;font-weight:600;margin-top:8px;}
+  .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--text);}
+  .controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+  .meta{font-size:12px;color:var(--muted);margin-top:8px;}
+  .main{display:flex;flex-direction:column;gap:12px;}
+  .chat-panel{background:var(--panel);padding:16px;border-radius:12px;min-height:520px;display:flex;flex-direction:column;}
+  .messages{flex:1;overflow:auto;padding-right:8px;}
+  .msg{display:flex;margin:8px 0;gap:12px;align-items:flex-end;}
+  .msg.bot .bubble{background:rgba(255,255,255,0.06);color:var(--text);border-radius:10px 10px 10px 2px;padding:10px 12px;max-width:75%;}
+  .msg.user{justify-content:flex-end;}
+  .msg.user .bubble{background:var(--accent);color:#fff;border-radius:10px 10px 2px 10px;padding:10px 12px;max-width:75%;}
+  .bubble small{display:block;color:var(--muted);font-size:11px;margin-top:6px;}
+  .input-row{display:flex;gap:8px;margin-top:12px;}
+  .input-row input{flex:1;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text);}
+  .small-muted{font-size:12px;color:var(--muted);}
+  .history{max-height:360px;overflow:auto;margin-top:8px;}
+  .history-item{padding:8px;border-radius:8px;background:rgba(255,255,255,0.02);margin-bottom:8px;cursor:pointer;}
+  .flex-row{display:flex;gap:8px;align-items:center;}
+  .footer-note{font-size:12px;color:var(--muted);margin-top:8px;}
+  .danger{color:#ffadad;font-weight:600;font-size:13px;}
+  .link{color:var(--accent);cursor:pointer;text-decoration:underline;}
+  @media (max-width:980px){
+    .app{grid-template-columns:1fr; padding:16px;}
+    .sidebar{order:2;}
+  }
+</style>
+</head>
+<body>
+
+<div class="app" role="application" aria-label="CephasAI demo">
+  <!-- SIDEBAR: settings, mode, history -->
+  <aside class="sidebar" aria-label="Settings">
+    <h1>CephasAI</h1>
+    <p class="lead">Local demo + optional OpenAI mode. Start with Mock mode to explore.</p>
+
+    <div class="section">
+      <label>Mode</label>
+      <select id="modeSelect" aria-label="Mode">
+        <option value="mock">Mock (offline)</option>
+        <option value="openai">OpenAI API (requires API key)</option>
+      </select>
+      <div class="meta">Mock mode uses built-in responses (no network). OpenAI sends your prompts to the OpenAI API.</div>
+    </div>
+
+    <div class="section">
+      <label>API Key (Optional)</label>
+      <input id="apiKey" type="password" placeholder="sk-..." autocomplete="off">
+      <div class="meta">Prefer a server-side proxy for production. Do not commit keys to public repos.</div>
+      <div class="controls">
+        <button id="saveKey" class="btn ghost">Save Temporarily</button>
+        <button id="clearKey" class="btn ghost">Clear</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <label>System Prompt (Assistant behavior)</label>
+      <textarea id="systemPrompt">You are CephasAI, a helpful assistant for Cephas GM projects. Keep answers concise, professional, and include references to projects when relevant.</textarea>
+      <div class="controls">
+        <button id="applySys" class="btn">Apply</button>
+        <button id="resetSys" class="btn ghost">Reset</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <label>Conversation History</label>
+      <div class="history" id="historyList" aria-live="polite"></div>
+      <div class="controls">
+        <button id="export" class="btn">Export JSON</button>
+        <button id="clearHistory" class="btn ghost">Clear</button>
+      </div>
+      <div class="footer-note">Tip: Try prompts like “Show me today’s reports” or “List active projects”.</div>
+    </div>
+  </aside>
+
+  <!-- MAIN: chat UI -->
+  <main class="main" aria-live="polite">
+    <div class="chat-panel" role="region" aria-label="Chat area">
+      <div class="messages" id="messages" tabindex="0" aria-label="Messages">
+        <!-- messages will appear here -->
+      </div>
+
+      <div class="input-row" aria-label="Send message">
+        <input id="userInput" placeholder="Ask CephasAI — try: 'Show me today's reports'">
+        <button id="sendBtn" class="btn">Send</button>
+        <button id="exampleBtn" class="btn ghost">Example</button>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;">
+        <div class="small-muted">Mode: <span id="modeLabel">Mock</span></div>
+        <div class="small-muted">Saved conversations: <span id="histCount">0</span></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+/*
+  CephasAI — Browser demo
+  - Mock mode (default): local rule-based responses for offline use.
+  - OpenAI mode: forwards to OpenAI Chat Completions. Requires an API key and CORS allowance.
+  - Conversation saved to localStorage (so you can continue later).
+  - Export / clear history functions included.
+*/
+
+/* ---------- Defaults & state ---------- */
+const STATE_KEY = 'cephasai_state_v1';
+const DEFAULT_SYS = "You are CephasAI, a helpful assistant for Cephas GM projects. Keep answers concise, professional, and reference Cephas GM projects when relevant.";
+let state = {
+  sys: DEFAULT_SYS,
+  history: [] // each entry: {id, role: 'user'|'assistant'|'system', content, ts}
+};
+
+/* ---------- Helpers ---------- */
+const el = id => document.getElementById(id);
+const saveState = () => localStorage.setItem(STATE_KEY, JSON.stringify(state));
+const loadState = () => {
+  const raw = localStorage.getItem(STATE_KEY);
+  if(raw){
+    try{ state = JSON.parse(raw); }catch(e){ state = {...state, history: []}; }
+  }
+};
+const uid = (n=6) => Math.random().toString(36).slice(2,2+n);
+
+/* ---------- UI elements ---------- */
+const messages = el('messages');
+const userInput = el('userInput');
+const sendBtn = el('sendBtn');
+const exampleBtn = el('exampleBtn');
+const modeSelect = el('modeSelect');
+const modeLabel = el('modeLabel');
+const apiKeyInput = el('apiKey');
+const saveKeyBtn = el('saveKey');
+const clearKeyBtn = el('clearKey');
+const applySysBtn = el('applySys');
+const resetSysBtn = el('resetSys');
+const systemPrompt = el('systemPrompt');
+const historyList = el('historyList');
+const exportBtn = el('export');
+const clearHistoryBtn = el('clearHistory');
+const histCount = el('histCount');
+
+/* ---------- Initialize ---------- */
+loadState();
+if(!state.sys) state.sys = DEFAULT_SYS;
+systemPrompt.value = state.sys;
+renderHistoryList();
+renderAllMessages();
+updateModeLabel();
+
+/* ---------- Event bindings ---------- */
+sendBtn.addEventListener('click', () => sendMessage());
+userInput.addEventListener('keydown', (e) => { if(e.key === 'Enter') sendMessage(); });
+exampleBtn.addEventListener('click', () => { userInput.value = "Show me today's reports"; userInput.focus(); });
+modeSelect.addEventListener('change', updateModeLabel);
+saveKeyBtn.addEventListener('click', () => {
+  const k = apiKeyInput.value.trim();
+  if(!k) return alert('Paste an API key first (temporary only).');
+  localStorage.setItem('cephasai_api_key', k);
+  alert('API key saved to browser storage for this origin (temporary).');
+});
+clearKeyBtn.addEventListener('click', () => { localStorage.removeItem('cephasai_api_key'); apiKeyInput.value=''; alert('API key cleared.'); });
+applySysBtn.addEventListener('click', () => { state.sys = systemPrompt.value || DEFAULT_SYS; saveState(); alert('System prompt updated.'); });
+resetSysBtn.addEventListener('click', () => { systemPrompt.value = DEFAULT_SYS; state.sys = DEFAULT_SYS; saveState(); alert('Reset to default.'); });
+exportBtn.addEventListener('click', () => {
+  const blob = new Blob([JSON.stringify(state.history, null, 2)], {type:'application/json'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'cephasai-history.json'; a.click();
+});
+clearHistoryBtn.addEventListener('click', () => {
+  if(!confirm('Clear conversation history?')) return;
+  state.history = []; saveState(); renderHistoryList(); renderAllMessages();
+});
+
+/* ---------- Rendering functions ---------- */
+function renderAllMessages(){
+  messages.innerHTML = '';
+  // show system note at top (not as chat bubble)
+  const sysNote = document.createElement('div');
+  sysNote.style.fontSize='12px';
+  sysNote.style.color='#9fb7ad';
+  sysNote.style.marginBottom='8px';
+  sysNote.textContent = 'System: ' + (state.sys || DEFAULT_SYS);
+  messages.appendChild(sysNote);
+
+  for(const item of state.history){
+    appendMessageBubble(item.role, item.content, item.ts);
+  }
+  scrollToBottom();
+  histCount.textContent = state.history.length;
+}
+
+function appendMessageBubble(role, content, ts){
+  const wrapper = document.createElement('div');
+  wrapper.classList.add('msg', role==='user' ? 'user' : 'bot');
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble';
+  bubble.innerHTML = `<div>${escapeHtml(content)}</div><small>${new Date(ts).toLocaleString()}</small>`;
+  wrapper.appendChild(bubble);
+  messages.appendChild(wrapper);
+}
+
+function renderHistoryList(){
+  historyList.innerHTML = '';
+  for(const h of [...state.history].reverse()){
+    const it = document.createElement('div');
+    it.className='history-item';
+    it.textContent = `${h.role.toUpperCase()}: ${truncate(h.content,60)} — ${new Date(h.ts).toLocaleString()}`;
+    it.onclick = () => {
+      if(confirm('Load this single message into the input box?')) userInput.value = h.content;
+    };
+    historyList.appendChild(it);
+  }
+  histCount.textContent = state.history.length;
+}
+
+function scrollToBottom(){ messages.scrollTop = messages.scrollHeight; }
+function truncate(s,n){ return s.length>n ? s.slice(0,n-1)+'…' : s; }
+function escapeHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+/* ---------- Mock response engine (simple, useful) ---------- */
+function mockResponse(userText){
+  const t = userText.toLowerCase();
+  if(t.includes("today") && t.includes("report")) return "📊 Today's summary: 4 projects updated; 2 new documents uploaded to Downloads; AI model training running on two experiments.";
+  if(t.includes("show") && t.includes("project")) return "Active projects: AlphaLimaG01 (smart city), DeltaYankee02 (cloud), QubecLimaD07 (AI), TangoRomeaoK09 (renewables).";
+  if(t.includes("download")) return "You have 4 documents available in the Downloads center. Use the Downloads tab to fetch them.";
+  if(t.includes("who") && t.includes("you")) return "I am CephasAI — a demo assistant created to help explore the Cephas GM portal.";
+  if(t.includes("help") || t.includes("how")) return "Try: 'Show me today's reports', 'List active projects', or 'Where can I find the renewable energy plan?'.";
+  // fallback short assistant reply with a friendly tone
+  const replies = [
+    "Interesting — could you clarify what aspect you'd like to see (status, timeline, or files)?",
+    "I can provide project summaries, downloads info, or recent updates. Which one would you like?",
+    "I don't have direct access to live data in Mock mode, but I can show a simulated summary."
+  ];
+  return replies[Math.floor(Math.random()*replies.length)];
+}
+
+/* ---------- OpenAI call (optional) ---------- */
+async function callOpenAIChat(messagesForApi, apiKey, model='gpt-4o-mini'){
+  // This is an example using the OpenAI Chat Completions endpoint.
+  // NOTE: calling this from client-side exposes the key to the browser. Prefer a server proxy for production.
+  const url = 'https://api.openai.com/v1/chat/completions';
+  const payload = {
+    model,
+    messages: messagesForApi,
+    max_tokens: 600,
+    temperature: 0.2
+  };
+  const resp = await fetch(url, {
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiKey},
+    body: JSON.stringify(payload)
+  });
+  if(!resp.ok){
+    const txt = await resp.text();
+    throw new Error('OpenAI error: '+resp.status+' '+txt);
+  }
+  const json = await resp.json();
+  // This parsing may vary by model/response format — classic Chat Completions returns choices[0].message.content
+  const content = (json.choices && json.choices[0] && (json.choices[0].message?.content || json.choices[0].text)) || JSON.stringify(json);
+  return String(content).trim();
+}
+
+/* ---------- Core: send message ---------- */
+async function sendMessage(){
+  const text = userInput.value.trim();
+  if(!text) return;
+  // push user message to state
+  const entryUser = {id: uid(8), role:'user', content:text, ts: Date.now()};
+  state.history.push(entryUser);
+  saveState();
+  renderHistoryList();
+  appendMessageBubble('user', text, entryUser.ts);
+  userInput.value=''; scrollToBottom();
+
+  // choose mode
+  const mode = modeSelect.value;
+  try{
+    if(mode === 'mock'){
+      // local simulation
+      await sleep(500);
+      const reply = mockResponse(text);
+      const entryBot = {id: uid(8), role:'assistant', content: reply, ts: Date.now()};
+      state.history.push(entryBot); saveState();
+      appendMessageBubble('assistant', reply, entryBot.ts);
+      renderHistoryList(); scrollToBottom();
+    } else {
+      // OpenAI mode
+      const key = localStorage.getItem('cephasai_api_key') || apiKeyInput.value.trim();
+      if(!key) { appendMessageBubble('assistant','⚠️ No API key provided. Please paste a key or select Mock mode.', Date.now()); return; }
+
+      // Build messages for API: system + history up to some limit
+      const apiMessages = [{role:'system', content: state.sys || DEFAULT_SYS}];
+      // include last N messages from state.history
+      const historyForApi = state.history.slice(-10);
+      for(const h of historyForApi){
+        apiMessages.push({role: h.role === 'user' ? 'user' : 'assistant', content: h.content});
+      }
+
+      appendMessageBubble('assistant','⏳ Asking OpenAI — please wait...', Date.now());
+      scrollToBottom();
+
+      const modelName = 'gpt-4o-mini'; // you can change this; depends on your account
+      const aiContent = await callOpenAIChat(apiMessages, key, modelName);
+      // remove the 'waiting' message (last assistant placeholder)
+      // simple approach: just append actual text
+      const entryBot = {id: uid(8), role:'assistant', content: aiContent, ts: Date.now()};
+      state.history.push(entryBot); saveState();
+      appendMessageBubble('assistant', aiContent, entryBot.ts);
+      renderHistoryList(); scrollToBottom();
+    }
+  }catch(err){
+    console.error(err);
+    appendMessageBubble('assistant', '⚠️ Error: ' + err.message, Date.now());
+  }
+}
+
+/* ---------- Utility ---------- */
+function sleep(ms){ return new Promise(resolve => setTimeout(resolve, ms)); }
+
+/* ---------- Save state on page unload ---------- */
+window.addEventListener('beforeunload', () => saveState());
+
+/* On load: hydrate messages into panel */
+function hydrate(){
+  renderAllMessages();
+  // load API key if we saved it previously (temporary)
+  const k = localStorage.getItem('cephasai_api_key');
+  if(k) apiKeyInput.value = k;
+}
+hydrate();
+</script>
+</body>
+</html>
