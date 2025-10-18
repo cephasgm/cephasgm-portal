@@ -4,6 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cephas GM Portal — Access Gateway</title>
+
+  <!-- ✅ PWA Manifest -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <meta name="theme-color" content="#0b7a59">
+
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -18,32 +24,12 @@
       min-height: 100vh;
       text-align: center;
     }
-    h1 {
-      font-size: 2.4rem;
-      font-weight: 700;
-      margin-bottom: 1rem;
-      color: #0b7a59;
-    }
-    p {
-      font-size: 1.1rem;
-      max-width: 600px;
-      margin-bottom: 2rem;
-      color: #ddd;
-    }
-    .buttons {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
+    h1 { font-size: 2.4rem; font-weight: 700; margin-bottom: 1rem; color: #0b7a59; }
+    p { font-size: 1.1rem; max-width: 600px; margin-bottom: 2rem; color: #ddd; }
+    .buttons { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
     .btn {
-      background: #0b7a59;
-      color: #fff;
-      padding: 0.9rem 1.8rem;
-      border-radius: 8px;
-      text-decoration: none;
-      transition: 0.3s;
-      font-weight: 500;
+      background: #0b7a59; color: #fff; padding: 0.9rem 1.8rem;
+      border-radius: 8px; text-decoration: none; transition: 0.3s; font-weight: 500;
     }
     .btn:hover { background: #099268; transform: translateY(-3px); }
     .btn.alt { background: #333; }
@@ -71,6 +57,17 @@
   </div>
 
   <footer>Copyright © 2025 😀 | </footer>
+
+  <!-- ✅ Service Worker Registration -->
+  <script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(reg => console.log('Service Worker registered:', reg.scope))
+        .catch(err => console.error('Service Worker registration failed:', err));
+    });
+  }
+  </script>
 
 </body>
 </html>
