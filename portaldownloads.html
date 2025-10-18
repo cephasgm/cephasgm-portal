@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Downloads Center — Cephas GM Portal</title>
+
+<!-- ✅ PWA Manifest -->
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="theme-color" content="#0b7a59">
+
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -25,8 +31,6 @@ body{
   color:var(--text-color);
   transition:background .4s,color .4s;
 }
-
-/* Navbar */
 .nav{
   background:rgba(0,0,0,0.7);
   display:flex;
@@ -54,8 +58,6 @@ body{
   font-size:.8rem;
 }
 .theme-toggle:hover{opacity:.8;}
-
-/* Main */
 header{
   text-align:center;
   background:rgba(0,0,0,0.6);
@@ -63,8 +65,6 @@ header{
 }
 header h1{font-size:2.2rem;margin-bottom:.5rem;}
 header p{color:#ccc;font-size:.95rem;}
-
-/* Analytics */
 .analytics{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
@@ -80,8 +80,6 @@ header p{color:#ccc;font-size:.95rem;}
 }
 .stat h2{color:var(--accent);font-size:2rem;}
 .stat p{margin-top:.3rem;font-size:.9rem;color:#ccc;}
-
-/* Downloads */
 .downloads{
   background:rgba(0,0,0,0.6);
   padding:3rem 10%;
@@ -140,56 +138,35 @@ footer{
 </header>
 
 <section class="analytics">
-  <div class="stat">
-    <h2 id="files">0</h2>
-    <p>Total Files Available</p>
-  </div>
-  <div class="stat">
-    <h2 id="downloads">0</h2>
-    <p>Total Downloads</p>
-  </div>
-  <div class="stat">
-    <h2 id="updates">0</h2>
-    <p>Reports Updated This Week</p>
-  </div>
+  <div class="stat"><h2 id="files">0</h2><p>Total Files Available</p></div>
+  <div class="stat"><h2 id="downloads">0</h2><p>Total Downloads</p></div>
+  <div class="stat"><h2 id="updates">0</h2><p>Reports Updated This Week</p></div>
 </section>
 
 <section class="downloads">
   <h2>Available Documents</h2>
-  
-  <div class="file">
-    <span><i>📘</i> Project Progress Report – Q1 2025 <br><small>Last Updated: Feb 15, 2025</small></span>
-    <button class="btn">Download PDF</button>
-  </div>
-
-  <div class="file">
-    <span><i>📗</i> AI Research & Development Overview <br><small>Last Updated: Mar 03, 2025</small></span>
-    <button class="btn">Download PDF</button>
-  </div>
-
-  <div class="file">
-    <span><i>📙</i> Renewable Energy Expansion Plan <br><small>Last Updated: Apr 21, 2025</small></span>
-    <button class="btn">Download PDF</button>
-  </div>
-
-  <div class="file">
-    <span><i>📕</i> Annual Corporate Strategy Document <br><small>Last Updated: May 10, 2025</small></span>
-    <button class="btn">Download PDF</button>
-  </div>
+  <div class="file"><span><i>📘</i> Project Progress Report – Q1 2025<br><small>Last Updated: Feb 15, 2025</small></span><button class="btn">Download PDF</button></div>
+  <div class="file"><span><i>📗</i> AI Research & Development Overview<br><small>Last Updated: Mar 03, 2025</small></span><button class="btn">Download PDF</button></div>
+  <div class="file"><span><i>📙</i> Renewable Energy Expansion Plan<br><small>Last Updated: Apr 21, 2025</small></span><button class="btn">Download PDF</button></div>
+  <div class="file"><span><i>📕</i> Annual Corporate Strategy Document<br><small>Last Updated: May 10, 2025</small></span><button class="btn">Download PDF</button></div>
 </section>
 
 <footer>Copyright © 2025 😀 | </footer>
 
 <script>
-// Mock analytics
-const mockData = {files: 4, downloads: 87, updates: 3};
-document.getElementById('files').textContent = mockData.files;
-document.getElementById('downloads').textContent = mockData.downloads;
-document.getElementById('updates').textContent = mockData.updates;
+const mockData={files:4,downloads:87,updates:3};
+document.getElementById('files').textContent=mockData.files;
+document.getElementById('downloads').textContent=mockData.downloads;
+document.getElementById('updates').textContent=mockData.updates;
+function toggleTheme(){document.body.classList.toggle('dark');}
 
-// Light/Dark theme toggle
-function toggleTheme(){
-  document.body.classList.toggle('dark');
+// ✅ PWA Service Worker Registration
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('service-worker.js')
+      .then(reg => console.log('Service Worker registered:', reg.scope))
+      .catch(err => console.error('Service Worker registration failed:', err));
+  });
 }
 </script>
 
