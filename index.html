@@ -4,10 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cephas GM Portal — Access Gateway</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
+  <!-- ✅ PWA Manifest -->
   <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
   <meta name="theme-color" content="#0b7a59">
-  
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -20,34 +23,13 @@
       justify-content: center;
       min-height: 100vh;
       text-align: center;
-      transition: background 0.5s ease-in-out;
     }
-    h1 {
-      font-size: 2.4rem;
-      font-weight: 700;
-      margin-bottom: 1rem;
-      color: #0b7a59;
-    }
-    p {
-      font-size: 1.1rem;
-      max-width: 600px;
-      margin-bottom: 2rem;
-      color: #ddd;
-    }
-    .buttons {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
+    h1 { font-size: 2.4rem; font-weight: 700; margin-bottom: 1rem; color: #0b7a59; }
+    p { font-size: 1.1rem; max-width: 600px; margin-bottom: 2rem; color: #ddd; }
+    .buttons { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
     .btn {
-      background: #0b7a59;
-      color: #fff;
-      padding: 0.9rem 1.8rem;
-      border-radius: 8px;
-      text-decoration: none;
-      transition: 0.3s;
-      font-weight: 500;
+      background: #0b7a59; color: #fff; padding: 0.9rem 1.8rem;
+      border-radius: 8px; text-decoration: none; transition: 0.3s; font-weight: 500;
     }
     .btn:hover { background: #099268; transform: translateY(-3px); }
     .btn.alt { background: #333; }
@@ -60,70 +42,32 @@
       bottom: 0;
       width: 100%;
     }
-    #installBtn {
-      display: none;
-      background: #0b7a59;
-      margin-top: 1.5rem;
-      border: none;
-      padding: 0.8rem 1.4rem;
-      border-radius: 8px;
-      color: #fff;
-      cursor: pointer;
-      font-weight: 500;
-    }
-    #installBtn:hover { background: #099268; }
   </style>
 </head>
 <body>
 
   <h1>Cephas GM Secure Portal</h1>
-  <p>Welcome to the secure client and staff gateway.<br>
-     Access your personalized dashboard, downloads, accounting, and updates below.</p>
+  <p>Welcome to the secure client and staff gateway.  
+     Access your personalized dashboard, downloads, and updates below.</p>
 
   <div class="buttons">
     <a href="portallogin.html" class="btn">🔐 Client Login / Signup</a>
     <a href="portallogin.html?staff=true" class="btn alt">👨‍💼 Staff Login</a>
     <a href="https://cephasgm.github.io/cephasgm-site/" class="btn">🌍 Visit Main Site</a>
-    <a href="portalaccounting.html" class="btn alt">📘 Portal Accounting</a>
   </div>
 
-  <button id="installBtn">📲 Install Cephas GM Portal</button>
+  <footer>Copyright © 2025 😀 | </footer>
 
-  <footer>Copyright © 2025 😀 | Cephas GM</footer>
-
+  <!-- ✅ Service Worker Registration -->
   <script>
-    // ✅ Register Service Worker
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker
-          .register("service-worker.js", { scope: "./" })
-          .then(() => console.log("✅ Service Worker registered successfully"))
-          .catch(err => console.error("❌ SW registration failed:", err));
-      });
-    }
-
-    // ✅ Handle install prompt
-    let deferredPrompt;
-    const installBtn = document.getElementById("installBtn");
-
-    window.addEventListener("beforeinstallprompt", (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      installBtn.style.display = "inline-block";
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(reg => console.log('Service Worker registered:', reg.scope))
+        .catch(err => console.error('Service Worker registration failed:', err));
     });
-
-    installBtn.addEventListener("click", async () => {
-      installBtn.style.display = "none";
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      if (outcome === "accepted") {
-        console.log("✅ User installed the app");
-      } else {
-        console.log("❌ User dismissed install prompt");
-      }
-      deferredPrompt = null;
-    });
+  }
   </script>
+
 </body>
 </html>
-
