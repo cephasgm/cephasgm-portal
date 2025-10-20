@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Finance & Accounting — Cephas GM Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet" />
+  <link rel="manifest" href="manifest.json">
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("service-worker.js");
+      });
+    }
+  </script>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{
+      font-family:'Poppins',sans-serif;
+      background:linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.85)),
+      url('https://img.freepik.com/free-vector/gradient-credit-assessment-concept_52683-78045.jpg?semt=ais_hybrid&w=740&q=80') center/cover fixed;
+      color:#fff;min-height:100vh;
+    }
+    nav{
+      background:rgba(0,0,0,0.8);
+      padding:1rem 2rem;
+      display:flex;justify-content:space-between;align-items:center;
+      position:sticky;top:0;z-index:10;
+    }
+    nav a{color:#fff;text-decoration:none;margin:0 10px;transition:.3s;}
+    nav a:hover{color:#0b7a59;}
+    h1{text-align:center;margin:1rem 0;color:#0b7a59;}
+    main{padding:1rem 5%;}
+    .card{
+      background:rgba(255,255,255,0.08);
+      border-radius:12px;
+      padding:1.5rem;
+      margin:1rem 0;
+      box-shadow:0 6px 15px rgba(0,0,0,0.4);
+    }
+    table{
+      width:100%;
+      border-collapse:collapse;
+      color:#fff;
+      margin-top:1rem;
+    }
+    th,td{
+      border:1px solid rgba(255,255,255,0.2);
+      padding:8px;text-align:left;
+    }
+    th{background:#0b7a59;}
+    input,select,button{
+      padding:.5rem;
+      border:none;
+      border-radius:6px;
+      margin:.3rem;
+    }
+    button{
+      background:#0b7a59;
+      color:#fff;
+      cursor:pointer;
+      transition:.3s;
+    }
+    button:hover{opacity:.8;}
+    footer{
+      text-align:center;
+      padding:1rem;
+      background:rgba(0,0,0,0.85);
+      margin-top:2rem;
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div>Cephas GM Portal</div>
+  <div>
+    <a href="portaldashboard.html">Dashboard</a>
+    <a href="portaldownloads.html">Downloads</a>
+    <a href="portaladmin.html">Admin</a>
+    <a href="portalaccounting.html" class="active">Accounting</a>
+    <a href="portallogin.html">Logout</a>
+  </div>
+</nav>
+
+<h1>💼 Cephas GM Accounting Automation</h1>
+
+<main>
+  <div class="card">
+    <h2>Journal Entries</h2>
+    <form id="entryForm">
+      <input type="date" id="date" required />
+      <input type="text" id="account" placeholder="Account Name" required />
+      <input type="number" id="debit" placeholder="Debit (TZS)" step="0.01" />
+      <input type="number" id="credit" placeholder="Credit (TZS)" step="0.01" />
+      <button type="submit">Add Entry</button>
+    </form>
+
+    <table id="journalTable">
+      <thead>
+        <tr><th>Date</th><th>Account</th><th>Debit (TZS)</th><th>Credit (TZS)</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>Ledger Summary</h2>
+    <div id="ledgerView">No data yet.</div>
+  </div>
+
+  <div class="card">
+    <h2>Trial Balance</h2>
+    <div id="trialView">No data yet.</div>
+  </div>
+
+  <div class="card">
+    <h2>Income Statement</h2>
+    <div id="financialView">No data yet.</div>
+  </div>
+
+  <div style="text-align:center;margin-top:1.5rem;">
+    <button onclick="exportExcel()">⬇️ Download Excel</button>
+    <button onclick="exportPDF()">⬇️ Download PDF</button>
+  </div>
+</main>
+
+<footer>Copyright © 2025 Cephas GM | Automated Finance Suite</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script>
+let entries = JSON.parse(localStorage.getItem("cephasEntries")||"[]");
+const tableBody = document.querySelector("#journalTable tbody");
+
+function renderJournal(){
+  tableBody.innerHTML="";
+  entries.forEach(e=>{
+    const row=document.createElement("tr");
+    row.innerHTML=`<td>${e.date}</td><td>${e.account}</td><td>${e.debit}</td><td>${e.credit}</td>`;
+    tableBody.appendChild(row);
+  });
+}
+function renderLedger(){
+  if(entries.length===0){document.getElementById("ledgerView").innerText="No data.";return;}
+  const ledger = {};
+  entries.forEach(e=>{
+    if(!ledger[e.account])ledger[e.account]={Debit:0,Credit:0};
+    ledger[e.account].Debit += parseFloat(e.debit)||0;
+    ledger[e.account].Credit += parseFloat(e.credit)||0;
+  });
+  let html="<table><tr><th>Account</th><th>Total Debit</th><th>Total Credit</th></tr>";
+  for(const [acc,v] of Object.entries(ledger)){
+    html+=`<tr><td>${acc}</td><td>${v.Debit.toFixed(2)}</td><td>${v.Credit.toFixed(2)}</td></tr>`;
+  }
+  html+="</table>";
+  document.getElementById("ledgerView").innerHTML=html;
+}
+function renderTrial(){
+  const totalDebit = entries.reduce((a,e)=>a+(parseFloat(e.debit)||0),0);
+  const totalCredit = entries.reduce((a,e)=>a+(parseFloat(e.credit)||0),0);
+  document.getElementById("trialView").innerHTML=
+  `<p><strong>Total Debit:</strong> ${totalDebit.toFixed(2)} TZS</p>
+   <p><strong>Total Credit:</strong> ${totalCredit.toFixed(2)} TZS</p>
+   <p><strong>Status:</strong> ${totalDebit===totalCredit?"✅ Balanced":"⚠️ Unbalanced"}</p>`;
+}
+function renderIncome(){
+  const revenue = entries.filter(e=>/revenue|sales/i.test(e.account)).reduce((a,e)=>a+(parseFloat(e.credit)||0),0);
+  const expense = entries.filter(e=>/expense|cost/i.test(e.account)).reduce((a,e)=>a+(parseFloat(e.debit)||0),0);
+  const profit = revenue - expense;
+  document.getElementById("financialView").innerHTML=
+  `<p><strong>Total Revenue:</strong> ${revenue.toFixed(2)} TZS</p>
+   <p><strong>Total Expense:</strong> ${expense.toFixed(2)} TZS</p>
+   <p><strong>Net Profit:</strong> ${profit.toFixed(2)} TZS</p>`;
+}
+
+document.getElementById("entryForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  const obj = {
+    date:date.value,account:account.value,
+    debit:debit.value||0,credit:credit.value||0
+  };
+  entries.push(obj);
+  localStorage.setItem("cephasEntries",JSON.stringify(entries));
+  renderJournal();renderLedger();renderTrial();renderIncome();
+  e.target.reset();
+});
+renderJournal();renderLedger();renderTrial();renderIncome();
+
+function exportExcel(){
+  const ws = XLSX.utils.json_to_sheet(entries);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,"Journal Entries");
+  XLSX.writeFile(wb,"CephasGM_Accounting.xlsx");
+}
+
+// PDF Export with Watermark
+async function exportPDF(){
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF("p","pt","a4");
+
+  // Header
+  doc.setFillColor(11,122,89);
+  doc.rect(0,0,595,60,"F");
+  doc.setTextColor("#fff");
+  doc.setFont("helvetica","bold");
+  doc.setFontSize(18);
+  doc.text("Cephas GM — Accounting Report",40,38);
+
+  // Logo
+  const logoUrl="https://cephasgm.github.io/cephasgm-site/images/favicon.png";
+  try{
+    const img=await fetch(logoUrl).then(r=>r.blob()).then(b=>new Promise(res=>{
+      const reader=new FileReader();reader.onload=()=>res(reader.result);reader.readAsDataURL(b);
+    }));
+    doc.addImage(img,"PNG",500,12,40,40);
+  }catch(err){console.warn("Logo not found",err);}
+
+  // Watermark
+  doc.saveGraphicsState();
+  doc.setGState(new doc.GState({opacity:0.05}));
+  doc.setFont("helvetica","bold");
+  doc.setFontSize(80);
+  doc.setTextColor(11,122,89);
+  doc.text("Cephas GM",150,400,{angle:45});
+  doc.restoreGraphicsState();
+
+  doc.setTextColor("#000");
+  doc.setFont("helvetica","normal");
+  const today=new Date().toLocaleString();
+  doc.text(`Generated on: ${today}`,40,80);
+
+  let y=110;
+  doc.setFont("helvetica","bold");
+  doc.text("📘 Journal Entries",40,y);y+=15;
+  doc.setFont("helvetica","normal");
+  entries.slice(0,10).forEach(e=>{
+    doc.text(`${e.date} | ${e.account} | Dr ${e.debit} | Cr ${e.credit}`,40,y);
+    y+=14;
+  });
+
+  y+=20;
+  doc.setFont("helvetica","bold");
+  doc.text("📊 Ledger Summary",40,y);
+  y+=15;
+  const ledger=Object.entries(entries.reduce((a,e)=>{
+    if(!a[e.account])a[e.account]={Debit:0,Credit:0};
+    a[e.account].Debit+=(parseFloat(e.debit)||0);
+    a[e.account].Credit+=(parseFloat(e.credit)||0);
+    return a;
+  },{}));
+  doc.setFont("helvetica","normal");
+  ledger.slice(0,10).forEach(([acc,val])=>{
+    doc.text(`${acc}: Debit ${val.Debit.toFixed(2)} | Credit ${val.Credit.toFixed(2)}`,40,y);
+    y+=14;
+  });
+
+  y+=25;
+  doc.setFont("helvetica","bold");
+  doc.text("📈 Financial Summary",40,y);
+  y+=18;
+  doc.setFont("helvetica","normal");
+  const finText=document.getElementById("financialView")?.innerText||"No data.";
+  const lines=doc.splitTextToSize(finText,500);
+  doc.text(lines,40,y);
+
+  // Footer
+  const footerY=740;
+  doc.setDrawColor(11,122,89);
+  doc.line(40,footerY,550,footerY);
+  doc.setFont("helvetica","italic");
+  doc.text("Authorized By: ____________________",40,footerY+25);
+  doc.text("Signature: ____________________",320,footerY+25);
+  doc.setFontSize(10);
+  doc.setTextColor("#555");
+  doc.text("Confidential — Cephas GM Internal Finance Use Only",40,footerY+60);
+
+  doc.save(`CephasGM_Report_${today.replace(/[/:,\s]/g,"_")}.pdf`);
+}
+</script>
+</body>
+</html>
