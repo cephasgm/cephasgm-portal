@@ -1,283 +1,346 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Finance & Accounting — Cephas GM Portal</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet" />
-  <link rel="manifest" href="manifest.json">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Portal Accounting — Cephas GM</title>
+
+  <!-- Manifest & PWA setup -->
+  <link rel="manifest" href="manifest.json" />
   <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
-        navigator.serviceWorker.register("service-worker.js");
+        navigator.serviceWorker
+          .register("service-worker.js")
+          .then(() => console.log("✅ Service Worker Registered"))
+          .catch((err) => console.warn("SW failed:", err));
       });
     }
   </script>
+
+  <!-- Fonts + Export Libraries -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
   <style>
-    *{margin:0;padding:0;box-sizing:border-box;}
-    body{
-      font-family:'Poppins',sans-serif;
-      background:linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.85)),
-      url('https://img.freepik.com/free-vector/gradient-credit-assessment-concept_52683-78045.jpg?semt=ais_hybrid&w=740&q=80') center/cover fixed;
-      color:#fff;min-height:100vh;
+    :root {
+      --accent: #0b7a59;
+      --bg: #0e0f10;
+      --panel: rgba(255, 255, 255, 0.05);
     }
-    nav{
-      background:rgba(0,0,0,0.8);
-      padding:1rem 2rem;
-      display:flex;justify-content:space-between;align-items:center;
-      position:sticky;top:0;z-index:10;
+    body {
+      font-family: "Poppins", sans-serif;
+      background: var(--bg)
+        url("https://img.freepik.com/free-photo/nice-business-desk-black-background_24972-1177.jpg?semt=ais_hybrid&w=740&q=80")
+        center/cover fixed no-repeat;
+      color: #fff;
+      margin: 0;
+      padding-bottom: 80px;
     }
-    nav a{color:#fff;text-decoration:none;margin:0 10px;transition:.3s;}
-    nav a:hover{color:#0b7a59;}
-    h1{text-align:center;margin:1rem 0;color:#0b7a59;}
-    main{padding:1rem 5%;}
-    .card{
-      background:rgba(255,255,255,0.08);
-      border-radius:12px;
-      padding:1.5rem;
-      margin:1rem 0;
-      box-shadow:0 6px 15px rgba(0,0,0,0.4);
+    nav {
+      background: rgba(0, 0, 0, 0.75);
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-    table{
-      width:100%;
-      border-collapse:collapse;
-      color:#fff;
-      margin-top:1rem;
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      margin-left: 15px;
     }
-    th,td{
-      border:1px solid rgba(255,255,255,0.2);
-      padding:8px;text-align:left;
+    h1 {
+      color: var(--accent);
+      text-align: center;
+      margin: 25px 0;
     }
-    th{background:#0b7a59;}
-    input,select,button{
-      padding:.5rem;
-      border:none;
-      border-radius:6px;
-      margin:.3rem;
+    section {
+      background: var(--panel);
+      padding: 20px;
+      margin: 15px auto;
+      border-radius: 12px;
+      width: 95%;
+      max-width: 1200px;
     }
-    button{
-      background:#0b7a59;
-      color:#fff;
-      cursor:pointer;
-      transition:.3s;
+    label {
+      display: block;
+      margin: 6px 0;
+      color: #ccc;
     }
-    button:hover{opacity:.8;}
-    footer{
-      text-align:center;
-      padding:1rem;
-      background:rgba(0,0,0,0.85);
-      margin-top:2rem;
+    input,
+    select {
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      margin-right: 8px;
+    }
+    button {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:hover {
+      opacity: 0.9;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+    th,
+    td {
+      padding: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    th {
+      color: var(--accent);
+    }
+    .exports {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 15px;
+    }
+    footer {
+      background: rgba(0, 0, 0, 0.85);
+      text-align: center;
+      padding: 1rem;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      color: #ccc;
+      font-size: 0.9rem;
+    }
+    #installBtn {
+      display: none;
+      background: #099268;
     }
   </style>
 </head>
 <body>
+  <nav>
+    <div><strong>📘 Portal Accounting</strong></div>
+    <div>
+      <a href="index.html">Home</a>
+      <a href="portaldashboard.html">Dashboard</a>
+      <a href="portaladmin.html">Admin</a>
+      <a href="portaldownloads.html">Downloads</a>
+    </div>
+  </nav>
 
-<nav>
-  <div>Cephas GM Portal</div>
-  <div>
-    <a href="portaldashboard.html">Dashboard</a>
-    <a href="portaldownloads.html">Downloads</a>
-    <a href="portaladmin.html">Admin</a>
-    <a href="portalaccounting.html" class="active">Accounting</a>
-    <a href="portallogin.html">Logout</a>
-  </div>
-</nav>
+  <h1>Accounting & Finance Calculator</h1>
 
-<h1>💼 Cephas GM Accounting Automation</h1>
-
-<main>
-  <div class="card">
-    <h2>Journal Entries</h2>
+  <section>
     <form id="entryForm">
-      <input type="date" id="date" required />
-      <input type="text" id="account" placeholder="Account Name" required />
-      <input type="number" id="debit" placeholder="Debit (TZS)" step="0.01" />
-      <input type="number" id="credit" placeholder="Credit (TZS)" step="0.01" />
+      <label>Date <input type="date" id="date" required /></label>
+      <label>Account <input type="text" id="account" placeholder="Account name" required /></label>
+      <label>Type
+        <select id="type">
+          <option value="Debit">Debit</option>
+          <option value="Credit">Credit</option>
+        </select>
+      </label>
+      <label>Category
+        <select id="category">
+          <option>Asset</option>
+          <option>Liability</option>
+          <option>Equity</option>
+          <option>Revenue</option>
+          <option>Expense</option>
+        </select>
+      </label>
+      <label>Amount (TZS) <input type="number" id="amount" step="0.01" required /></label>
+      <label>VAT % <input type="number" id="vat" value="0" /></label>
       <button type="submit">Add Entry</button>
     </form>
 
-    <table id="journalTable">
+    <table id="journal">
       <thead>
-        <tr><th>Date</th><th>Account</th><th>Debit (TZS)</th><th>Credit (TZS)</th></tr>
+        <tr>
+          <th>Date</th>
+          <th>Account</th>
+          <th>Type</th>
+          <th>Category</th>
+          <th>Amount</th>
+          <th>VAT</th>
+          <th>Net</th>
+        </tr>
       </thead>
       <tbody></tbody>
     </table>
-  </div>
+  </section>
 
-  <div class="card">
+  <section>
     <h2>Ledger Summary</h2>
-    <div id="ledgerView">No data yet.</div>
-  </div>
+    <div id="ledger">No data</div>
+  </section>
 
-  <div class="card">
+  <section>
     <h2>Trial Balance</h2>
-    <div id="trialView">No data yet.</div>
-  </div>
+    <div id="trial">No data</div>
+  </section>
 
-  <div class="card">
+  <section>
     <h2>Income Statement</h2>
-    <div id="financialView">No data yet.</div>
-  </div>
+    <div id="income">No data</div>
+  </section>
 
-  <div style="text-align:center;margin-top:1.5rem;">
-    <button onclick="exportExcel()">⬇️ Download Excel</button>
-    <button onclick="exportPDF()">⬇️ Download PDF</button>
-  </div>
-</main>
+  <section class="exports">
+    <button id="excel">⬇️ Export Excel</button>
+    <button id="pdf">⬇️ Export PDF</button>
+    <button id="clear" style="background:#444">🗑 Clear</button>
+    <button id="installBtn">📲 Install Accounting App</button>
+  </section>
 
-<footer>Copyright © 2025 Cephas GM | Automated Finance Suite</footer>
+  <footer>Copyright © 2025 😀 | Public Accounting Tool</footer>
 
-<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script>
+    // ==========================
+    // Install App (Custom Prompt)
+    // ==========================
+    let deferredPrompt;
+    const installBtn = document.getElementById("installBtn");
 
-<script>
-let entries = JSON.parse(localStorage.getItem("cephasEntries")||"[]");
-const tableBody = document.querySelector("#journalTable tbody");
+    window.addEventListener("beforeinstallprompt", (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installBtn.style.display = "inline-block";
+    });
 
-function renderJournal(){
-  tableBody.innerHTML="";
-  entries.forEach(e=>{
-    const row=document.createElement("tr");
-    row.innerHTML=`<td>${e.date}</td><td>${e.account}</td><td>${e.debit}</td><td>${e.credit}</td>`;
-    tableBody.appendChild(row);
-  });
-}
-function renderLedger(){
-  if(entries.length===0){document.getElementById("ledgerView").innerText="No data.";return;}
-  const ledger = {};
-  entries.forEach(e=>{
-    if(!ledger[e.account])ledger[e.account]={Debit:0,Credit:0};
-    ledger[e.account].Debit += parseFloat(e.debit)||0;
-    ledger[e.account].Credit += parseFloat(e.credit)||0;
-  });
-  let html="<table><tr><th>Account</th><th>Total Debit</th><th>Total Credit</th></tr>";
-  for(const [acc,v] of Object.entries(ledger)){
-    html+=`<tr><td>${acc}</td><td>${v.Debit.toFixed(2)}</td><td>${v.Credit.toFixed(2)}</td></tr>`;
-  }
-  html+="</table>";
-  document.getElementById("ledgerView").innerHTML=html;
-}
-function renderTrial(){
-  const totalDebit = entries.reduce((a,e)=>a+(parseFloat(e.debit)||0),0);
-  const totalCredit = entries.reduce((a,e)=>a+(parseFloat(e.credit)||0),0);
-  document.getElementById("trialView").innerHTML=
-  `<p><strong>Total Debit:</strong> ${totalDebit.toFixed(2)} TZS</p>
-   <p><strong>Total Credit:</strong> ${totalCredit.toFixed(2)} TZS</p>
-   <p><strong>Status:</strong> ${totalDebit===totalCredit?"✅ Balanced":"⚠️ Unbalanced"}</p>`;
-}
-function renderIncome(){
-  const revenue = entries.filter(e=>/revenue|sales/i.test(e.account)).reduce((a,e)=>a+(parseFloat(e.credit)||0),0);
-  const expense = entries.filter(e=>/expense|cost/i.test(e.account)).reduce((a,e)=>a+(parseFloat(e.debit)||0),0);
-  const profit = revenue - expense;
-  document.getElementById("financialView").innerHTML=
-  `<p><strong>Total Revenue:</strong> ${revenue.toFixed(2)} TZS</p>
-   <p><strong>Total Expense:</strong> ${expense.toFixed(2)} TZS</p>
-   <p><strong>Net Profit:</strong> ${profit.toFixed(2)} TZS</p>`;
-}
+    installBtn.addEventListener("click", async () => {
+      installBtn.style.display = "none";
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === "accepted") console.log("App installed!");
+      deferredPrompt = null;
+    });
 
-document.getElementById("entryForm").addEventListener("submit",e=>{
-  e.preventDefault();
-  const obj = {
-    date:date.value,account:account.value,
-    debit:debit.value||0,credit:credit.value||0
-  };
-  entries.push(obj);
-  localStorage.setItem("cephasEntries",JSON.stringify(entries));
-  renderJournal();renderLedger();renderTrial();renderIncome();
-  e.target.reset();
-});
-renderJournal();renderLedger();renderTrial();renderIncome();
+    // ==========================
+    // Accounting Logic
+    // ==========================
+    const txns = JSON.parse(localStorage.getItem("portal_txns") || "[]");
+    const jbody = document.querySelector("#journal tbody");
 
-function exportExcel(){
-  const ws = XLSX.utils.json_to_sheet(entries);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb,ws,"Journal Entries");
-  XLSX.writeFile(wb,"CephasGM_Accounting.xlsx");
-}
+    function render() {
+      jbody.innerHTML = "";
+      txns.forEach((t) => {
+        const r = document.createElement("tr");
+        r.innerHTML = `<td>${t.date}</td><td>${t.account}</td><td>${t.type}</td><td>${t.category}</td><td>${t.amount}</td><td>${t.vat}</td><td>${t.net}</td>`;
+        jbody.appendChild(r);
+      });
+      renderLedger();
+      renderTrial();
+      renderIncome();
+    }
 
-// PDF Export with Watermark
-async function exportPDF(){
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF("p","pt","a4");
+    document.getElementById("entryForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const date = dateField.value || new Date().toISOString().slice(0, 10);
+      const account = accountField.value.trim();
+      const type = typeField.value;
+      const category = categoryField.value;
+      const amount = parseFloat(amountField.value) || 0;
+      const vat = parseFloat(vatField.value) || 0;
+      const net = amount + (amount * vat) / 100;
+      txns.push({ date, account, type, category, amount, vat, net });
+      localStorage.setItem("portal_txns", JSON.stringify(txns));
+      render();
+      e.target.reset();
+    });
 
-  // Header
-  doc.setFillColor(11,122,89);
-  doc.rect(0,0,595,60,"F");
-  doc.setTextColor("#fff");
-  doc.setFont("helvetica","bold");
-  doc.setFontSize(18);
-  doc.text("Cephas GM — Accounting Report",40,38);
+    const [dateField, accountField, typeField, categoryField, amountField, vatField] =
+      ["date", "account", "type", "category", "amount", "vat"].map((id) =>
+        document.getElementById(id)
+      );
 
-  // Logo
-  const logoUrl="https://cephasgm.github.io/cephasgm-site/images/favicon.png";
-  try{
-    const img=await fetch(logoUrl).then(r=>r.blob()).then(b=>new Promise(res=>{
-      const reader=new FileReader();reader.onload=()=>res(reader.result);reader.readAsDataURL(b);
-    }));
-    doc.addImage(img,"PNG",500,12,40,40);
-  }catch(err){console.warn("Logo not found",err);}
+    function renderLedger() {
+      const ledger = {};
+      txns.forEach((t) => {
+        if (!ledger[t.account]) ledger[t.account] = { Debit: 0, Credit: 0 };
+        ledger[t.account][t.type] += t.amount;
+      });
+      let html = "<table><tr><th>Account</th><th>Debit</th><th>Credit</th></tr>";
+      for (const [acc, v] of Object.entries(ledger)) {
+        html += `<tr><td>${acc}</td><td>${v.Debit.toFixed(
+          2
+        )}</td><td>${v.Credit.toFixed(2)}</td></tr>`;
+      }
+      document.getElementById("ledger").innerHTML = html + "</table>";
+    }
 
-  // Watermark
-  doc.saveGraphicsState();
-  doc.setGState(new doc.GState({opacity:0.05}));
-  doc.setFont("helvetica","bold");
-  doc.setFontSize(80);
-  doc.setTextColor(11,122,89);
-  doc.text("Cephas GM",150,400,{angle:45});
-  doc.restoreGraphicsState();
+    function renderTrial() {
+      let d = 0,
+        c = 0;
+      txns.forEach((t) => {
+        if (t.type === "Debit") d += t.amount;
+        else c += t.amount;
+      });
+      document.getElementById(
+        "trial"
+      ).innerHTML = `Total Debit: ${d.toFixed(
+        2
+      )} | Total Credit: ${c.toFixed(2)} | Status: ${
+        Math.abs(d - c) < 0.01 ? "✅ Balanced" : "⚠️ Unbalanced"
+      }`;
+    }
 
-  doc.setTextColor("#000");
-  doc.setFont("helvetica","normal");
-  const today=new Date().toLocaleString();
-  doc.text(`Generated on: ${today}`,40,80);
+    function renderIncome() {
+      let revenue = 0,
+        expense = 0;
+      txns.forEach((t) => {
+        if (t.category === "Revenue") revenue += t.amount;
+        if (t.category === "Expense") expense += t.amount;
+      });
+      document.getElementById(
+        "income"
+      ).innerHTML = `Revenue: ${revenue.toFixed(
+        2
+      )} | Expense: ${expense.toFixed(2)} | Net: ${(revenue - expense).toFixed(
+        2
+      )}`;
+    }
 
-  let y=110;
-  doc.setFont("helvetica","bold");
-  doc.text("📘 Journal Entries",40,y);y+=15;
-  doc.setFont("helvetica","normal");
-  entries.slice(0,10).forEach(e=>{
-    doc.text(`${e.date} | ${e.account} | Dr ${e.debit} | Cr ${e.credit}`,40,y);
-    y+=14;
-  });
+    document.getElementById("excel").onclick = () => {
+      const sheet = XLSX.utils.json_to_sheet(txns);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, sheet, "Transactions");
+      XLSX.writeFile(wb, "AccountingData.xlsx");
+    };
 
-  y+=20;
-  doc.setFont("helvetica","bold");
-  doc.text("📊 Ledger Summary",40,y);
-  y+=15;
-  const ledger=Object.entries(entries.reduce((a,e)=>{
-    if(!a[e.account])a[e.account]={Debit:0,Credit:0};
-    a[e.account].Debit+=(parseFloat(e.debit)||0);
-    a[e.account].Credit+=(parseFloat(e.credit)||0);
-    return a;
-  },{}));
-  doc.setFont("helvetica","normal");
-  ledger.slice(0,10).forEach(([acc,val])=>{
-    doc.text(`${acc}: Debit ${val.Debit.toFixed(2)} | Credit ${val.Credit.toFixed(2)}`,40,y);
-    y+=14;
-  });
+    document.getElementById("pdf").onclick = () => {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      doc.text("Accounting Summary", 10, 10);
+      doc.autoTable({
+        head: [["Date", "Account", "Type", "Category", "Amount", "VAT", "Net"]],
+        body: txns.map((t) => [
+          t.date,
+          t.account,
+          t.type,
+          t.category,
+          t.amount,
+          t.vat,
+          t.net,
+        ]),
+      });
+      doc.save("AccountingReport.pdf");
+    };
 
-  y+=25;
-  doc.setFont("helvetica","bold");
-  doc.text("📈 Financial Summary",40,y);
-  y+=18;
-  doc.setFont("helvetica","normal");
-  const finText=document.getElementById("financialView")?.innerText||"No data.";
-  const lines=doc.splitTextToSize(finText,500);
-  doc.text(lines,40,y);
+    document.getElementById("clear").onclick = () => {
+      if (confirm("Clear all data?")) {
+        localStorage.removeItem("portal_txns");
+        txns.length = 0;
+        render();
+      }
+    };
 
-  // Footer
-  const footerY=740;
-  doc.setDrawColor(11,122,89);
-  doc.line(40,footerY,550,footerY);
-  doc.setFont("helvetica","italic");
-  doc.text("Authorized By: ____________________",40,footerY+25);
-  doc.text("Signature: ____________________",320,footerY+25);
-  doc.setFontSize(10);
-  doc.setTextColor("#555");
-  doc.text("Confidential — Cephas GM Internal Finance Use Only",40,footerY+60);
-
-  doc.save(`CephasGM_Report_${today.replace(/[/:,\s]/g,"_")}.pdf`);
-}
-</script>
+    render();
+  </script>
 </body>
 </html>
