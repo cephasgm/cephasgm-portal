@@ -4,65 +4,142 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Accounting — Cephas GM</title>
+
+  <!-- PWA Manifest -->
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icon-192.png">
   <meta name="theme-color" content="#0b7a59">
+
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
   <style>
-    *{margin:0;padding:0;box-sizing:border-box;}
-    body{
-      font-family:'Poppins',sans-serif;
-      background:linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.9)), url('https://img.freepik.com/free-photo/nice-business-desk-black-background_24972-1177.jpg');
-      background-size:cover;
-      color:#fff;
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
-    nav{
-      background:rgba(0,0,0,0.95);
-      padding:15px 30px;
-      display:flex;
-      justify-content:space-between;
-      border-bottom:2px solid #0b7a59;
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.9)), url('https://img.freepik.com/free-photo/nice-business-desk-black-background_24972-1177.jpg');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      color: #fff;
+      min-height: 100vh;
     }
-    .nav-links{display:flex;gap:16px;}
-    .nav-links a{color:#fff;text-decoration:none;padding:8px 16px;}
-    .logout-btn{background:#c0392b;}
-    h1{color:#0b7a59;text-align:center;margin:30px 0;}
-    section{
-      background:rgba(255,255,255,0.1);
-      padding:20px;
-      margin:20px auto;
-      width:95%;
-      max-width:1000px;
-      border-radius:12px;
+    .nav {
+      background: rgba(0,0,0,0.95);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 30px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 2px solid #0b7a59;
     }
-    input,select,button{margin:5px;padding:10px;border-radius:6px;}
-    button{background:#0b7a59;color:#fff;border:none;cursor:pointer;}
-    table{width:100%;margin-top:15px;}
-    th{color:#0b7a59;}
-    td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.1);}
-    footer{
-      background:rgba(0,0,0,0.95);
-      text-align:center;
-      padding:1rem;
-      margin-top:2rem;
+    .brand {
+      font-weight: 700;
+      color: #fff;
+      font-size: 1.2rem;
+    }
+    .nav-links {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .nav-links a {
+      color: #fff;
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      transition: 0.3s;
+    }
+    .nav-links a:hover,
+    .nav-links a.active {
+      background: rgba(255,255,255,0.15);
+    }
+    .logout-btn {
+      background: #c0392b;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .logout-btn:hover {
+      background: #e74c3c;
+    }
+    .user-welcome {
+      color: #0b7a59;
+      font-weight: 500;
+      margin-right: 15px;
+    }
+    header {
+      text-align: center;
+      padding: 40px 20px;
+      background: rgba(0,0,0,0.6);
+      margin-bottom: 20px;
+    }
+    header h1 {
+      color: #0b7a59;
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+    header p {
+      color: #ccc;
+    }
+    .coming-soon {
+      max-width: 600px;
+      margin: 100px auto;
+      text-align: center;
+      padding: 40px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 16px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .coming-soon h2 {
+      color: #0b7a59;
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+    .coming-soon p {
+      color: #ccc;
+      line-height: 1.6;
+    }
+    footer {
+      background: rgba(0,0,0,0.95);
+      text-align: center;
+      padding: 1.5rem;
+      margin-top: 2rem;
+      color: #ccc;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      position: fixed;
+      bottom: 0;
+      width: 100%;
     }
   </style>
 </head>
 <body>
 
-<nav>
+<nav class="nav">
   <div class="brand">📘 Accounting</div>
   <div class="nav-links">
+    <span class="user-welcome" id="welcomeMsg">Welcome!</span>
     <a href="portaldashboard.html">Dashboard</a>
     <a href="portaldownloads.html">Downloads</a>
     <a href="portaladmin.html">Admin</a>
+    <a href="portalaccounting.html" class="active">Accounting</a>
     <a href="#" id="logoutBtn" class="logout-btn">Logout</a>
+    <a href="https://cephasgm.github.io/cephasgm-site/" target="_blank">🌍 Main Site</a>
   </div>
 </nav>
 
 <script>
+  // Firebase Configuration
   const firebaseConfig = {
     apiKey: "AIzaSyA2vWoAkdbke0D_x8N1W3JAzDVj4vcsZSE",
     authDomain: "cephasgm-portal.firebaseapp.com",
@@ -73,24 +150,62 @@
     measurementId: "G-KC2XDEJPRV"
   };
 
-  firebase.initializeApp(firebaseConfig);
+  // Initialize Firebase
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
   const auth = firebase.auth();
 
+  // Check authentication
   auth.onAuthStateChanged((user) => {
-    if (!user) window.location.href = 'index.html';
+    if (!user) {
+      window.location.href = 'index.html';
+    } else {
+      const displayName = user.email.split('@')[0];
+      document.getElementById('welcomeMsg').textContent = `Welcome, ${displayName}!`;
+    }
   });
 
+  // Logout
   document.getElementById('logoutBtn').addEventListener('click', (e) => {
     e.preventDefault();
-    auth.signOut().then(() => window.location.href = 'index.html');
+    auth.signOut().then(() => {
+      window.location.href = 'index.html';
+    }).catch((error) => {
+      console.error('Logout error:', error);
+    });
   });
 </script>
 
-<h1>Project Accounting</h1>
-<section>
-  <p>Accounting module loaded successfully. Add your accounting features here.</p>
-</section>
+<header>
+  <h1>📊 Project Accounting</h1>
+  <p>Financial tracking and cost management for Cephas GM projects</p>
+</header>
 
-<footer>Copyright © 2025 Cephas GM</footer>
+<div class="coming-soon">
+  <h2>🚀 Coming Soon</h2>
+  <p>The full accounting module is under development. Features will include:</p>
+  <p style="margin-top: 20px; text-align: left;">
+    • Project cost tracking<br>
+    • Budget vs actual analysis<br>
+    • Invoice management<br>
+    • Financial reporting<br>
+    • Expense categorization
+  </p>
+</div>
+
+<footer>Copyright © 2025 Cephas GM | Enterprise Portal</footer>
+
+<script>
+  // Service Worker
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(reg => console.log('✅ Service Worker registered:', reg.scope))
+        .catch(err => console.error('❌ Service Worker registration failed:', err));
+    });
+  }
+</script>
+
 </body>
 </html>
