@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Portal Login — Cephas GM</title>
 
 <!-- ✅ PWA Manifest -->
@@ -10,57 +10,122 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="theme-color" content="#0b7a59">
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
-
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box;}
-body{
-  font-family:'Poppins',sans-serif;
-  color:#fff;
-  background:linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.8)),
-  url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1470&q=80') center/cover no-repeat fixed;
-  display:flex;justify-content:center;align-items:center;min-height:100vh;text-align:center;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: 'Poppins', sans-serif;
+  color: #fff;
+  background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1470&q=80');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
   position: relative;
 }
-.login-box{
-  background:rgba(255,255,255,0.1);
-  padding:2.5rem 3rem;border-radius:14px;box-shadow:0 0 30px rgba(0,0,0,0.5);
+.login-box {
+  background: rgba(255,255,255,0.1);
+  padding: 2.5rem;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
   backdrop-filter: blur(10px);
   width: 90%;
   max-width: 400px;
+  border: 1px solid rgba(255,255,255,0.1);
 }
-h1{color:#0b7a59;margin-bottom:1.5rem;font-size:2rem;}
-input{
-  display:block;width:100%;margin:0.7rem 0;padding:0.8rem;border:none;border-radius:8px;
-  font-family:'Poppins',sans-serif;
+h1 {
+  color: #0b7a59;
+  margin-bottom: 1.5rem;
+  font-size: 2rem;
+  text-align: center;
 }
-button{
-  width:100%;padding:0.8rem;margin-top:1rem;background:#0b7a59;color:#fff;
-  border:none;border-radius:8px;font-weight:600;cursor:pointer;transition:0.3s;
-  font-size:1rem;
+input {
+  display: block;
+  width: 100%;
+  margin: 0.7rem 0;
+  padding: 0.8rem 1rem;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 8px;
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
 }
-button:hover{background:#099268;}
-a{color:#ddd;text-decoration:none;font-size:0.9rem;display:block;margin-top:1rem;}
-a:hover{color:#fff;}
-footer{
-  position:absolute;bottom:0;width:100%;text-align:center;padding:1rem;
-  background:rgba(0,0,0,0.85);font-size:.9rem;
+input::placeholder {
+  color: rgba(255,255,255,0.6);
 }
-.error { 
-  color: #ff6b6b; 
-  margin-top: 0.5rem; 
-  font-size: 0.9rem; 
+input:focus {
+  outline: none;
+  border-color: #0b7a59;
+  background: rgba(255,255,255,0.15);
+}
+button {
+  width: 100%;
+  padding: 0.8rem;
+  margin-top: 1rem;
+  background: #0b7a59;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 1rem;
+  font-family: 'Poppins', sans-serif;
+}
+button:hover {
+  background: #099268;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(11,122,89,0.3);
+}
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+a {
+  color: #ddd;
+  text-decoration: none;
+  font-size: 0.9rem;
+  display: block;
+  margin-top: 1rem;
+  text-align: center;
+}
+a:hover {
+  color: #fff;
+}
+footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+  padding: 1rem;
+  background: rgba(0,0,0,0.9);
+  color: #ccc;
+  font-size: 0.9rem;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+.error-message {
+  color: #ff6b6b;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
   display: none;
-  background: rgba(255,0,0,0.1);
+  background: rgba(255,107,107,0.1);
   padding: 0.5rem;
   border-radius: 4px;
+  text-align: center;
 }
-.success {
+.success-message {
   color: #0b7a59;
   margin-top: 0.5rem;
   font-size: 0.9rem;
@@ -68,11 +133,14 @@ footer{
   background: rgba(11,122,89,0.1);
   padding: 0.5rem;
   border-radius: 4px;
+  text-align: center;
 }
-.loading {
-  display: none;
+.loading-message {
   color: #ccc;
   margin-top: 0.5rem;
+  font-size: 0.9rem;
+  display: none;
+  text-align: center;
 }
 .demo-credentials {
   margin-top: 2rem;
@@ -81,24 +149,32 @@ footer{
   border-radius: 8px;
   font-size: 0.85rem;
   color: #ccc;
+  border: 1px solid rgba(255,255,255,0.1);
 }
 .demo-credentials p {
-  margin: 0.2rem 0;
+  margin: 0.3rem 0;
+}
+.demo-credentials strong {
+  color: #0b7a59;
 }
 </style>
 </head>
 <body>
 
 <div class="login-box">
-  <h1>Portal Login</h1>
+  <h1>🔐 Portal Login</h1>
+  
   <form id="loginForm">
     <input type="email" id="email" placeholder="Email address" required value="test@cephasgm.com">
     <input type="password" id="password" placeholder="Password" required value="Test1234">
-    <button type="submit" id="loginBtn">Login</button>
-    <div class="error" id="loginError"></div>
-    <div class="success" id="loginSuccess">Login successful! Redirecting...</div>
-    <div class="loading" id="loading">Authenticating...</div>
+    
+    <div class="error-message" id="loginError"></div>
+    <div class="success-message" id="loginSuccess">Login successful! Redirecting...</div>
+    <div class="loading-message" id="loginLoading">Authenticating...</div>
+    
+    <button type="submit" id="loginBtn">Sign In</button>
   </form>
+  
   <a href="index.html">← Back to Portal Home</a>
   
   <div class="demo-credentials">
@@ -111,7 +187,7 @@ footer{
 <footer>Copyright © 2025 Cephas GM | Enterprise Portal</footer>
 
 <script>
-  // Initialize Firebase
+  // Firebase Configuration
   const firebaseConfig = {
     apiKey: "AIzaSyB7TImJ72bH2aQ5LgQxb3XK7hD4kY9qWzM",
     authDomain: "cephasgm-portal.firebaseapp.com",
@@ -124,12 +200,12 @@ footer{
   // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
-  
-  // Check URL parameters for mode
+
+  // Get URL parameters
   const urlParams = new URLSearchParams(window.location.search);
   const mode = urlParams.get('mode');
   
-  // Pre-fill based on mode
+  // Set default values based on mode
   if (mode === 'staff') {
     document.getElementById('email').value = 'admin@cephasgm.com';
     document.getElementById('password').value = 'Admin1234';
@@ -142,23 +218,22 @@ footer{
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
     const loginBtn = document.getElementById('loginBtn');
-    const loading = document.getElementById('loading');
     const errorDiv = document.getElementById('loginError');
     const successDiv = document.getElementById('loginSuccess');
+    const loadingDiv = document.getElementById('loginLoading');
     
     // Reset displays
     errorDiv.style.display = 'none';
     successDiv.style.display = 'none';
-    loading.style.display = 'block';
+    loadingDiv.style.display = 'block';
     loginBtn.disabled = true;
     
     try {
       // Sign in with Firebase
-      const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
+      const userCredential = await auth.signInWithEmailAndPassword(email, password);
       const user = userCredential.user;
       
-      // Get user role (you can store this in Firestore or custom claims)
-      // For demo, determine role based on email
+      // Determine role based on email
       const isStaff = email.includes('admin');
       
       // Store session info
@@ -167,11 +242,11 @@ footer{
       localStorage.setItem('cephasUID', user.uid);
       localStorage.setItem('cephasLoginTime', new Date().toISOString());
       
-      // Show success
-      loading.style.display = 'none';
+      // Show success message
+      loadingDiv.style.display = 'none';
       successDiv.style.display = 'block';
       
-      // Redirect after brief delay
+      // Redirect based on role
       setTimeout(() => {
         if (isStaff) {
           window.location.href = 'portaladmin.html';
@@ -181,7 +256,7 @@ footer{
       }, 1500);
       
     } catch (error) {
-      loading.style.display = 'none';
+      loadingDiv.style.display = 'none';
       loginBtn.disabled = false;
       
       // Handle specific error codes
@@ -212,7 +287,7 @@ footer{
   });
 
   // Check if already logged in
-  firebase.auth().onAuthStateChanged((user) => {
+  auth.onAuthStateChanged((user) => {
     if (user && window.location.pathname.includes('portallogin.html')) {
       // Already logged in, redirect appropriately
       const isStaff = user.email.includes('admin');
@@ -224,7 +299,7 @@ footer{
     }
   });
 
-  // ✅ Service Worker Registration
+  // Service Worker Registration
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('service-worker.js')
