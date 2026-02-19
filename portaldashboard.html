@@ -48,7 +48,6 @@ body{
 .nav a:hover,.nav a.active{background:rgba(255,255,255,0.15);}
 .logout-btn {
   background: #c0392b;
-  padding: 8px 12px;
   border-radius: 6px;
 }
 .logout-btn:hover {
@@ -175,13 +174,13 @@ footer{
     <a href="portaldashboard.html" class="active">Dashboard</a>
     <a href="portaldownloads.html">Downloads</a>
     <a href="#" onclick="toggleAI()">🤖 CephasAI</a>
-    <a href="#" onclick="logout()" class="logout-btn">Logout</a>
+    <a href="#" id="logoutBtn" class="logout-btn">Logout</a>
     <a href="https://cephasgm.github.io/cephasgm-site/" target="_blank">🌍 Main Site</a>
   </div>
 </nav>
 
 <script>
-  // Initialize Firebase
+  // Firebase Configuration
   const firebaseConfig = {
     apiKey: "AIzaSyB7TImJ72bH2aQ5LgQxb3XK7hD4kY9qWzM",
     authDomain: "cephasgm-portal.firebaseapp.com",
@@ -203,19 +202,27 @@ footer{
       // Set display name
       const displayName = user.email.split('@')[0];
       document.getElementById('displayName').textContent = displayName.charAt(0).toUpperCase() + displayName.slice(1);
-      console.log('Logged in as:', user.email);
     }
   });
 
-  // Logout function
+  // Universal logout function
   window.logout = function() {
     auth.signOut().then(() => {
       localStorage.clear();
+      sessionStorage.clear();
       window.location.href = 'portallogin.html';
     }).catch((error) => {
       console.error('Logout error:', error);
+      localStorage.clear();
+      window.location.href = 'portallogin.html';
     });
   };
+
+  // Add logout event listener
+  document.getElementById('logoutBtn').addEventListener('click', (e) => {
+    e.preventDefault();
+    logout();
+  });
 </script>
 
 <header>
@@ -246,7 +253,6 @@ footer{
 <footer>Copyright © 2025 Cephas GM | Enterprise Portal</footer>
 
 <script>
-// Mock project data tied to main site
 const clientProjects = [
   { 
     name: 'CephasGM-ERP', 
@@ -274,7 +280,6 @@ const clientProjects = [
   }
 ];
 
-// Display projects
 const projectList = document.getElementById('projectList');
 projectList.innerHTML = clientProjects.map(p => `
   <div class="project-item">
@@ -284,13 +289,11 @@ projectList.innerHTML = clientProjects.map(p => `
   </div>
 `).join('');
 
-// Toggle AI chat
 function toggleAI(){
   const ai = document.getElementById("ai-section");
   ai.style.display = ai.style.display === "none" ? "block" : "none";
 }
 
-// Mock AI with project-specific responses
 const chat = document.getElementById("chat-box");
 document.getElementById("send-btn").onclick = function(){
   const input = document.getElementById("user-input");
@@ -302,20 +305,18 @@ document.getElementById("send-btn").onclick = function(){
   
   setTimeout(() => {
     const inputLower = val.toLowerCase();
-    let reply = "I can help with your ERP, Safety PWA, or Location Tracker projects. What would you like to know?";
+    let reply = "I can help with your ERP, Safety PWA, or Location Tracker projects.";
     
     if (inputLower.includes('erp')) {
-      reply = "The CephasGM-ERP system is 85% complete. Financial and HR modules are ready for demo. Last updated on March 15, 2025.";
+      reply = "The CephasGM-ERP system is 85% complete. Financial and HR modules are ready for demo.";
     } else if (inputLower.includes('safety') || inputLower.includes('pwa') || inputLower.includes('health')) {
-      reply = "The Health & Safety PWA is at 92% completion. Incident tracking and checklists are fully functional. 420+ incidents have been logged to date.";
+      reply = "The Health & Safety PWA is at 92% completion. Incident tracking and checklists are fully functional.";
     } else if (inputLower.includes('location') || inputLower.includes('tracker') || inputLower.includes('gps')) {
-      reply = "The Smart Location Tracker is 78% complete. Real-time GPS and geofencing are operational. Currently tracking 252 assets.";
+      reply = "The Smart Location Tracker is 78% complete. Real-time GPS and geofencing are operational.";
     } else if (inputLower.includes('download')) {
-      reply = "You can find project reports and documents in the Downloads section. Latest reports were added on March 18, 2025.";
+      reply = "You can find project reports and documents in the Downloads section.";
     } else if (inputLower.includes('hello') || inputLower.includes('hi')) {
-      reply = "Hello! How can I assist with your projects today? You can ask about ERP, Safety PWA, or Location Tracker.";
-    } else if (inputLower.includes('update')) {
-      reply = "Latest updates: ERP (85%), Safety PWA (92%), Location Tracker (78%). All projects are on track.";
+      reply = "Hello! How can I assist with your projects today?";
     }
     
     chat.innerHTML += `<div class="message assistant"><b>CephasAI:</b> ${reply}</div>`;
@@ -323,7 +324,6 @@ document.getElementById("send-btn").onclick = function(){
   }, 800);
 };
 
-// Service Worker Registration
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('service-worker.js')
