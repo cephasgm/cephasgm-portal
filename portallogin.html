@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Portal Login — Cephas GM</title>
 
 <!-- ✅ PWA Manifest -->
 <link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
 <meta name="theme-color" content="#0b7a59">
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
@@ -23,6 +23,7 @@ body{
 .login-box{
   background:rgba(255,255,255,0.1);
   padding:2rem 3rem;border-radius:14px;box-shadow:0 0 20px rgba(0,0,0,0.4);
+  backdrop-filter: blur(5px);
 }
 h1{color:#0b7a59;margin-bottom:1.5rem;}
 input{
@@ -34,10 +35,12 @@ button{
 }
 button:hover{background:#099268;}
 a{color:#ddd;text-decoration:none;font-size:0.9rem;display:block;margin-top:1rem;}
+a:hover{color:#fff;}
 footer{
   position:absolute;bottom:0;width:100%;text-align:center;padding:1rem;
   background:rgba(0,0,0,0.85);font-size:.9rem;
 }
+.error { color: #ff6b6b; margin-top: 0.5rem; font-size: 0.9rem; display: none; }
 </style>
 </head>
 <body>
@@ -45,28 +48,40 @@ footer{
 <div class="login-box">
   <h1>Portal Login</h1>
   <form onsubmit="handleLogin(event)">
-    <input type="text" id="username" placeholder="Username" required>
-    <input type="password" id="password" placeholder="Password" required>
+    <input type="text" id="username" placeholder="Username (e.g., client or staff)" required>
+    <input type="password" id="password" placeholder="Password (any 6+ chars)" required>
     <button type="submit">Login</button>
+    <div class="error" id="loginError">Invalid credentials. Please try again.</div>
   </form>
   <a href="index.html">← Back to Portal Home</a>
+  <p style="font-size:0.8rem; margin-top:1rem; color:#aaa;">Demo: Use any username/password (min 6 chars)</p>
 </div>
 
-<footer>Copyright © 2025 😀 | </footer>
+<footer>Copyright © 2025 Cephas GM | Enterprise Portal</footer>
 
 <script>
 function handleLogin(e){
   e.preventDefault();
-  const username=document.getElementById("username").value.trim();
-  const password=document.getElementById("password").value.trim();
-  const isStaff=window.location.search.includes("staff=true");
+  const username = document.getElementById("username").value.trim();
+  const password = document.getElementById("password").value.trim();
+  const isStaff = window.location.search.includes("staff=true");
 
-  if(username && password){
+  // Simple validation (in real app, you'd check against a backend)
+  if (username && password.length >= 6) {
+    // Store user session
     localStorage.setItem("cephasUser", username);
     localStorage.setItem("cephasRole", isStaff ? "staff" : "client");
-    if(isStaff){ window.location.href="portaladmin.html"; }
-    else{ window.location.href="portaldashboard.html"; }
-  }else{ alert("Please fill in all fields!"); }
+    localStorage.setItem("cephasLoginTime", new Date().toISOString());
+
+    // Redirect based on role
+    if (isStaff) {
+      window.location.href = "portaladmin.html";
+    } else {
+      window.location.href = "portaldashboard.html";
+    }
+  } else {
+    document.getElementById("loginError").style.display = "block";
+  }
 }
 </script>
 
