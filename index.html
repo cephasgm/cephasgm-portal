@@ -5,10 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cephas GM Portal — Access Gateway</title>
 
-  <!-- ✅ PWA Manifest -->
+  <!-- PWA Manifest -->
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icon-192.png">
   <meta name="theme-color" content="#0b7a59">
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
   <style>
@@ -20,17 +24,15 @@
     body {
       font-family: 'Poppins', sans-serif;
       color: #fff;
-      background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)), url('https://kxn3vdktxmez55pl.public.blob.vercel-storage.com/Africa-Kenya-Mount-Kilimanjaro-at-dawn-DanitaDelimont_RM_AF21_JAR0638_1323x637.png');
+      background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url('https://kxn3vdktxmez55pl.public.blob.vercel-storage.com/Africa-Kenya-Mount-Kilimanjaro-at-dawn-DanitaDelimont_RM_AF21_JAR0638_1323x637.png');
       background-size: cover;
       background-position: center;
       background-attachment: fixed;
-      background-repeat: no-repeat;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       min-height: 100vh;
-      text-align: center;
       position: relative;
     }
     h1 { 
@@ -78,6 +80,34 @@
     .btn.alt:hover { 
       background: #34495e; 
     }
+    .user-info {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(0,0,0,0.7);
+      padding: 10px 20px;
+      border-radius: 30px;
+      display: none;
+      align-items: center;
+      gap: 15px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .user-info span {
+      color: #0b7a59;
+      font-weight: 500;
+    }
+    .logout-btn {
+      background: #c0392b;
+      color: #fff;
+      border: none;
+      padding: 5px 15px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    .logout-btn:hover {
+      background: #e74c3c;
+    }
     footer {
       background: rgba(0,0,0,0.9);
       text-align: center;
@@ -93,26 +123,82 @@
 </head>
 <body>
 
+  <div class="user-info" id="userInfo">
+    <span id="userEmail"></span>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </div>
+
   <h1>Cephas GM Secure Portal</h1>
   <p>Welcome to the dedicated gateway for clients and staff. Access real-time dashboards, project documents (ERP, Safety PWA, Location Tracker), and system updates.</p>
 
-  <div class="buttons">
-    <a href="portallogin.html" class="btn">🔐 Client Login</a>
-    <a href="portallogin.html?mode=staff" class="btn alt">👨‍💼 Staff Login</a>
+  <div class="buttons" id="mainButtons">
+    <a href="portallogin.html" class="btn" id="loginBtn">🔐 Login</a>
+    <a href="portaldashboard.html" class="btn alt" id="dashboardBtn" style="display:none;">📊 Go to Dashboard</a>
     <a href="https://cephasgm.github.io/cephasgm-site/" class="btn alt" target="_blank">🌍 Visit Main Site</a>
   </div>
 
   <footer>Copyright © 2025 Cephas GM | Enterprise Portal</footer>
 
-  <!-- ✅ Service Worker Registration -->
   <script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('service-worker.js')
-        .then(reg => console.log('✅ Service Worker registered:', reg.scope))
-        .catch(err => console.error('❌ Service Worker registration failed:', err));
+    // Firebase Configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyA2vWoAkdbke0D_x8N1W3JAzDVj4vcsZSE",
+      authDomain: "cephasgm-portal.firebaseapp.com",
+      projectId: "cephasgm-portal",
+      storageBucket: "cephasgm-portal.firebasestorage.app",
+      messagingSenderId: "577322740819",
+      appId: "1:577322740819:web:da7bfaf387fb690bc96aa6",
+      measurementId: "G-KC2XDEJPRV"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    // Check auth state
+    auth.onAuthStateChanged((user) => {
+      const userInfo = document.getElementById('userInfo');
+      const loginBtn = document.getElementById('loginBtn');
+      const dashboardBtn = document.getElementById('dashboardBtn');
+      
+      if (user) {
+        // User is logged in
+        userInfo.style.display = 'flex';
+        document.getElementById('userEmail').textContent = user.email;
+        loginBtn.style.display = 'none';
+        dashboardBtn.style.display = 'inline-block';
+        
+        // Store in session
+        sessionStorage.setItem('userLoggedIn', 'true');
+        sessionStorage.setItem('userEmail', user.email);
+        sessionStorage.setItem('userRole', user.email.includes('admin') ? 'staff' : 'client');
+      } else {
+        // User is logged out
+        userInfo.style.display = 'none';
+        loginBtn.style.display = 'inline-block';
+        dashboardBtn.style.display = 'none';
+        sessionStorage.clear();
+      }
     });
-  }
+
+    // Logout function
+    window.logout = function() {
+      auth.signOut().then(() => {
+        sessionStorage.clear();
+        window.location.href = 'index.html';
+      }).catch((error) => {
+        console.error('Logout error:', error);
+      });
+    };
+
+    // Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('service-worker.js')
+          .then(reg => console.log('✅ Service Worker registered:', reg.scope))
+          .catch(err => console.error('❌ Service Worker registration failed:', err));
+      });
+    }
   </script>
 
 </body>
