@@ -25,7 +25,6 @@ body{
   transition:background .4s,color .4s;
 }
 
-/* Navbar */
 .nav{
   background:rgba(0,0,0,0.7);
   display:flex;
@@ -36,7 +35,8 @@ body{
   top:0;
   z-index:100;
 }
-.nav-links{display:flex;gap:16px;}
+.brand{font-weight:700;}
+.nav-links{display:flex;gap:16px;flex-wrap:wrap;}
 .nav a{
   color:#fff;
   text-decoration:none;
@@ -56,7 +56,6 @@ body{
 }
 .theme-toggle:hover{opacity:.8;}
 
-/* Chat */
 .chat-container{
   max-width:700px;
   margin:3rem auto;
@@ -64,6 +63,7 @@ body{
   border-radius:12px;
   box-shadow:0 8px 20px rgba(0,0,0,0.4);
   padding:1.5rem;
+  backdrop-filter: blur(4px);
 }
 .chat-box{
   height:400px;
@@ -127,9 +127,8 @@ footer{
 </head>
 <body>
 
-<!-- Fake session gate -->
 <script>
-if(!localStorage.getItem('cephasSession')){
+if(!localStorage.getItem('cephasUser')){
   window.location.href='portallogin.html';
 }
 </script>
@@ -147,9 +146,18 @@ if(!localStorage.getItem('cephasSession')){
   <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
 </nav>
 
+<script>
+function toggleTheme(){document.body.classList.toggle('dark');}
+function logout(){
+  localStorage.removeItem('cephasUser');
+  localStorage.removeItem('cephasRole');
+  window.location.href='portallogin.html';
+}
+</script>
+
 <section class="chat-container">
   <div class="chat-box" id="chatBox">
-    <div class="msg bot"><p>👋 Hello! I’m CephasBot — your virtual assistant. How can I help today?</p></div>
+    <div class="msg bot"><p>👋 Hello! I'm your project assistant for CephasGM-ERP, Safety PWA, and Location Tracker. How can I help?</p></div>
   </div>
 
   <div class="input-area">
@@ -158,17 +166,9 @@ if(!localStorage.getItem('cephasSession')){
   </div>
 </section>
 
-<footer>Copyright © 2025 😀 | </footer>
+<footer>Copyright © 2025 Cephas GM | Enterprise Portal</footer>
 
 <script>
-function toggleTheme(){document.body.classList.toggle('dark');}
-
-function logout(){
-  localStorage.removeItem('cephasSession');
-  localStorage.removeItem('cephasRole');
-  window.location.href='portallogin.html';
-}
-
 function sendMessage(){
   const input=document.getElementById('userInput');
   const chatBox=document.getElementById('chatBox');
@@ -181,10 +181,9 @@ function sendMessage(){
   userMsg.innerHTML=`<p>${message}</p>`;
   chatBox.appendChild(userMsg);
   chatBox.scrollTop=chatBox.scrollHeight;
-
   input.value='';
 
-  // Bot response simulation
+  // Bot response simulation with project context
   setTimeout(()=>{
     const botMsg=document.createElement('div');
     botMsg.classList.add('msg','bot');
@@ -196,12 +195,13 @@ function sendMessage(){
 
 function generateResponse(input){
   input=input.toLowerCase();
-  if(input.includes('report')) return "📊 Here’s today’s summary: 4 projects updated, 2 new downloads available.";
-  if(input.includes('project')) return "🚧 Current active projects: AlphaLimaG01, DeltaYankee02, QubecLimaD07, TangoRomeaoK09.";
-  if(input.includes('download')) return "📁 You can find new documents in the Downloads section — last updated this week.";
-  if(input.includes('help')) return "🤝 You can ask about reports, projects, or system updates.";
-  if(input.includes('hello') || input.includes('hi')) return "👋 Hi there! Ready to assist with your portal updates.";
-  return "🤔 I’m not sure about that yet — but I’ll learn soon!";
+  if(input.includes('erp')) return "📊 CephasGM-ERP is at 85% completion. Core modules are functional.";
+  if(input.includes('safety') || input.includes('pwa')) return "🛡️ Health & Safety PWA is 92% complete. Incident tracking is live with 420+ logged events.";
+  if(input.includes('location') || input.includes('tracker')) return "📍 Smart Location Tracker is 78% complete, monitoring 252 assets in real-time.";
+  if(input.includes('download')) return "📁 You can find project reports in the Downloads section.";
+  if(input.includes('report')) return "📈 The latest Q1 report shows all projects on track. Check the Downloads page.";
+  if(input.includes('hello') || input.includes('hi')) return "👋 Hi there! Ask me about ERP, Safety PWA, or Location Tracker.";
+  return "🤔 I'm here to help with your Cephas GM projects. Try asking about ERP, Safety, or Location Tracker.";
 }
 </script>
 
