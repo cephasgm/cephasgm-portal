@@ -11,6 +11,12 @@
 <meta name="theme-color" content="#0b7a59">
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 body{
@@ -19,19 +25,24 @@ body{
   background:linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.8)),
   url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1470&q=80') center/cover no-repeat fixed;
   display:flex;justify-content:center;align-items:center;min-height:100vh;text-align:center;
+  position: relative;
 }
 .login-box{
   background:rgba(255,255,255,0.1);
-  padding:2rem 3rem;border-radius:14px;box-shadow:0 0 20px rgba(0,0,0,0.4);
-  backdrop-filter: blur(5px);
+  padding:2.5rem 3rem;border-radius:14px;box-shadow:0 0 30px rgba(0,0,0,0.5);
+  backdrop-filter: blur(10px);
+  width: 90%;
+  max-width: 400px;
 }
-h1{color:#0b7a59;margin-bottom:1.5rem;}
+h1{color:#0b7a59;margin-bottom:1.5rem;font-size:2rem;}
 input{
-  display:block;width:100%;margin:0.7rem 0;padding:0.7rem;border:none;border-radius:8px;
+  display:block;width:100%;margin:0.7rem 0;padding:0.8rem;border:none;border-radius:8px;
+  font-family:'Poppins',sans-serif;
 }
 button{
   width:100%;padding:0.8rem;margin-top:1rem;background:#0b7a59;color:#fff;
   border:none;border-radius:8px;font-weight:600;cursor:pointer;transition:0.3s;
+  font-size:1rem;
 }
 button:hover{background:#099268;}
 a{color:#ddd;text-decoration:none;font-size:0.9rem;display:block;margin-top:1rem;}
@@ -40,60 +51,187 @@ footer{
   position:absolute;bottom:0;width:100%;text-align:center;padding:1rem;
   background:rgba(0,0,0,0.85);font-size:.9rem;
 }
-.error { color: #ff6b6b; margin-top: 0.5rem; font-size: 0.9rem; display: none; }
+.error { 
+  color: #ff6b6b; 
+  margin-top: 0.5rem; 
+  font-size: 0.9rem; 
+  display: none;
+  background: rgba(255,0,0,0.1);
+  padding: 0.5rem;
+  border-radius: 4px;
+}
+.success {
+  color: #0b7a59;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  display: none;
+  background: rgba(11,122,89,0.1);
+  padding: 0.5rem;
+  border-radius: 4px;
+}
+.loading {
+  display: none;
+  color: #ccc;
+  margin-top: 0.5rem;
+}
+.demo-credentials {
+  margin-top: 2rem;
+  padding: 1rem;
+  background: rgba(255,255,255,0.05);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  color: #ccc;
+}
+.demo-credentials p {
+  margin: 0.2rem 0;
+}
 </style>
 </head>
 <body>
 
 <div class="login-box">
   <h1>Portal Login</h1>
-  <form onsubmit="handleLogin(event)">
-    <input type="text" id="username" placeholder="Username (e.g., client or staff)" required>
-    <input type="password" id="password" placeholder="Password (any 6+ chars)" required>
-    <button type="submit">Login</button>
-    <div class="error" id="loginError">Invalid credentials. Please try again.</div>
+  <form id="loginForm">
+    <input type="email" id="email" placeholder="Email address" required value="test@cephasgm.com">
+    <input type="password" id="password" placeholder="Password" required value="Test1234">
+    <button type="submit" id="loginBtn">Login</button>
+    <div class="error" id="loginError"></div>
+    <div class="success" id="loginSuccess">Login successful! Redirecting...</div>
+    <div class="loading" id="loading">Authenticating...</div>
   </form>
   <a href="index.html">← Back to Portal Home</a>
-  <p style="font-size:0.8rem; margin-top:1rem; color:#aaa;">Demo: Use any username/password (min 6 chars)</p>
+  
+  <div class="demo-credentials">
+    <p><strong>Demo Credentials:</strong></p>
+    <p>👤 Client: test@cephasgm.com / Test1234</p>
+    <p>👨‍💼 Admin: admin@cephasgm.com / Admin1234</p>
+  </div>
 </div>
 
 <footer>Copyright © 2025 Cephas GM | Enterprise Portal</footer>
 
 <script>
-function handleLogin(e){
-  e.preventDefault();
-  const username = document.getElementById("username").value.trim();
-  const password = document.getElementById("password").value.trim();
-  const isStaff = window.location.search.includes("staff=true");
+  // Initialize Firebase
+  const firebaseConfig = {
+    apiKey: "AIzaSyB7TImJ72bH2aQ5LgQxb3XK7hD4kY9qWzM",
+    authDomain: "cephasgm-portal.firebaseapp.com",
+    projectId: "cephasgm-portal",
+    storageBucket: "cephasgm-portal.firebasestorage.app",
+    messagingSenderId: "123456789012",
+    appId: "1:123456789012:web:abc123def456ghi789jkl"
+  };
 
-  // Simple validation (in real app, you'd check against a backend)
-  if (username && password.length >= 6) {
-    // Store user session
-    localStorage.setItem("cephasUser", username);
-    localStorage.setItem("cephasRole", isStaff ? "staff" : "client");
-    localStorage.setItem("cephasLoginTime", new Date().toISOString());
-
-    // Redirect based on role
-    if (isStaff) {
-      window.location.href = "portaladmin.html";
-    } else {
-      window.location.href = "portaldashboard.html";
-    }
-  } else {
-    document.getElementById("loginError").style.display = "block";
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  
+  // Check URL parameters for mode
+  const urlParams = new URLSearchParams(window.location.search);
+  const mode = urlParams.get('mode');
+  
+  // Pre-fill based on mode
+  if (mode === 'staff') {
+    document.getElementById('email').value = 'admin@cephasgm.com';
+    document.getElementById('password').value = 'Admin1234';
   }
-}
-</script>
 
-<!-- ✅ Service Worker Registration -->
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('service-worker.js')
-      .then(reg => console.log('Service Worker registered:', reg.scope))
-      .catch(err => console.error('Service Worker registration failed:', err));
+  // Handle login form submission
+  document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const loginBtn = document.getElementById('loginBtn');
+    const loading = document.getElementById('loading');
+    const errorDiv = document.getElementById('loginError');
+    const successDiv = document.getElementById('loginSuccess');
+    
+    // Reset displays
+    errorDiv.style.display = 'none';
+    successDiv.style.display = 'none';
+    loading.style.display = 'block';
+    loginBtn.disabled = true;
+    
+    try {
+      // Sign in with Firebase
+      const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
+      const user = userCredential.user;
+      
+      // Get user role (you can store this in Firestore or custom claims)
+      // For demo, determine role based on email
+      const isStaff = email.includes('admin');
+      
+      // Store session info
+      localStorage.setItem('cephasUser', user.email);
+      localStorage.setItem('cephasRole', isStaff ? 'staff' : 'client');
+      localStorage.setItem('cephasUID', user.uid);
+      localStorage.setItem('cephasLoginTime', new Date().toISOString());
+      
+      // Show success
+      loading.style.display = 'none';
+      successDiv.style.display = 'block';
+      
+      // Redirect after brief delay
+      setTimeout(() => {
+        if (isStaff) {
+          window.location.href = 'portaladmin.html';
+        } else {
+          window.location.href = 'portaldashboard.html';
+        }
+      }, 1500);
+      
+    } catch (error) {
+      loading.style.display = 'none';
+      loginBtn.disabled = false;
+      
+      // Handle specific error codes
+      let errorMessage = 'Login failed. Please try again.';
+      switch(error.code) {
+        case 'auth/user-not-found':
+          errorMessage = 'User not found. Please check your email.';
+          break;
+        case 'auth/wrong-password':
+          errorMessage = 'Incorrect password. Please try again.';
+          break;
+        case 'auth/invalid-email':
+          errorMessage = 'Invalid email format.';
+          break;
+        case 'auth/user-disabled':
+          errorMessage = 'This account has been disabled.';
+          break;
+        case 'auth/too-many-requests':
+          errorMessage = 'Too many failed attempts. Please try again later.';
+          break;
+        default:
+          errorMessage = error.message;
+      }
+      
+      errorDiv.textContent = errorMessage;
+      errorDiv.style.display = 'block';
+    }
   });
-}
+
+  // Check if already logged in
+  firebase.auth().onAuthStateChanged((user) => {
+    if (user && window.location.pathname.includes('portallogin.html')) {
+      // Already logged in, redirect appropriately
+      const isStaff = user.email.includes('admin');
+      if (isStaff) {
+        window.location.href = 'portaladmin.html';
+      } else {
+        window.location.href = 'portaldashboard.html';
+      }
+    }
+  });
+
+  // ✅ Service Worker Registration
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(reg => console.log('✅ Service Worker registered:', reg.scope))
+        .catch(err => console.error('❌ Service Worker registration failed:', err));
+    });
+  }
 </script>
 
 </body>
