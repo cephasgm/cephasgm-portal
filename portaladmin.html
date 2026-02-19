@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin Analytics — Cephas GM Portal</title>
 
-<!-- ✅ PWA Manifest -->
+<!-- PWA Manifest -->
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="theme-color" content="#0b7a59">
@@ -14,145 +14,208 @@
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
 <style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 :root {
   --bg: #0b0c10;
   --card-bg: rgba(255,255,255,0.08);
   --text: #fff;
   --accent: #0b7a59;
 }
-body.dark {
-  --bg: #f4f4f4;
-  --card-bg: #fff;
-  --text: #111;
-}
-*{margin:0;padding:0;box-sizing:border-box;}
-body{
-  font-family:'Poppins',sans-serif;
-  background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url('https://scx2.b-cdn.net/gfx/news/hires/2019/2-nature.jpg');
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.9)), url('https://scx2.b-cdn.net/gfx/news/hires/2019/2-nature.jpg');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
-  color:var(--text);
-  transition:background .4s,color .4s;
+  color: var(--text);
   min-height: 100vh;
 }
-.nav{
-  background:rgba(0,0,0,0.9);
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:14px 30px;
-  position:sticky;
-  top:0;
-  z-index:100;
+.nav {
+  background: rgba(0,0,0,0.95);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
   border-bottom: 2px solid var(--accent);
 }
-.brand{font-weight:700; color: #fff;}
-.nav-links{display:flex;gap:16px;flex-wrap:wrap;}
-.nav a{
-  color:#fff;
-  text-decoration:none;
-  padding:8px 12px;
-  border-radius:6px;
-  transition:.3s;
+.brand {
+  font-weight: 700;
+  color: #fff;
+  font-size: 1.2rem;
 }
-.nav a:hover,.nav a.active{background:rgba(255,255,255,0.15);}
-.theme-toggle{
-  background:var(--accent);
-  color:#fff;
-  border:none;
-  padding:6px 10px;
-  border-radius:6px;
-  cursor:pointer;
-  font-size:.8rem;
+.nav-links {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: center;
 }
-.theme-toggle:hover{opacity:.8;}
-header{
-  text-align:center;
-  background:rgba(0,0,0,0.6);
-  padding:2rem 1rem;
-  margin-bottom: 1rem;
+.nav-links a {
+  color: #fff;
+  text-decoration: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  transition: 0.3s;
+  font-size: 0.95rem;
 }
-header h1{font-size:2.2rem;margin-bottom:.5rem; color: var(--accent);}
-header p{color:#ccc;font-size:.95rem;}
-.main-container{
-  display:flex;
-  flex-wrap:wrap;
-  gap:1rem;
-  padding:1rem 5%;
+.nav-links a:hover,
+.nav-links a.active {
+  background: rgba(255,255,255,0.15);
+}
+.logout-btn {
+  background: #c0392b !important;
+}
+.logout-btn:hover {
+  background: #e74c3c !important;
+}
+.theme-toggle {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: 0.3s;
+}
+.theme-toggle:hover {
+  opacity: 0.9;
+}
+header {
+  text-align: center;
+  background: rgba(0,0,0,0.6);
+  padding: 40px 20px;
+  margin-bottom: 20px;
+}
+header h1 {
+  font-size: 2.2rem;
+  margin-bottom: 10px;
+  color: var(--accent);
+}
+header p {
+  color: #ccc;
+  font-size: 1rem;
+}
+.main-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 20px 5%;
   max-width: 1400px;
   margin: 0 auto;
 }
-.dashboard, .cephasAI{
-  flex:1;
-  min-width:320px;
-  background:rgba(0,0,0,0.6);
-  border-radius:12px;
-  padding:1.5rem;
-  color:#fff;
-  backdrop-filter: blur(4px);
+.dashboard, .cephasAI {
+  flex: 1;
+  min-width: 320px;
+  background: rgba(0,0,0,0.6);
+  border-radius: 16px;
+  padding: 25px;
+  backdrop-filter: blur(10px);
   border: 1px solid rgba(255,255,255,0.1);
 }
-.cards{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-  gap:1rem;
-  margin-bottom:1.5rem;
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 15px;
+  margin-bottom: 25px;
 }
-.card{
-  background:var(--card-bg);
-  border-radius:12px;
-  padding:1.5rem;
-  text-align:center;
-  box-shadow:0 6px 15px rgba(0,0,0,0.4);
-  transition:.3s;
+.card {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  transition: 0.3s;
   border: 1px solid rgba(255,255,255,0.05);
 }
-.card:hover{transform:translateY(-5px); background: rgba(255,255,255,0.12);}
-.card h2{color:var(--accent);font-size:2.2rem;}
-.card p{margin-top:.4rem;color:#ccc;}
-#chatBox{
-  background:rgba(255,255,255,0.1);
-  border-radius:8px;
-  padding:1rem;
-  height:350px;
-  overflow-y:auto;
-  margin-bottom:1rem;
+.card:hover {
+  transform: translateY(-5px);
+  background: rgba(255,255,255,0.12);
 }
-#chatBox p{margin:.4rem 0;}
-input,button{
-  padding:.6rem;
-  border:none;
-  border-radius:6px;
-  font-family: 'Poppins', sans-serif;
+.card h2 {
+  color: var(--accent);
+  font-size: 2.2rem;
+  margin-bottom: 5px;
+}
+.card p {
+  color: #ccc;
+  font-size: 0.9rem;
+}
+#chatBox {
+  background: rgba(255,255,255,0.1);
+  border-radius: 8px;
+  padding: 15px;
+  height: 350px;
+  overflow-y: auto;
+  margin-bottom: 15px;
+}
+#chatBox p {
+  margin: 8px 0;
+  line-height: 1.5;
 }
 #userInput {
   width: 70%;
+  padding: 12px;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 8px;
   background: rgba(255,255,255,0.1);
   color: #fff;
-  border: 1px solid rgba(255,255,255,0.2);
+  font-family: 'Poppins', sans-serif;
 }
 #userInput::placeholder {
   color: #aaa;
 }
-button{background:var(--accent);color:#fff;cursor:pointer; padding: 0.6rem 1.2rem;}
-button:hover{opacity:.9;}
-footer{
-  background:rgba(0,0,0,0.9);
-  text-align:center;
-  padding:1rem;
-  font-size:.9rem;
-  margin-top:2rem;
-  color:#ccc;
+#userInput:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+.send-btn {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  margin-left: 5px;
+  transition: 0.3s;
+}
+.send-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+footer {
+  background: rgba(0,0,0,0.95);
+  text-align: center;
+  padding: 1rem;
+  margin-top: 2rem;
+  color: #ccc;
+  font-size: 0.9rem;
   border-top: 1px solid rgba(255,255,255,0.1);
 }
-.logout-btn {
-  background: #c0392b;
-}
-.logout-btn:hover {
-  background: #e74c3c;
+@media (max-width: 768px) {
+  .nav {
+    flex-direction: column;
+    gap: 10px;
+    padding: 15px;
+  }
+  .nav-links {
+    justify-content: center;
+  }
+  header h1 {
+    font-size: 1.8rem;
+  }
 }
 </style>
 </head>
@@ -228,114 +291,148 @@ footer{
 <div class="main-container">
   <section class="dashboard">
     <div class="cards">
-      <div class="card"><h2 id="projects">0</h2><p>Active Projects</p></div>
-      <div class="card"><h2 id="downloads">0</h2><p>Monthly Downloads</p></div>
-      <div class="card"><h2 id="staff">0</h2><p>Staff Online</p></div>
-      <div class="card"><h2 id="uptime">0%</h2><p>System Uptime</p></div>
+      <div class="card">
+        <h2 id="projects">0</h2>
+        <p>Active Projects</p>
+      </div>
+      <div class="card">
+        <h2 id="downloads">0</h2>
+        <p>Monthly Downloads</p>
+      </div>
+      <div class="card">
+        <h2 id="staff">0</h2>
+        <p>Staff Online</p>
+      </div>
+      <div class="card">
+        <h2 id="uptime">0%</h2>
+        <p>System Uptime</p>
+      </div>
     </div>
-    <canvas id="chart" height="180"></canvas>
+    <canvas id="chart" height="200"></canvas>
   </section>
 
   <section class="cephasAI">
-    <h2 style="color:#0b7a59;">🤖 CephasAI Assistant</h2>
-    <p style="color:#ccc;">Ask about project stats, team performance, or reports.</p>
+    <h2 style="color: #0b7a59; margin-bottom: 15px;">🤖 CephasAI Assistant</h2>
+    <p style="color: #ccc; margin-bottom: 15px;">Ask about project stats, team performance, or reports.</p>
     <div id="chatBox">
-      <p style="color:#0b7a59;"><strong>CephasAI:</strong> Welcome, Admin! I'm here with real-time project data.</p>
+      <p style="color: #0b7a59;"><strong>CephasAI:</strong> Welcome, Admin! I'm here with real-time project data.</p>
     </div>
     <div style="display: flex; gap: 5px;">
       <input id="userInput" type="text" placeholder="Type your message...">
-      <button onclick="sendMessage()">Send</button>
+      <button class="send-btn" onclick="sendMessage()">Send</button>
     </div>
   </section>
 </div>
 
 <footer>Copyright © 2025 Cephas GM | Enterprise Portal</footer>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-const mockData = {
-  projects: 4,
-  downloads: 156,
-  staff: 8,
-  uptime: 99.8,
-  progress: [85, 92, 78, 100]
-};
+  // Mock data
+  const mockData = {
+    projects: 4,
+    downloads: 156,
+    staff: 8,
+    uptime: 99.8,
+    progress: [85, 92, 78, 100]
+  };
 
-document.getElementById('projects').textContent = mockData.projects;
-document.getElementById('downloads').textContent = mockData.downloads;
-document.getElementById('staff').textContent = mockData.staff;
-document.getElementById('uptime').textContent = mockData.uptime + '%';
+  document.getElementById('projects').textContent = mockData.projects;
+  document.getElementById('downloads').textContent = mockData.downloads;
+  document.getElementById('staff').textContent = mockData.staff;
+  document.getElementById('uptime').textContent = mockData.uptime + '%';
 
-new Chart(document.getElementById('chart'), {
-  type: 'bar',
-  data: {
-    labels: ['CephasGM-ERP', 'Health-Safety-PWA', 'Location Tracker', 'Client Portal'],
-    datasets: [{
-      label: '% Completion',
-      data: mockData.progress,
-      backgroundColor: 'rgba(11,122,89,0.7)',
-      borderColor: '#0b7a59',
-      borderWidth: 1
-    }]
-  },
-  options: {
-    scales: { 
-      y: { 
-        beginAtZero: true, 
-        max: 100,
-        grid: { color: 'rgba(255,255,255,0.1)' },
-        ticks: { color: '#fff' }
-      },
-      x: { 
-        grid: { display: false },
-        ticks: { color: '#fff' }
-      }
+  // Initialize chart
+  const ctx = document.getElementById('chart').getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['CephasGM-ERP', 'Health-Safety-PWA', 'Location Tracker', 'Client Portal'],
+      datasets: [{
+        label: 'Completion %',
+        data: mockData.progress,
+        backgroundColor: 'rgba(11,122,89,0.7)',
+        borderColor: '#0b7a59',
+        borderWidth: 1
+      }]
     },
-    plugins: { 
-      legend: { labels: { color: '#fff' } } 
+    options: {
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true,
+          max: 100,
+          grid: { color: 'rgba(255,255,255,0.1)' },
+          ticks: { color: '#fff' }
+        },
+        x: {
+          grid: { display: false },
+          ticks: { color: '#fff' }
+        }
+      },
+      plugins: {
+        legend: {
+          labels: { color: '#fff' }
+        }
+      }
     }
-  }
-});
-
-function toggleTheme(){ document.body.classList.toggle('dark'); }
-
-function scrollToChat(){ document.querySelector('.cephasAI').scrollIntoView({behavior:'smooth'}); }
-
-function sendMessage(){
-  const input = document.getElementById('userInput');
-  const chatBox = document.getElementById('chatBox');
-  const userMsg = input.value.trim();
-  if(!userMsg) return;
-
-  chatBox.innerHTML += `<p><strong>You:</strong> ${userMsg}</p>`;
-  input.value = '';
-  chatBox.scrollTop = chatBox.scrollHeight;
-
-  setTimeout(() => {
-    const lowerMsg = userMsg.toLowerCase();
-    let reply = "I can provide updates on all active projects.";
-
-    if (lowerMsg.includes('erp')) reply = "CephasGM-ERP is at 85% completion. Financial and HR modules are on track.";
-    else if (lowerMsg.includes('safety') || lowerMsg.includes('pwa')) reply = "Health-Safety-PWA is 92% complete. Incident tracking is live with 420+ incidents logged.";
-    else if (lowerMsg.includes('location') || lowerMsg.includes('tracker')) reply = "Smart Location Tracker is 78% complete. Currently monitoring 252 assets.";
-    else if (lowerMsg.includes('download')) reply = `Monthly downloads are at ${mockData.downloads}.`;
-    else if (lowerMsg.includes('uptime')) reply = `System uptime is ${mockData.uptime}% across all services.`;
-    
-    chatBox.innerHTML += `<p style='color:#0b7a59;'><strong>CephasAI:</strong> ${reply}</p>`;
-    chatBox.scrollTop = chatBox.scrollHeight;
-  }, 800);
-}
-
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('service-worker.js')
-      .then(reg => console.log('✅ Service Worker registered:', reg.scope))
-      .catch(err => console.error('❌ Service Worker registration failed:', err));
   });
-}
+
+  // Theme toggle
+  function toggleTheme() {
+    document.body.classList.toggle('dark');
+  }
+
+  // Scroll to chat
+  function scrollToChat() {
+    document.querySelector('.cephasAI').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // Send message
+  function sendMessage() {
+    const input = document.getElementById('userInput');
+    const chatBox = document.getElementById('chatBox');
+    const userMsg = input.value.trim();
+    
+    if (!userMsg) return;
+
+    chatBox.innerHTML += `<p><strong>You:</strong> ${userMsg}</p>`;
+    input.value = '';
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    setTimeout(() => {
+      const lowerMsg = userMsg.toLowerCase();
+      let reply = "I can provide updates on all active projects.";
+
+      if (lowerMsg.includes('erp')) {
+        reply = "CephasGM-ERP is at 85% completion. Financial and HR modules are on track for Q3 release.";
+      } else if (lowerMsg.includes('safety') || lowerMsg.includes('pwa')) {
+        reply = "Health-Safety-PWA is 92% complete. Incident tracking is live with 420+ incidents logged.";
+      } else if (lowerMsg.includes('location') || lowerMsg.includes('tracker')) {
+        reply = "Smart Location Tracker is 78% complete. Currently monitoring 252 assets across 3 sites.";
+      } else if (lowerMsg.includes('download')) {
+        reply = `Monthly downloads are at ${mockData.downloads}. Key reports are in Downloads section.`;
+      } else if (lowerMsg.includes('uptime')) {
+        reply = `System uptime is ${mockData.uptime}% across all services. All systems operational.`;
+      } else if (lowerMsg.includes('staff')) {
+        reply = `${mockData.staff} staff members are currently online.`;
+      } else if (lowerMsg.includes('hello') || lowerMsg.includes('hi')) {
+        reply = "Hello Admin! How can I assist with project management today?";
+      }
+
+      chatBox.innerHTML += `<p style="color: #0b7a59;"><strong>CephasAI:</strong> ${reply}</p>`;
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }, 800);
+  }
+
+  // Service Worker
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(reg => console.log('✅ Service Worker registered:', reg.scope))
+        .catch(err => console.error('❌ Service Worker registration failed:', err));
+    });
+  }
 </script>
 
 </body>
 </html>
-
-
