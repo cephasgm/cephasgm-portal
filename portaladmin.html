@@ -10,28 +10,36 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="theme-color" content="#0b7a59">
 
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:#0b0c10;
-  --card-bg:rgba(255,255,255,0.08);
-  --text:#fff;
-  --accent:#0b7a59;
+  --bg: #0b0c10;
+  --card-bg: rgba(255,255,255,0.08);
+  --text: #fff;
+  --accent: #0b7a59;
 }
 body.dark {
-  --bg:#f4f4f4;
-  --card-bg:#fff;
-  --text:#111;
+  --bg: #f4f4f4;
+  --card-bg: #fff;
+  --text: #111;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 body{
   font-family:'Poppins',sans-serif;
-  background:var(--bg) url('https://scx2.b-cdn.net/gfx/news/hires/2019/2-nature.jpg') center/cover fixed no-repeat;
+  background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url('https://scx2.b-cdn.net/gfx/news/hires/2019/2-nature.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
   color:var(--text);
   transition:background .4s,color .4s;
+  min-height: 100vh;
 }
 .nav{
-  background:rgba(0,0,0,0.7);
+  background:rgba(0,0,0,0.9);
   display:flex;
   justify-content:space-between;
   align-items:center;
@@ -39,8 +47,9 @@ body{
   position:sticky;
   top:0;
   z-index:100;
+  border-bottom: 2px solid var(--accent);
 }
-.brand{font-weight:700;}
+.brand{font-weight:700; color: #fff;}
 .nav-links{display:flex;gap:16px;flex-wrap:wrap;}
 .nav a{
   color:#fff;
@@ -64,23 +73,27 @@ header{
   text-align:center;
   background:rgba(0,0,0,0.6);
   padding:2rem 1rem;
+  margin-bottom: 1rem;
 }
-header h1{font-size:2.2rem;margin-bottom:.5rem;}
+header h1{font-size:2.2rem;margin-bottom:.5rem; color: var(--accent);}
 header p{color:#ccc;font-size:.95rem;}
 .main-container{
   display:flex;
   flex-wrap:wrap;
   gap:1rem;
   padding:1rem 5%;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 .dashboard, .cephasAI{
   flex:1;
   min-width:320px;
-  background:rgba(0,0,0,0.5);
+  background:rgba(0,0,0,0.6);
   border-radius:12px;
   padding:1.5rem;
   color:#fff;
   backdrop-filter: blur(4px);
+  border: 1px solid rgba(255,255,255,0.1);
 }
 .cards{
   display:grid;
@@ -95,8 +108,9 @@ header p{color:#ccc;font-size:.95rem;}
   text-align:center;
   box-shadow:0 6px 15px rgba(0,0,0,0.4);
   transition:.3s;
+  border: 1px solid rgba(255,255,255,0.05);
 }
-.card:hover{transform:translateY(-5px);}
+.card:hover{transform:translateY(-5px); background: rgba(255,255,255,0.12);}
 .card h2{color:var(--accent);font-size:2.2rem;}
 .card p{margin-top:.4rem;color:#ccc;}
 #chatBox{
@@ -112,16 +126,33 @@ input,button{
   padding:.6rem;
   border:none;
   border-radius:6px;
+  font-family: 'Poppins', sans-serif;
 }
-button{background:var(--accent);color:#fff;cursor:pointer;}
+#userInput {
+  width: 70%;
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+#userInput::placeholder {
+  color: #aaa;
+}
+button{background:var(--accent);color:#fff;cursor:pointer; padding: 0.6rem 1.2rem;}
 button:hover{opacity:.9;}
 footer{
-  background:rgba(0,0,0,0.8);
+  background:rgba(0,0,0,0.9);
   text-align:center;
   padding:1rem;
   font-size:.9rem;
   margin-top:2rem;
   color:#ccc;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+.logout-btn {
+  background: #c0392b;
+}
+.logout-btn:hover {
+  background: #e74c3c;
 }
 </style>
 </head>
@@ -135,20 +166,52 @@ footer{
     <a href="portalaccounting.html">Accounting</a>
     <a href="portaladmin.html" class="active">Admin</a>
     <a href="#" onclick="scrollToChat()">🤖 CephasAI</a>
-    <a href="portallogin.html" onclick="logout()">Logout</a>
+    <a href="#" onclick="logout()" class="logout-btn">Logout</a>
     <a href="https://cephasgm.github.io/cephasgm-site/" target="_blank">🌍 Main Site</a>
   </div>
   <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
 </nav>
 
 <script>
-  if (!localStorage.getItem('cephasUser') || localStorage.getItem('cephasRole') !== 'staff') {
-    window.location.href = 'portallogin.html';
-  }
-  function logout() {
-    localStorage.removeItem('cephasUser');
-    localStorage.removeItem('cephasRole');
-  }
+  // Initialize Firebase
+  const firebaseConfig = {
+    apiKey: "AIzaSyB7TImJ72bH2aQ5LgQxb3XK7hD4kY9qWzM",
+    authDomain: "cephasgm-portal.firebaseapp.com",
+    projectId: "cephasgm-portal",
+    storageBucket: "cephasgm-portal.firebasestorage.app",
+    messagingSenderId: "123456789012",
+    appId: "1:123456789012:web:abc123def456ghi789jkl"
+  };
+
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+
+  // Check authentication
+  auth.onAuthStateChanged((user) => {
+    if (!user) {
+      window.location.href = 'portallogin.html';
+    } else {
+      // Check if user is admin (based on email)
+      if (!user.email.includes('admin')) {
+        alert('Access denied. Admin privileges required.');
+        window.location.href = 'portaldashboard.html';
+      } else {
+        // Display user info
+        console.log('Logged in as:', user.email);
+      }
+    }
+  });
+
+  // Logout function
+  window.logout = function() {
+    auth.signOut().then(() => {
+      localStorage.clear();
+      window.location.href = 'portallogin.html';
+    }).catch((error) => {
+      console.error('Logout error:', error);
+    });
+  };
 </script>
 
 <header>
@@ -173,8 +236,8 @@ footer{
     <div id="chatBox">
       <p style="color:#0b7a59;"><strong>CephasAI:</strong> Welcome, Admin! I'm here with real-time project data.</p>
     </div>
-    <div>
-      <input id="userInput" type="text" placeholder="Type your message..." style="width:70%;">
+    <div style="display: flex; gap: 5px;">
+      <input id="userInput" type="text" placeholder="Type your message...">
       <button onclick="sendMessage()">Send</button>
     </div>
   </section>
@@ -200,18 +263,33 @@ document.getElementById('uptime').textContent = mockData.uptime + '%';
 
 // Chart with actual project names
 new Chart(document.getElementById('chart'), {
-  type:'bar',
+  type: 'bar',
   data: {
     labels: ['CephasGM-ERP', 'Health-Safety-PWA', 'Location Tracker', 'Client Portal'],
     datasets: [{
       label: '% Completion',
       data: mockData.progress,
-      backgroundColor: 'rgba(11,122,89,0.7)'
+      backgroundColor: 'rgba(11,122,89,0.7)',
+      borderColor: '#0b7a59',
+      borderWidth: 1
     }]
   },
   options: {
-    scales: { y: { beginAtZero: true, max: 100 } },
-    plugins: { legend: { labels: { color: '#fff' } } }
+    scales: { 
+      y: { 
+        beginAtZero: true, 
+        max: 100,
+        grid: { color: 'rgba(255,255,255,0.1)' },
+        ticks: { color: '#fff' }
+      },
+      x: { 
+        grid: { display: false },
+        ticks: { color: '#fff' }
+      }
+    },
+    plugins: { 
+      legend: { labels: { color: '#fff' } } 
+    }
   }
 });
 
@@ -221,7 +299,7 @@ function toggleTheme(){ document.body.classList.toggle('dark'); }
 function scrollToChat(){ document.querySelector('.cephasAI').scrollIntoView({behavior:'smooth'}); }
 
 // Enhanced AI with project-specific knowledge
-async function sendMessage(){
+function sendMessage(){
   const input = document.getElementById('userInput');
   const chatBox = document.getElementById('chatBox');
   const userMsg = input.value.trim();
@@ -235,24 +313,25 @@ async function sendMessage(){
     const lowerMsg = userMsg.toLowerCase();
     let reply = "I can provide updates on all active projects.";
 
-    if (lowerMsg.includes('erp')) reply = "CephasGM-ERP is at 85% completion. Financial and HR modules are on track.";
-    else if (lowerMsg.includes('safety') || lowerMsg.includes('pwa')) reply = "Health-Safety-PWA is 92% complete. Incident tracking is live with 420+ incidents logged.";
-    else if (lowerMsg.includes('location') || lowerMsg.includes('tracker')) reply = "Smart Location Tracker is 78% complete. Currently monitoring 252 assets.";
-    else if (lowerMsg.includes('download')) reply = `Monthly downloads are at ${mockData.downloads}. Key reports are in Downloads section.`;
-    else if (lowerMsg.includes('uptime')) reply = `System uptime is ${mockData.uptime}% across all services.`;
+    if (lowerMsg.includes('erp')) reply = "CephasGM-ERP is at 85% completion. Financial and HR modules are on track for Q3 release.";
+    else if (lowerMsg.includes('safety') || lowerMsg.includes('pwa')) reply = "Health-Safety-PWA is 92% complete. Incident tracking is live with 420+ incidents logged this quarter.";
+    else if (lowerMsg.includes('location') || lowerMsg.includes('tracker')) reply = "Smart Location Tracker is 78% complete. Currently monitoring 252 assets across 3 client sites.";
+    else if (lowerMsg.includes('download')) reply = `Monthly downloads are at ${mockData.downloads}. Key reports are in the Downloads section.`;
+    else if (lowerMsg.includes('uptime')) reply = `System uptime is ${mockData.uptime}% across all services. All systems operational.`;
     else if (lowerMsg.includes('staff')) reply = `${mockData.staff} staff members are currently online.`;
+    else if (lowerMsg.includes('hello') || lowerMsg.includes('hi')) reply = "Hello Admin! How can I assist with project management today?";
 
     chatBox.innerHTML += `<p style='color:#0b7a59;'><strong>CephasAI:</strong> ${reply}</p>`;
     chatBox.scrollTop = chatBox.scrollHeight;
   }, 800);
 }
 
-// PWA Service Worker Registration
+// Service Worker Registration
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('service-worker.js')
-      .then(reg => console.log('Service Worker registered:', reg.scope))
-      .catch(err => console.error('Service Worker registration failed:', err));
+      .then(reg => console.log('✅ Service Worker registered:', reg.scope))
+      .catch(err => console.error('❌ Service Worker registration failed:', err));
   });
 }
 </script>
