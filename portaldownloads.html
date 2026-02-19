@@ -16,68 +16,136 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box;}
-body{
-  font-family:'Poppins',sans-serif;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: 'Poppins', sans-serif;
   background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.9)), url('https://seeafricatoday.com/wp-content/uploads/2019/07/Namibrand-Nature-Reserve-Namibia-Africa-596398501-1.jpg');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
-  color:#fff;
-  min-height:100vh;
+  color: #fff;
+  min-height: 100vh;
 }
-.nav{
-  background:rgba(0,0,0,0.95);
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:15px 30px;
-  border-bottom:2px solid #0b7a59;
+.nav {
+  background: rgba(0,0,0,0.95);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 2px solid #0b7a59;
 }
-.nav-links{display:flex;gap:16px;flex-wrap:wrap;}
-.nav-links a{
-  color:#fff;
-  text-decoration:none;
-  padding:8px 16px;
-  border-radius:6px;
+.brand {
+  font-weight: 700;
+  color: #fff;
+  font-size: 1.2rem;
 }
-.nav-links a:hover,.nav-links a.active{background:rgba(255,255,255,0.15);}
-.logout-btn{background:#c0392b !important;}
-header{
-  text-align:center;
-  padding:40px 20px;
-  background:rgba(0,0,0,0.6);
+.nav-links {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: center;
 }
-h1{color:#0b7a59;font-size:2rem;margin-bottom:10px;}
-.downloads{
-  max-width:800px;
-  margin:40px auto;
-  padding:20px;
+.nav-links a {
+  color: #fff;
+  text-decoration: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  transition: 0.3s;
 }
-.file-item{
-  background:rgba(255,255,255,0.1);
-  padding:20px;
-  margin:10px 0;
-  border-radius:12px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  flex-wrap:wrap;
-  gap:15px;
+.nav-links a:hover,
+.nav-links a.active {
+  background: rgba(255,255,255,0.15);
 }
-.download-btn{
-  background:#0b7a59;
-  color:#fff;
-  border:none;
-  padding:10px 20px;
-  border-radius:6px;
-  cursor:pointer;
+.logout-btn {
+  background: #c0392b;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
 }
-footer{
-  background:rgba(0,0,0,0.95);
-  text-align:center;
-  padding:1.5rem;
-  margin-top:2rem;
+.logout-btn:hover {
+  background: #e74c3c;
+}
+.user-welcome {
+  color: #0b7a59;
+  font-weight: 500;
+  margin-right: 15px;
+}
+header {
+  text-align: center;
+  padding: 40px 20px;
+  background: rgba(0,0,0,0.6);
+  margin-bottom: 20px;
+}
+header h1 {
+  color: #0b7a59;
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+header p {
+  color: #ccc;
+}
+.downloads-container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+}
+.file-item {
+  background: rgba(255,255,255,0.1);
+  padding: 20px;
+  margin: 15px 0;
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.file-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.file-icon {
+  font-size: 2rem;
+  color: #0b7a59;
+}
+.file-details h3 {
+  font-size: 1.1rem;
+  margin-bottom: 5px;
+}
+.file-details small {
+  color: #aaa;
+}
+.download-btn {
+  background: #0b7a59;
+  color: #fff;
+  border: none;
+  padding: 10px 25px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.3s;
+}
+.download-btn:hover {
+  background: #099268;
+  transform: translateY(-2px);
+}
+footer {
+  background: rgba(0,0,0,0.95);
+  text-align: center;
+  padding: 1.5rem;
+  margin-top: 2rem;
+  color: #ccc;
+  border-top: 1px solid rgba(255,255,255,0.1);
 }
 </style>
 </head>
@@ -86,15 +154,18 @@ footer{
 <nav class="nav">
   <div class="brand">Cephas GM Downloads</div>
   <div class="nav-links">
+    <span class="user-welcome" id="welcomeMsg">Welcome!</span>
     <a href="portaldashboard.html">Dashboard</a>
     <a href="portaldownloads.html" class="active">Downloads</a>
     <a href="portaladmin.html">Admin</a>
     <a href="portalaccounting.html">Accounting</a>
     <a href="#" id="logoutBtn" class="logout-btn">Logout</a>
+    <a href="https://cephasgm.github.io/cephasgm-site/" target="_blank">🌍 Main Site</a>
   </div>
 </nav>
 
 <script>
+  // Firebase Configuration
   const firebaseConfig = {
     apiKey: "AIzaSyA2vWoAkdbke0D_x8N1W3JAzDVj4vcsZSE",
     authDomain: "cephasgm-portal.firebaseapp.com",
@@ -105,39 +176,100 @@ footer{
     measurementId: "G-KC2XDEJPRV"
   };
 
-  firebase.initializeApp(firebaseConfig);
+  // Initialize Firebase
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
   const auth = firebase.auth();
 
+  // Check authentication
   auth.onAuthStateChanged((user) => {
-    if (!user) window.location.href = 'index.html';
+    if (!user) {
+      window.location.href = 'index.html';
+    } else {
+      const displayName = user.email.split('@')[0];
+      document.getElementById('welcomeMsg').textContent = `Welcome, ${displayName}!`;
+    }
   });
 
+  // Logout
   document.getElementById('logoutBtn').addEventListener('click', (e) => {
     e.preventDefault();
-    auth.signOut().then(() => window.location.href = 'index.html');
+    auth.signOut().then(() => {
+      window.location.href = 'index.html';
+    }).catch((error) => {
+      console.error('Logout error:', error);
+    });
   });
 </script>
 
 <header>
   <h1>📁 Downloads Center</h1>
-  <p>Access project documents and reports</p>
+  <p>Access project documents, technical specs, and reports</p>
 </header>
 
-<div class="downloads">
+<div class="downloads-container">
   <div class="file-item">
-    <span>📘 CephasGM-ERP Architecture</span>
-    <button class="download-btn" onclick="alert('Download started')">Download</button>
+    <div class="file-info">
+      <span class="file-icon">📘</span>
+      <div class="file-details">
+        <h3>CephasGM-ERP System Architecture</h3>
+        <small>Version 2.1 | Updated: Mar 15, 2025 | 2.4 MB</small>
+      </div>
+    </div>
+    <button class="download-btn" onclick="downloadFile('ERP_Architecture.pdf')">Download</button>
   </div>
+
   <div class="file-item">
-    <span>📗 Health-Safety-PWA Report Q1</span>
-    <button class="download-btn" onclick="alert('Download started')">Download</button>
+    <div class="file-info">
+      <span class="file-icon">📗</span>
+      <div class="file-details">
+        <h3>Health-Safety-PWA Incident Report Q1</h3>
+        <small>Updated: Mar 18, 2025 | 1.8 MB</small>
+      </div>
+    </div>
+    <button class="download-btn" onclick="downloadFile('Safety_Report_Q1.pdf')">Download</button>
   </div>
+
   <div class="file-item">
-    <span>📙 Location Tracker API Docs</span>
-    <button class="download-btn" onclick="alert('Download started')">Download</button>
+    <div class="file-info">
+      <span class="file-icon">📙</span>
+      <div class="file-details">
+        <h3>Smart Location Tracker API Documentation</h3>
+        <small>Updated: Mar 14, 2025 | 3.2 MB</small>
+      </div>
+    </div>
+    <button class="download-btn" onclick="downloadFile('Tracker_API.pdf')">Download</button>
+  </div>
+
+  <div class="file-item">
+    <div class="file-info">
+      <span class="file-icon">📕</span>
+      <div class="file-details">
+        <h3>Annual Corporate Strategy 2025</h3>
+        <small>Updated: Jan 10, 2025 | 4.1 MB</small>
+      </div>
+    </div>
+    <button class="download-btn" onclick="downloadFile('Strategy_2025.pdf')">Download</button>
   </div>
 </div>
 
-<footer>Copyright © 2025 Cephas GM</footer>
+<footer>Copyright © 2025 Cephas GM | Enterprise Portal</footer>
+
+<script>
+  function downloadFile(filename) {
+    alert(`📥 Download started: ${filename}\n\nIn a production environment, this would download the actual file.`);
+  }
+
+  // Service Worker
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(reg => console.log('✅ Service Worker registered:', reg.scope))
+        .catch(err => console.error('❌ Service Worker registration failed:', err));
+    });
+  }
+</script>
+
 </body>
 </html>
