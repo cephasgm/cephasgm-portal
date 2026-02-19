@@ -1,4 +1,4 @@
-const CACHE_NAME = "cephasgm-cache-v2";
+const CACHE_NAME = "cephasgm-portal-v3"; // Incremented version
 const ASSETS = [
   "/cephasgm-portal/",
   "/cephasgm-portal/index.html",
@@ -7,10 +7,10 @@ const ASSETS = [
   "/cephasgm-portal/portaladmin.html",
   "/cephasgm-portal/portaldownloads.html",
   "/cephasgm-portal/portalaccounting.html",
+  "/cephasgm-portal/portalassistant.html",
   "/cephasgm-portal/manifest.json",
-  "/cephasgm-portal/images/icon-192.png",
-  "/cephasgm-portal/images/icon-512.png",
-  "/cephasgm-portal/images/bg-mountain.jpg"
+  "/cephasgm-portal/icon-192.png",
+  "/cephasgm-portal/icon-512.png"
 ];
 
 self.addEventListener("install", e => {
