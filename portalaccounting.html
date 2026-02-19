@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Portal Accounting — Cephas GM</title>
 
-  <!-- Manifest & PWA setup -->
+  <!-- PWA Manifest -->
   <link rel="manifest" href="manifest.json" />
-  <link rel="apple-touch-icon" href="icon-192.png">
-  <meta name="theme-color" content="#0b7a59">
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <meta name="theme-color" content="#0b7a59" />
 
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -21,6 +21,11 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
     :root {
       --accent: #0b7a59;
       --bg: #0e0f10;
@@ -28,17 +33,18 @@
     }
     body {
       font-family: "Poppins", sans-serif;
-      background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url("https://img.freepik.com/free-photo/nice-business-desk-black-background_24972-1177.jpg?semt=ais_hybrid&w=740&q=80");
+      background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.9)), url("https://img.freepik.com/free-photo/nice-business-desk-black-background_24972-1177.jpg");
       background-size: cover;
       background-position: center;
       background-attachment: fixed;
       color: #fff;
       margin: 0;
-      padding-bottom: 80px;
       min-height: 100vh;
+      padding-bottom: 70px;
+      position: relative;
     }
     nav {
-      background: rgba(0,0,0,0.9);
+      background: rgba(0,0,0,0.95);
       padding: 15px 30px;
       display: flex;
       justify-content: space-between;
@@ -48,94 +54,122 @@
       z-index: 100;
       border-bottom: 2px solid var(--accent);
     }
-    .brand { font-weight: 700; color: #fff; }
-    .nav-links { display: flex; gap: 16px; flex-wrap: wrap; }
-    nav a {
+    .brand { 
+      font-weight: 700; 
+      color: #fff; 
+      font-size: 1.2rem;
+    }
+    .nav-links { 
+      display: flex; 
+      gap: 16px; 
+      flex-wrap: wrap; 
+      align-items: center;
+    }
+    .nav-links a {
       color: #fff;
       text-decoration: none;
-      padding: 8px 12px;
+      padding: 8px 16px;
       border-radius: 6px;
       transition: 0.3s;
+      font-size: 0.95rem;
     }
-    nav a:hover, nav a.active { background: rgba(255,255,255,0.15); }
+    .nav-links a:hover,
+    .nav-links a.active { 
+      background: rgba(255,255,255,0.15); 
+    }
     .logout-btn {
-      background: #c0392b;
-      border-radius: 6px;
+      background: #c0392b !important;
     }
     .logout-btn:hover {
-      background: #e74c3c;
+      background: #e74c3c !important;
     }
     h1 {
       color: var(--accent);
       text-align: center;
-      margin: 25px 0 5px;
+      margin: 30px 0 10px;
+      font-size: 2.2rem;
     }
     .subtitle {
       text-align: center;
       color: #ccc;
-      margin-bottom: 20px;
+      margin-bottom: 30px;
+      font-size: 1rem;
     }
     section {
       background: var(--panel);
-      padding: 20px;
-      margin: 15px auto;
-      border-radius: 12px;
+      padding: 25px;
+      margin: 20px auto;
+      border-radius: 16px;
       width: 95%;
       max-width: 1200px;
-      backdrop-filter: blur(4px);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
     }
     label {
       display: block;
-      margin: 6px 0;
+      margin: 10px 0 5px;
       color: #ccc;
+      font-weight: 500;
     }
-    input,
-    select {
-      padding: 10px;
-      border: none;
+    input, select {
+      padding: 12px 15px;
+      border: 1px solid rgba(255,255,255,0.2);
       border-radius: 8px;
-      margin-right: 8px;
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      font-family: 'Poppins', sans-serif;
       width: 100%;
       max-width: 300px;
+      margin-bottom: 10px;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--accent);
+      background: rgba(255,255,255,0.15);
     }
     button {
       background: var(--accent);
       color: #fff;
       border: none;
-      padding: 10px 16px;
+      padding: 12px 24px;
       border-radius: 8px;
       cursor: pointer;
       font-weight: 500;
+      font-family: 'Poppins', sans-serif;
+      transition: all 0.3s;
       margin: 5px;
     }
     button:hover {
       opacity: 0.9;
       transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(11,122,89,0.3);
     }
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 15px;
+      margin-top: 20px;
       color: #fff;
     }
-    th,
-    td {
-      padding: 8px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    th {
+      padding: 12px;
+      border-bottom: 2px solid var(--accent);
+      color: var(--accent);
+      font-weight: 600;
       text-align: left;
     }
-    th {
-      color: var(--accent);
+    td {
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
     }
     .exports {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
       justify-content: center;
-      margin-top: 15px;
+      margin: 20px 0;
     }
     footer {
-      background: rgba(0,0,0,0.9);
+      background: rgba(0,0,0,0.95);
       text-align: center;
       padding: 1rem;
       position: fixed;
@@ -148,6 +182,19 @@
     #installBtn {
       display: none;
       background: #099268;
+    }
+    @media (max-width: 768px) {
+      nav {
+        flex-direction: column;
+        gap: 10px;
+        padding: 15px;
+      }
+      .nav-links {
+        justify-content: center;
+      }
+      h1 {
+        font-size: 1.8rem;
+      }
     }
   </style>
 </head>
@@ -210,25 +257,33 @@
 
   <section>
     <form id="entryForm">
-      <label>Date <input type="date" id="date" required /></label>
-      <label>Account <input type="text" id="account" placeholder="e.g., ERP-Dev, Safety-PWA" required /></label>
-      <label>Type
-        <select id="type">
-          <option value="Debit">Debit</option>
-          <option value="Credit">Credit</option>
-        </select>
-      </label>
-      <label>Category
-        <select id="category">
-          <option>Asset</option>
-          <option>Liability</option>
-          <option>Equity</option>
-          <option>Revenue</option>
-          <option>Expense</option>
-        </select>
-      </label>
-      <label>Amount (TZS) <input type="number" id="amount" step="0.01" required /></label>
-      <label>VAT % <input type="number" id="vat" value="0" step="0.1" /></label>
+      <label>Date</label>
+      <input type="date" id="date" required />
+      
+      <label>Account</label>
+      <input type="text" id="account" placeholder="e.g., ERP-Dev, Safety-PWA" required />
+      
+      <label>Type</label>
+      <select id="type">
+        <option value="Debit">Debit</option>
+        <option value="Credit">Credit</option>
+      </select>
+      
+      <label>Category</label>
+      <select id="category">
+        <option>Asset</option>
+        <option>Liability</option>
+        <option>Equity</option>
+        <option>Revenue</option>
+        <option>Expense</option>
+      </select>
+      
+      <label>Amount (TZS)</label>
+      <input type="number" id="amount" step="0.01" required />
+      
+      <label>VAT %</label>
+      <input type="number" id="vat" value="0" step="0.1" />
+      
       <button type="submit">Add Entry</button>
     </form>
 
@@ -263,12 +318,12 @@
     <div id="income">No data</div>
   </section>
 
-  <section class="exports">
+  <div class="exports">
     <button id="excel">⬇️ Export Excel</button>
     <button id="pdf">⬇️ Export PDF</button>
     <button id="clear" style="background:#444">🗑 Clear All Data</button>
     <button id="installBtn">📲 Install Accounting App</button>
-  </section>
+  </div>
 
   <footer>Copyright © 2025 Cephas GM | Project Cost Tracker</footer>
 
@@ -294,14 +349,22 @@
     });
 
     // Accounting Logic
-    const txns = JSON.parse(localStorage.getItem("portal_txns") || "[]");
+    let txns = JSON.parse(localStorage.getItem("portal_txns") || "[]");
     const jbody = document.querySelector("#journal tbody");
 
     function render() {
       jbody.innerHTML = "";
       txns.forEach((t) => {
         const r = document.createElement("tr");
-        r.innerHTML = `<td>${t.date}</td><td>${t.account}</td><td>${t.type}</td><td>${t.category}</td><td>${parseFloat(t.amount).toFixed(2)}</td><td>${parseFloat(t.vat).toFixed(2)}</td><td>${parseFloat(t.net).toFixed(2)}</td>`;
+        r.innerHTML = `
+          <td>${t.date}</td>
+          <td>${t.account}</td>
+          <td>${t.type}</td>
+          <td>${t.category}</td>
+          <td>${parseFloat(t.amount).toFixed(2)}</td>
+          <td>${parseFloat(t.vat).toFixed(2)}</td>
+          <td>${parseFloat(t.net).toFixed(2)}</td>
+        `;
         jbody.appendChild(r);
       });
       renderLedger();
@@ -325,8 +388,10 @@
       const amount = parseFloat(amountField.value) || 0;
       const vat = parseFloat(vatField.value) || 0;
       const net = amount + (amount * vat) / 100;
+      
       txns.push({ date, account, type, category, amount, vat, net });
       localStorage.setItem("portal_txns", JSON.stringify(txns));
+      
       render();
       e.target.reset();
       dateField.value = new Date().toISOString().slice(0, 10);
@@ -340,6 +405,7 @@
         if (!ledger[t.account]) ledger[t.account] = { Debit: 0, Credit: 0 };
         ledger[t.account][t.type] += t.amount;
       });
+      
       let html = "<table><tr><th>Account</th><th>Debit</th><th>Credit</th></tr>";
       for (const [acc, v] of Object.entries(ledger)) {
         html += `<tr><td>${acc}</td><td>${v.Debit.toFixed(2)}</td><td>${v.Credit.toFixed(2)}</td></tr>`;
@@ -377,7 +443,9 @@
     document.getElementById("pdf").onclick = () => {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
-      doc.text("Accounting Summary - Cephas GM Projects", 10, 10);
+      doc.setFontSize(16);
+      doc.text("Accounting Summary - Cephas GM Projects", 14, 15);
+      doc.setFontSize(10);
       doc.autoTable({
         head: [["Date", "Account", "Type", "Category", "Amount", "VAT", "Net"]],
         body: txns.map((t) => [
@@ -389,6 +457,9 @@
           t.vat.toFixed(2),
           t.net.toFixed(2)
         ]),
+        startY: 25,
+        theme: 'striped',
+        headStyles: { fillColor: [11, 122, 89] }
       });
       doc.save("AccountingReport.pdf");
     };
@@ -396,7 +467,7 @@
     document.getElementById("clear").onclick = () => {
       if (confirm("Clear all accounting data?")) {
         localStorage.removeItem("portal_txns");
-        txns.length = 0;
+        txns = [];
         render();
       }
     };
