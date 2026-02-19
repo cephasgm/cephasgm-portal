@@ -67,10 +67,13 @@ body {
   background: rgba(255,255,255,0.15);
 }
 .logout-btn {
-  background: #c0392b !important;
+  background: #c0392b;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
 }
 .logout-btn:hover {
-  background: #e74c3c !important;
+  background: #e74c3c;
 }
 .user-welcome {
   color: #0b7a59;
@@ -99,8 +102,8 @@ header p {
   max-width: 1400px;
   margin: 0 auto;
 }
-.dashboard, .cephasAI {
-  flex: 1;
+.dashboard {
+  flex: 2;
   min-width: 320px;
   background: rgba(0,0,0,0.7);
   border-radius: 16px;
@@ -127,31 +130,6 @@ header p {
 .card p {
   color: #ccc;
 }
-#chatBox {
-  background: rgba(255,255,255,0.1);
-  border-radius: 12px;
-  padding: 15px;
-  height: 300px;
-  overflow-y: auto;
-  margin-bottom: 15px;
-}
-#userInput {
-  width: 70%;
-  padding: 12px;
-  border: 1px solid rgba(255,255,255,0.2);
-  border-radius: 30px;
-  background: rgba(255,255,255,0.1);
-  color: #fff;
-}
-.send-btn {
-  background: #0b7a59;
-  color: #fff;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 30px;
-  cursor: pointer;
-  margin-left: 5px;
-}
 footer {
   background: rgba(0,0,0,0.95);
   text-align: center;
@@ -172,7 +150,6 @@ footer {
     <a href="portaldownloads.html">Downloads</a>
     <a href="portalaccounting.html">Accounting</a>
     <a href="portaladmin.html" class="active">Admin</a>
-    <a href="#" onclick="scrollToChat()">🤖 CephasAI</a>
     <a href="#" id="logoutBtn" class="logout-btn">Logout</a>
     <a href="https://cephasgm.github.io/cephasgm-site/" target="_blank">🌍 Main Site</a>
   </div>
@@ -191,7 +168,9 @@ footer {
   };
 
   // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
   const auth = firebase.auth();
 
   // Check authentication
@@ -200,6 +179,11 @@ footer {
       window.location.href = 'index.html';
     } else {
       document.getElementById('welcomeMsg').textContent = `Welcome, ${user.email}!`;
+      // Check if user is admin
+      if (!user.email.includes('admin')) {
+        alert('Access denied. Admin privileges required.');
+        window.location.href = 'portaldashboard.html';
+      }
     }
   });
 
@@ -208,6 +192,8 @@ footer {
     e.preventDefault();
     auth.signOut().then(() => {
       window.location.href = 'index.html';
+    }).catch((error) => {
+      console.error('Logout error:', error);
     });
   });
 </script>
@@ -220,58 +206,60 @@ footer {
 <div class="main-container">
   <section class="dashboard">
     <div class="cards">
-      <div class="card"><h2 id="projects">4</h2><p>Projects</p></div>
-      <div class="card"><h2 id="downloads">156</h2><p>Downloads</p></div>
-      <div class="card"><h2 id="staff">8</h2><p>Staff</p></div>
-      <div class="card"><h2 id="uptime">99.8%</h2><p>Uptime</p></div>
+      <div class="card"><h2>4</h2><p>Active Projects</p></div>
+      <div class="card"><h2>156</h2><p>Downloads</p></div>
+      <div class="card"><h2>8</h2><p>Staff Online</p></div>
+      <div class="card"><h2>99.8%</h2><p>Uptime</p></div>
     </div>
-    <canvas id="chart" height="200"></canvas>
-  </section>
-
-  <section class="cephasAI">
-    <h2 style="color: #0b7a59;">🤖 CephasAI Assistant</h2>
-    <div id="chatBox">
-      <p>Welcome, Admin! Ask me about project stats.</p>
-    </div>
-    <div>
-      <input id="userInput" placeholder="Ask about projects...">
-      <button class="send-btn" onclick="sendMessage()">Send</button>
-    </div>
+    <canvas id="projectChart" height="200"></canvas>
   </section>
 </div>
 
 <footer>Copyright © 2025 Cephas GM | Enterprise Portal</footer>
 
 <script>
-  // Chart
-  new Chart(document.getElementById('chart'), {
+  // Initialize chart
+  const ctx = document.getElementById('projectChart').getContext('2d');
+  new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: ['ERP', 'Safety', 'Tracker', 'Portal'],
+      labels: ['ERP', 'Safety PWA', 'Tracker', 'Portal'],
       datasets: [{
         label: 'Completion %',
         data: [85, 92, 78, 100],
-        backgroundColor: '#0b7a59'
+        backgroundColor: '#0b7a59',
+        borderColor: '#fff',
+        borderWidth: 1
       }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true,
+          max: 100,
+          grid: { color: 'rgba(255,255,255,0.1)' },
+          ticks: { color: '#fff' }
+        },
+        x: {
+          ticks: { color: '#fff' }
+        }
+      },
+      plugins: {
+        legend: {
+          labels: { color: '#fff' }
+        }
+      }
     }
   });
 
-  function sendMessage() {
-    const input = document.getElementById('userInput');
-    const chatBox = document.getElementById('chatBox');
-    const msg = input.value.trim();
-    if (!msg) return;
-    
-    chatBox.innerHTML += `<p><strong>You:</strong> ${msg}</p>`;
-    input.value = '';
-    
-    setTimeout(() => {
-      chatBox.innerHTML += `<p style="color: #0b7a59;"><strong>CephasAI:</strong> All projects are on track.</p>`;
-    }, 800);
-  }
-
-  function scrollToChat() {
-    document.querySelector('.cephasAI').scrollIntoView({ behavior: 'smooth' });
+  // Service Worker
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(reg => console.log('✅ Service Worker registered:', reg.scope))
+        .catch(err => console.error('❌ Service Worker registration failed:', err));
+    });
   }
 </script>
 
