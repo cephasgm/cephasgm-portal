@@ -1,13 +1,13 @@
 {
   "name": "Cephas GM Enterprise Portal",
   "short_name": "CephasGM",
-  "description": "Secure client and staff portal for managing Cephas GM projects: ERP, Safety PWA, Location Tracker, and more.",
-  "start_url": "/cephasgm-portal/index.html",
+  "description": "Secure client and staff portal for managing Cephas GM projects",
+  "start_url": "index.html",
   "display": "standalone",
   "background_color": "#0b0c10",
   "theme_color": "#0b7a59",
   "orientation": "portrait",
-  "scope": "/cephasgm-portal/",
+  "scope": ".",
   "icons": [
     {
       "src": "icon-192.png",
