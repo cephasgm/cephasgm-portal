@@ -7,7 +7,7 @@
 
   <!-- ✅ PWA Manifest -->
   <link rel="manifest" href="manifest.json">
-  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icon-192.png">
   <meta name="theme-color" content="#0b7a59">
 
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
@@ -15,7 +15,7 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Poppins', sans-serif;
-      color: #fff;        
+      color: #fff;
       background:url('https://kxn3vdktxmez55pl.public.blob.vercel-storage.com/Africa-Kenya-Mount-Kilimanjaro-at-dawn-DanitaDelimont_RM_AF21_JAR0638_1323x637.png') center/cover fixed no-repeat;
       display: flex;
       flex-direction: column;
@@ -33,6 +33,7 @@
     }
     .btn:hover { background: #099268; transform: translateY(-3px); }
     .btn.alt { background: #333; }
+    .btn.alt:hover { background: #444; }
     footer {
       background: rgba(0,0,0,0.85);
       text-align: center;
@@ -47,16 +48,15 @@
 <body>
 
   <h1>Cephas GM Secure Portal</h1>
-  <p>Welcome to the secure client and staff gateway.  
-     Access your personalized dashboard, downloads, and updates below.</p>
+  <p>Welcome to the dedicated gateway for clients and staff. Access real-time dashboards, project documents (ERP, Safety PWA, Location Tracker), and system updates.</p>
 
   <div class="buttons">
     <a href="portallogin.html" class="btn">🔐 Client Login / Signup</a>
     <a href="portallogin.html?staff=true" class="btn alt">👨‍💼 Staff Login</a>
-    <a href="https://cephasgm.github.io/cephasgm-site/" class="btn">🌍 Visit Main Site</a>
+    <a href="https://cephasgm.github.io/cephasgm-site/" class="btn alt">🌍 Visit Main Site</a>
   </div>
 
-  <footer>Copyright © 2025 😀 | </footer>
+  <footer>Copyright © 2025 Cephas GM | Enterprise Portal</footer>
 
   <!-- ✅ Service Worker Registration -->
   <script>
