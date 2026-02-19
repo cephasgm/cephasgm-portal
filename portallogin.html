@@ -200,17 +200,10 @@ footer {
   };
 
   // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
   const auth = firebase.auth();
-
-  // Check if already logged in
-  auth.onAuthStateChanged((user) => {
-    if (user) {
-      // Already logged in, redirect to appropriate dashboard
-      const isStaff = user.email.includes('admin');
-      window.location.href = isStaff ? 'portaladmin.html' : 'portaldashboard.html';
-    }
-  });
 
   // Get URL parameters
   const urlParams = new URLSearchParams(window.location.search);
@@ -233,33 +226,40 @@ footer {
     const successDiv = document.getElementById('loginSuccess');
     const loadingDiv = document.getElementById('loginLoading');
     
+    // Reset displays
     errorDiv.style.display = 'none';
     successDiv.style.display = 'none';
     loadingDiv.style.display = 'block';
     loginBtn.disabled = true;
     
     try {
+      // Sign in with Firebase
       const userCredential = await auth.signInWithEmailAndPassword(email, password);
       const user = userCredential.user;
       
-      const isStaff = user.email.includes('admin');
+      // Determine role based on email
+      const isStaff = email.includes('admin');
       
-      // Store in session
-      sessionStorage.setItem('userLoggedIn', 'true');
-      sessionStorage.setItem('userEmail', user.email);
-      sessionStorage.setItem('userRole', isStaff ? 'staff' : 'client');
-      
+      // Show success message
       loadingDiv.style.display = 'none';
       successDiv.style.display = 'block';
       
+      // Redirect based on role after brief delay
       setTimeout(() => {
-        window.location.href = isStaff ? 'portaladmin.html' : 'portaldashboard.html';
+        if (isStaff) {
+          window.location.href = 'portaladmin.html';
+        } else {
+          window.location.href = 'portaldashboard.html';
+        }
       }, 1500);
       
     } catch (error) {
       loadingDiv.style.display = 'none';
       loginBtn.disabled = false;
       
+      console.error('Login error:', error.code, error.message);
+      
+      // Handle specific error codes
       let errorMessage = 'Login failed. Please try again.';
       switch(error.code) {
         case 'auth/user-not-found':
