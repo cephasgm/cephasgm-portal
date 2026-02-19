@@ -6,6 +6,8 @@
   "display": "standalone",
   "background_color": "#0b0c10",
   "theme_color": "#0b7a59",
+  "orientation": "portrait",
+  "scope": "/cephasgm-portal/",
   "icons": [
     {
       "src": "icon-192.png",
