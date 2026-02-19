@@ -188,7 +188,7 @@ footer {
 <footer>Copyright © 2025 Cephas GM | Enterprise Portal</footer>
 
 <script>
-  // Your Firebase configuration
+  // Firebase Configuration
   const firebaseConfig = {
     apiKey: "AIzaSyA2vWoAkdbke0D_x8N1W3JAzDVj4vcsZSE",
     authDomain: "cephasgm-portal.firebaseapp.com",
@@ -200,16 +200,17 @@ footer {
   };
 
   // Initialize Firebase
-  try {
-    firebase.initializeApp(firebaseConfig);
-    console.log('✅ Firebase initialized successfully');
-  } catch (error) {
-    console.error('❌ Firebase initialization error:', error);
-    document.getElementById('loginError').textContent = 'Firebase configuration error. Please check console.';
-    document.getElementById('loginError').style.display = 'block';
-  }
-  
+  firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
+
+  // Check if already logged in
+  auth.onAuthStateChanged((user) => {
+    if (user) {
+      // Already logged in, redirect to appropriate dashboard
+      const isStaff = user.email.includes('admin');
+      window.location.href = isStaff ? 'portaladmin.html' : 'portaldashboard.html';
+    }
+  });
 
   // Get URL parameters
   const urlParams = new URLSearchParams(window.location.search);
@@ -232,46 +233,33 @@ footer {
     const successDiv = document.getElementById('loginSuccess');
     const loadingDiv = document.getElementById('loginLoading');
     
-    // Reset displays
     errorDiv.style.display = 'none';
     successDiv.style.display = 'none';
     loadingDiv.style.display = 'block';
     loginBtn.disabled = true;
     
     try {
-      // Sign in with Firebase
       const userCredential = await auth.signInWithEmailAndPassword(email, password);
       const user = userCredential.user;
       
-      // Determine role based on email
-      const isStaff = email.includes('admin');
+      const isStaff = user.email.includes('admin');
       
-      // Store session info
-      localStorage.setItem('cephasUser', user.email);
-      localStorage.setItem('cephasRole', isStaff ? 'staff' : 'client');
-      localStorage.setItem('cephasUID', user.uid);
-      localStorage.setItem('cephasLoginTime', new Date().toISOString());
+      // Store in session
+      sessionStorage.setItem('userLoggedIn', 'true');
+      sessionStorage.setItem('userEmail', user.email);
+      sessionStorage.setItem('userRole', isStaff ? 'staff' : 'client');
       
-      // Show success message
       loadingDiv.style.display = 'none';
       successDiv.style.display = 'block';
       
-      // Redirect based on role
       setTimeout(() => {
-        if (isStaff) {
-          window.location.href = 'portaladmin.html';
-        } else {
-          window.location.href = 'portaldashboard.html';
-        }
+        window.location.href = isStaff ? 'portaladmin.html' : 'portaldashboard.html';
       }, 1500);
       
     } catch (error) {
       loadingDiv.style.display = 'none';
       loginBtn.disabled = false;
       
-      console.error('Login error:', error.code, error.message);
-      
-      // Handle specific error codes
       let errorMessage = 'Login failed. Please try again.';
       switch(error.code) {
         case 'auth/user-not-found':
@@ -283,14 +271,8 @@ footer {
         case 'auth/invalid-email':
           errorMessage = 'Invalid email format.';
           break;
-        case 'auth/user-disabled':
-          errorMessage = 'This account has been disabled.';
-          break;
         case 'auth/too-many-requests':
           errorMessage = 'Too many failed attempts. Please try again later.';
-          break;
-        case 'auth/network-request-failed':
-          errorMessage = 'Network error. Please check your internet connection.';
           break;
         default:
           errorMessage = error.message;
@@ -301,16 +283,7 @@ footer {
     }
   });
 
-  // Check if already logged in
-  auth.onAuthStateChanged((user) => {
-    if (user) {
-      console.log('User already logged in:', user.email);
-      // Don't redirect on login page if already logged in
-      // This prevents loops
-    }
-  });
-
-  // Service Worker Registration
+  // Service Worker
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('service-worker.js')
