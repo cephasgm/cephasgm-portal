@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Portal Login — Cephas GM</title>
 
-<!-- ✅ PWA Manifest -->
+<!-- PWA Manifest -->
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="theme-color" content="#0b7a59">
@@ -92,6 +92,7 @@ button:hover {
 button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+  transform: none;
 }
 a {
   color: #ddd;
@@ -187,18 +188,27 @@ footer {
 <footer>Copyright © 2025 Cephas GM | Enterprise Portal</footer>
 
 <script>
-  // Firebase Configuration
+  // Your Firebase configuration
   const firebaseConfig = {
-    apiKey: "AIzaSyB7TImJ72bH2aQ5LgQxb3XK7hD4kY9qWzM",
+    apiKey: "AIzaSyA2vWoAkdbke0D_x8N1W3JAzDVj4vcsZSE",
     authDomain: "cephasgm-portal.firebaseapp.com",
     projectId: "cephasgm-portal",
     storageBucket: "cephasgm-portal.firebasestorage.app",
-    messagingSenderId: "123456789012",
-    appId: "1:123456789012:web:abc123def456ghi789jkl"
+    messagingSenderId: "577322740819",
+    appId: "1:577322740819:web:da7bfaf387fb690bc96aa6",
+    measurementId: "G-KC2XDEJPRV"
   };
 
   // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
+  try {
+    firebase.initializeApp(firebaseConfig);
+    console.log('✅ Firebase initialized successfully');
+  } catch (error) {
+    console.error('❌ Firebase initialization error:', error);
+    document.getElementById('loginError').textContent = 'Firebase configuration error. Please check console.';
+    document.getElementById('loginError').style.display = 'block';
+  }
+  
   const auth = firebase.auth();
 
   // Get URL parameters
@@ -259,6 +269,8 @@ footer {
       loadingDiv.style.display = 'none';
       loginBtn.disabled = false;
       
+      console.error('Login error:', error.code, error.message);
+      
       // Handle specific error codes
       let errorMessage = 'Login failed. Please try again.';
       switch(error.code) {
@@ -277,6 +289,9 @@ footer {
         case 'auth/too-many-requests':
           errorMessage = 'Too many failed attempts. Please try again later.';
           break;
+        case 'auth/network-request-failed':
+          errorMessage = 'Network error. Please check your internet connection.';
+          break;
         default:
           errorMessage = error.message;
       }
@@ -288,14 +303,10 @@ footer {
 
   // Check if already logged in
   auth.onAuthStateChanged((user) => {
-    if (user && window.location.pathname.includes('portallogin.html')) {
-      // Already logged in, redirect appropriately
-      const isStaff = user.email.includes('admin');
-      if (isStaff) {
-        window.location.href = 'portaladmin.html';
-      } else {
-        window.location.href = 'portaldashboard.html';
-      }
+    if (user) {
+      console.log('User already logged in:', user.email);
+      // Don't redirect on login page if already logged in
+      // This prevents loops
     }
   });
 
@@ -311,5 +322,3 @@ footer {
 
 </body>
 </html>
-
-
