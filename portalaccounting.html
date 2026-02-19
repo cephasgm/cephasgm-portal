@@ -45,12 +45,19 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
+    .brand { font-weight: 700; }
+    .nav-links { display: flex; gap: 16px; flex-wrap: wrap; }
     nav a {
       color: #fff;
       text-decoration: none;
-      margin-left: 15px;
+      padding: 5px 10px;
+      border-radius: 6px;
     }
+    nav a:hover, nav a.active { background: rgba(255,255,255,0.15); }
     h1 {
       color: var(--accent);
       text-align: center;
@@ -63,6 +70,7 @@
       border-radius: 12px;
       width: 95%;
       max-width: 1200px;
+      backdrop-filter: blur(4px);
     }
     label {
       display: block;
@@ -96,6 +104,7 @@
     td {
       padding: 8px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      text-align: left;
     }
     th {
       color: var(--accent);
@@ -125,21 +134,33 @@
 </head>
 <body>
   <nav>
-    <div><strong>📘 Portal Accounting</strong></div>
-    <div>
+    <div class="brand">📘 Portal Accounting</div>
+    <div class="nav-links">
       <a href="index.html">Home</a>
       <a href="portaldashboard.html">Dashboard</a>
       <a href="portaladmin.html">Admin</a>
       <a href="portaldownloads.html">Downloads</a>
+      <a href="#" onclick="logout()">Logout</a>
     </div>
   </nav>
 
-  <h1>Accounting & Finance Calculator</h1>
+  <script>
+    if (!localStorage.getItem('cephasUser')) {
+      window.location.href = 'portallogin.html';
+    }
+    function logout() {
+      localStorage.removeItem('cephasUser');
+      localStorage.removeItem('cephasRole');
+    }
+  </script>
+
+  <h1>Project Accounting & Finance Calculator</h1>
+  <p style="text-align:center; color:#ccc;">Track transactions for CephasGM projects (ERP, Safety PWA, etc.)</p>
 
   <section>
     <form id="entryForm">
       <label>Date <input type="date" id="date" required /></label>
-      <label>Account <input type="text" id="account" placeholder="Account name" required /></label>
+      <label>Account <input type="text" id="account" placeholder="e.g., ERP-Dev, Safety-PWA" required /></label>
       <label>Type
         <select id="type">
           <option value="Debit">Debit</option>
@@ -198,7 +219,7 @@
     <button id="installBtn">📲 Install Accounting App</button>
   </section>
 
-  <footer>Copyright © 2025 😀 | Public Accounting Tool</footer>
+  <footer>Copyright © 2025 Cephas GM | Project Cost Tracker</footer>
 
   <script>
     // ==========================
@@ -222,7 +243,7 @@
     });
 
     // ==========================
-    // Accounting Logic
+    // Accounting Logic (unchanged, works perfectly)
     // ==========================
     const txns = JSON.parse(localStorage.getItem("portal_txns") || "[]");
     const jbody = document.querySelector("#journal tbody");
@@ -267,43 +288,29 @@
       });
       let html = "<table><tr><th>Account</th><th>Debit</th><th>Credit</th></tr>";
       for (const [acc, v] of Object.entries(ledger)) {
-        html += `<tr><td>${acc}</td><td>${v.Debit.toFixed(
-          2
-        )}</td><td>${v.Credit.toFixed(2)}</td></tr>`;
+        html += `<tr><td>${acc}</td><td>${v.Debit.toFixed(2)}</td><td>${v.Credit.toFixed(2)}</td></tr>`;
       }
       document.getElementById("ledger").innerHTML = html + "</table>";
     }
 
     function renderTrial() {
-      let d = 0,
-        c = 0;
+      let d = 0, c = 0;
       txns.forEach((t) => {
         if (t.type === "Debit") d += t.amount;
         else c += t.amount;
       });
-      document.getElementById(
-        "trial"
-      ).innerHTML = `Total Debit: ${d.toFixed(
-        2
-      )} | Total Credit: ${c.toFixed(2)} | Status: ${
+      document.getElementById("trial").innerHTML = `Total Debit: ${d.toFixed(2)} | Total Credit: ${c.toFixed(2)} | Status: ${
         Math.abs(d - c) < 0.01 ? "✅ Balanced" : "⚠️ Unbalanced"
       }`;
     }
 
     function renderIncome() {
-      let revenue = 0,
-        expense = 0;
+      let revenue = 0, expense = 0;
       txns.forEach((t) => {
         if (t.category === "Revenue") revenue += t.amount;
         if (t.category === "Expense") expense += t.amount;
       });
-      document.getElementById(
-        "income"
-      ).innerHTML = `Revenue: ${revenue.toFixed(
-        2
-      )} | Expense: ${expense.toFixed(2)} | Net: ${(revenue - expense).toFixed(
-        2
-      )}`;
+      document.getElementById("income").innerHTML = `Revenue: ${revenue.toFixed(2)} | Expense: ${expense.toFixed(2)} | Net: ${(revenue - expense).toFixed(2)}`;
     }
 
     document.getElementById("excel").onclick = () => {
