@@ -64,10 +64,13 @@ body {
   background: rgba(255,255,255,0.15);
 }
 .logout-btn {
-  background: #c0392b !important;
+  background: #c0392b;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
 }
 .logout-btn:hover {
-  background: #e74c3c !important;
+  background: #e74c3c;
 }
 .user-welcome {
   color: #0b7a59;
@@ -137,74 +140,6 @@ main {
   display: inline-block;
   font-size: 0.85rem;
 }
-.ai-toggle {
-  background: #0b7a59;
-  color: #fff;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 30px;
-  cursor: pointer;
-  font-weight: 500;
-  margin: 20px auto;
-  display: block;
-  font-size: 1rem;
-}
-.ai-toggle:hover {
-  background: #099268;
-  transform: translateY(-2px);
-}
-#ai-section {
-  display: none;
-  background: rgba(0,0,0,0.7);
-  padding: 25px;
-  margin: 20px auto;
-  border-radius: 16px;
-  backdrop-filter: blur(10px);
-  max-width: 800px;
-}
-#chat-box {
-  height: 300px;
-  overflow-y: auto;
-  background: rgba(255,255,255,0.1);
-  border-radius: 12px;
-  padding: 15px;
-  margin-bottom: 15px;
-}
-.message {
-  margin: 10px 0;
-}
-.user {
-  color: #0b7a59;
-  font-weight: 500;
-  text-align: right;
-}
-.assistant {
-  color: #fff;
-}
-.chat-input {
-  display: flex;
-  gap: 10px;
-}
-#user-input {
-  flex: 1;
-  padding: 12px;
-  border: 1px solid rgba(255,255,255,0.2);
-  border-radius: 30px;
-  background: rgba(255,255,255,0.1);
-  color: #fff;
-}
-#user-input:focus {
-  outline: none;
-  border-color: #0b7a59;
-}
-#send-btn {
-  background: #0b7a59;
-  color: #fff;
-  border: none;
-  padding: 12px 30px;
-  border-radius: 30px;
-  cursor: pointer;
-}
 footer {
   background: rgba(0,0,0,0.95);
   text-align: center;
@@ -223,7 +158,6 @@ footer {
     <span class="user-welcome" id="welcomeMsg">Welcome!</span>
     <a href="portaldashboard.html" class="active">Dashboard</a>
     <a href="portaldownloads.html">Downloads</a>
-    <a href="#" onclick="toggleAI()">🤖 CephasAI</a>
     <a href="#" id="logoutBtn" class="logout-btn">Logout</a>
     <a href="https://cephasgm.github.io/cephasgm-site/" target="_blank">🌍 Main Site</a>
   </div>
@@ -242,7 +176,9 @@ footer {
   };
 
   // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
   const auth = firebase.auth();
 
   // Check authentication state
@@ -254,12 +190,6 @@ footer {
       // Update welcome message
       const displayName = user.email.split('@')[0];
       document.getElementById('welcomeMsg').textContent = `Welcome, ${displayName}!`;
-      
-      // Check if admin trying to access client page
-      if (user.email.includes('admin')) {
-        // Admin can access client page, but we'll show both options
-        console.log('Admin viewing client dashboard');
-      }
     }
   });
 
@@ -268,14 +198,10 @@ footer {
     e.preventDefault();
     auth.signOut().then(() => {
       window.location.href = 'index.html';
+    }).catch((error) => {
+      console.error('Logout error:', error);
     });
   });
-
-  // Toggle AI chat
-  window.toggleAI = function() {
-    const ai = document.getElementById('ai-section');
-    ai.style.display = ai.style.display === 'none' ? 'block' : 'none';
-  };
 </script>
 
 <header>
@@ -287,19 +213,6 @@ footer {
   <div class="card">
     <h2>Your Active Projects</h2>
     <div class="project-list" id="projectList"></div>
-  </div>
-  
-  <button class="ai-toggle" onclick="toggleAI()">🤖 Chat with CephasAI</button>
-
-  <div id="ai-section">
-    <h2 style="color: #0b7a59; text-align: center; margin-bottom: 15px;">🤖 CephasAI Assistant</h2>
-    <div id="chat-box">
-      <div class="message assistant">Hello! Ask me about your projects, reports, or downloads.</div>
-    </div>
-    <div class="chat-input">
-      <input type="text" id="user-input" placeholder="Type your message...">
-      <button id="send-btn">Send</button>
-    </div>
   </div>
 </main>
 
@@ -336,36 +249,6 @@ footer {
       <div class="status">Status: ${p.status} | Last: ${p.lastUpdate}</div>
     </div>
   `).join('');
-
-  // Chat functionality
-  const chatBox = document.getElementById('chat-box');
-  
-  document.getElementById('send-btn').onclick = function() {
-    const input = document.getElementById('user-input');
-    const message = input.value.trim();
-    if (!message) return;
-    
-    chatBox.innerHTML += `<div class="message user"><b>You:</b> ${message}</div>`;
-    input.value = '';
-    
-    setTimeout(() => {
-      const lower = message.toLowerCase();
-      let reply = "I can help with your projects. What would you like to know?";
-      
-      if (lower.includes('erp')) {
-        reply = "CephasGM-ERP is 85% complete. Financial and HR modules are ready for demo.";
-      } else if (lower.includes('safety') || lower.includes('pwa')) {
-        reply = "Health & Safety PWA is 92% complete. Incident tracking is live.";
-      } else if (lower.includes('location') || lower.includes('tracker')) {
-        reply = "Smart Location Tracker is 78% complete. Currently tracking assets.";
-      } else if (lower.includes('download')) {
-        reply = "Check the Downloads section for project documents.";
-      }
-      
-      chatBox.innerHTML += `<div class="message assistant"><b>CephasAI:</b> ${reply}</div>`;
-      chatBox.scrollTop = chatBox.scrollHeight;
-    }, 800);
-  };
 
   // Service Worker
   if ('serviceWorker' in navigator) {
