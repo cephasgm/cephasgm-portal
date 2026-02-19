@@ -7,16 +7,8 @@
 
   <!-- Manifest & PWA setup -->
   <link rel="manifest" href="manifest.json" />
-  <script>
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker
-          .register("service-worker.js")
-          .then(() => console.log("✅ Service Worker Registered"))
-          .catch((err) => console.warn("SW failed:", err));
-      });
-    }
-  </script>
+  <meta name="theme-color" content="#0b7a59">
+  <link rel="apple-touch-icon" href="icon-192.png">
 
   <!-- Fonts + Export Libraries -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet" />
@@ -38,6 +30,7 @@
       color: #fff;
       margin: 0;
       padding-bottom: 80px;
+      min-height: 100vh;
     }
     nav {
       background: rgba(0, 0, 0, 0.75);
@@ -49,19 +42,25 @@
       top: 0;
       z-index: 100;
     }
-    .brand { font-weight: 700; }
+    .brand { font-weight: 700; color: #fff; }
     .nav-links { display: flex; gap: 16px; flex-wrap: wrap; }
     nav a {
       color: #fff;
       text-decoration: none;
-      padding: 5px 10px;
+      padding: 8px 12px;
       border-radius: 6px;
+      transition: 0.3s;
     }
     nav a:hover, nav a.active { background: rgba(255,255,255,0.15); }
     h1 {
       color: var(--accent);
       text-align: center;
-      margin: 25px 0;
+      margin: 25px 0 5px;
+    }
+    .subtitle {
+      text-align: center;
+      color: #ccc;
+      margin-bottom: 20px;
     }
     section {
       background: var(--panel);
@@ -83,6 +82,8 @@
       border: none;
       border-radius: 8px;
       margin-right: 8px;
+      width: 100%;
+      max-width: 300px;
     }
     button {
       background: var(--accent);
@@ -91,14 +92,18 @@
       padding: 10px 16px;
       border-radius: 8px;
       cursor: pointer;
+      font-weight: 500;
+      margin: 5px;
     }
     button:hover {
       opacity: 0.9;
+      transform: translateY(-2px);
     }
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 15px;
+      color: #fff;
     }
     th,
     td {
@@ -140,22 +145,24 @@
       <a href="portaldashboard.html">Dashboard</a>
       <a href="portaladmin.html">Admin</a>
       <a href="portaldownloads.html">Downloads</a>
-      <a href="#" onclick="logout()">Logout</a>
+      <a href="portallogin.html" onclick="logout()">Logout</a>
     </div>
   </nav>
 
   <script>
+    // Session check
     if (!localStorage.getItem('cephasUser')) {
       window.location.href = 'portallogin.html';
     }
     function logout() {
       localStorage.removeItem('cephasUser');
       localStorage.removeItem('cephasRole');
+      window.location.href = 'portallogin.html';
     }
   </script>
 
   <h1>Project Accounting & Finance Calculator</h1>
-  <p style="text-align:center; color:#ccc;">Track transactions for CephasGM projects (ERP, Safety PWA, etc.)</p>
+  <p class="subtitle">Track transactions for CephasGM projects (ERP, Safety PWA, Location Tracker)</p>
 
   <section>
     <form id="entryForm">
@@ -177,7 +184,7 @@
         </select>
       </label>
       <label>Amount (TZS) <input type="number" id="amount" step="0.01" required /></label>
-      <label>VAT % <input type="number" id="vat" value="0" /></label>
+      <label>VAT % <input type="number" id="vat" value="0" step="0.1" /></label>
       <button type="submit">Add Entry</button>
     </form>
 
@@ -215,7 +222,7 @@
   <section class="exports">
     <button id="excel">⬇️ Export Excel</button>
     <button id="pdf">⬇️ Export PDF</button>
-    <button id="clear" style="background:#444">🗑 Clear</button>
+    <button id="clear" style="background:#444">🗑 Clear All Data</button>
     <button id="installBtn">📲 Install Accounting App</button>
   </section>
 
@@ -223,7 +230,7 @@
 
   <script>
     // ==========================
-    // Install App (Custom Prompt)
+    // PWA Install Prompt
     // ==========================
     let deferredPrompt;
     const installBtn = document.getElementById("installBtn");
@@ -236,14 +243,16 @@
 
     installBtn.addEventListener("click", async () => {
       installBtn.style.display = "none";
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      if (outcome === "accepted") console.log("App installed!");
-      deferredPrompt = null;
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === "accepted") console.log("App installed!");
+        deferredPrompt = null;
+      }
     });
 
     // ==========================
-    // Accounting Logic (unchanged, works perfectly)
+    // Accounting Logic
     // ==========================
     const txns = JSON.parse(localStorage.getItem("portal_txns") || "[]");
     const jbody = document.querySelector("#journal tbody");
@@ -252,13 +261,21 @@
       jbody.innerHTML = "";
       txns.forEach((t) => {
         const r = document.createElement("tr");
-        r.innerHTML = `<td>${t.date}</td><td>${t.account}</td><td>${t.type}</td><td>${t.category}</td><td>${t.amount}</td><td>${t.vat}</td><td>${t.net}</td>`;
+        r.innerHTML = `<td>${t.date}</td><td>${t.account}</td><td>${t.type}</td><td>${t.category}</td><td>${parseFloat(t.amount).toFixed(2)}</td><td>${parseFloat(t.vat).toFixed(2)}</td><td>${parseFloat(t.net).toFixed(2)}</td>`;
         jbody.appendChild(r);
       });
       renderLedger();
       renderTrial();
       renderIncome();
     }
+
+    // Get form elements
+    const dateField = document.getElementById('date');
+    const accountField = document.getElementById('account');
+    const typeField = document.getElementById('type');
+    const categoryField = document.getElementById('category');
+    const amountField = document.getElementById('amount');
+    const vatField = document.getElementById('vat');
 
     document.getElementById("entryForm").addEventListener("submit", (e) => {
       e.preventDefault();
@@ -273,12 +290,12 @@
       localStorage.setItem("portal_txns", JSON.stringify(txns));
       render();
       e.target.reset();
+      // Set default date
+      dateField.value = new Date().toISOString().slice(0, 10);
     });
 
-    const [dateField, accountField, typeField, categoryField, amountField, vatField] =
-      ["date", "account", "type", "category", "amount", "vat"].map((id) =>
-        document.getElementById(id)
-      );
+    // Set default date on load
+    dateField.value = new Date().toISOString().slice(0, 10);
 
     function renderLedger() {
       const ledger = {};
@@ -323,7 +340,7 @@
     document.getElementById("pdf").onclick = () => {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
-      doc.text("Accounting Summary", 10, 10);
+      doc.text("Accounting Summary - Cephas GM Projects", 10, 10);
       doc.autoTable({
         head: [["Date", "Account", "Type", "Category", "Amount", "VAT", "Net"]],
         body: txns.map((t) => [
@@ -331,23 +348,33 @@
           t.account,
           t.type,
           t.category,
-          t.amount,
-          t.vat,
-          t.net,
+          t.amount.toFixed(2),
+          t.vat.toFixed(2),
+          t.net.toFixed(2)
         ]),
       });
       doc.save("AccountingReport.pdf");
     };
 
     document.getElementById("clear").onclick = () => {
-      if (confirm("Clear all data?")) {
+      if (confirm("Clear all accounting data?")) {
         localStorage.removeItem("portal_txns");
         txns.length = 0;
         render();
       }
     };
 
+    // Initial render
     render();
+
+    // Service Worker Registration
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('service-worker.js')
+          .then(reg => console.log('✅ Service Worker registered:', reg.scope))
+          .catch(err => console.error('❌ Service Worker registration failed:', err));
+      });
+    }
   </script>
 </body>
 </html>
