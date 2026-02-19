@@ -152,7 +152,9 @@
     };
 
     // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
     const auth = firebase.auth();
 
     // Check auth state
@@ -160,31 +162,25 @@
       const userInfo = document.getElementById('userInfo');
       const loginBtn = document.getElementById('loginBtn');
       const dashboardBtn = document.getElementById('dashboardBtn');
+      const userEmailSpan = document.getElementById('userEmail');
       
       if (user) {
         // User is logged in
         userInfo.style.display = 'flex';
-        document.getElementById('userEmail').textContent = user.email;
+        userEmailSpan.textContent = user.email;
         loginBtn.style.display = 'none';
         dashboardBtn.style.display = 'inline-block';
-        
-        // Store in session
-        sessionStorage.setItem('userLoggedIn', 'true');
-        sessionStorage.setItem('userEmail', user.email);
-        sessionStorage.setItem('userRole', user.email.includes('admin') ? 'staff' : 'client');
       } else {
         // User is logged out
         userInfo.style.display = 'none';
         loginBtn.style.display = 'inline-block';
         dashboardBtn.style.display = 'none';
-        sessionStorage.clear();
       }
     });
 
     // Logout function
     window.logout = function() {
       auth.signOut().then(() => {
-        sessionStorage.clear();
         window.location.href = 'index.html';
       }).catch((error) => {
         console.error('Logout error:', error);
