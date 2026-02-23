@@ -167,7 +167,7 @@ footer {
   
   <form id="loginForm">
     <input type="email" id="email" placeholder="Email address" required value="test@cephasgm.com">
-    <input type="password" id="password" placeholder="Password" required value="Test1234">
+    <input type="password" id="password" placeholder="Password" required value="***">
     
     <div class="error-message" id="loginError"></div>
     <div class="success-message" id="loginSuccess">Login successful! Redirecting...</div>
@@ -180,8 +180,8 @@ footer {
   
   <div class="demo-credentials">
     <p><strong>Demo Credentials:</strong></p>
-    <p>👤 Client: test@cephasgm.com / Test1234</p>
-    <p>👨‍💼 Admin: admin@cephasgm.com / Admin1234</p>
+    <p>👤 Client: test@cephasgm.com / ***</p>
+    <p>👨‍💼 Admin: admin@cephasgm.com / ***</p>
   </div>
 </div>
 
@@ -212,7 +212,7 @@ footer {
   // Set default values based on mode
   if (mode === 'staff') {
     document.getElementById('email').value = 'admin@cephasgm.com';
-    document.getElementById('password').value = 'Admin1234';
+    document.getElementById('password').value = '***';
   }
 
   // Handle login form submission
@@ -295,3 +295,4 @@ footer {
 
 </body>
 </html>
+
