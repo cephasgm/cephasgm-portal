@@ -10,149 +10,298 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="theme-color" content="#0b7a59">
 
-<!-- Firebase SDK -->
+<!-- SEO & Social Meta Tags -->
+<meta name="description" content="Secure file downloads for Cephas GM clients and staff – reports, documentation, architecture specs.">
+<meta property="og:title" content="Downloads — Cephas GM Portal">
+<meta property="og:description" content="Access project documents, technical specs, and reports securely.">
+<meta property="og:image" content="https://cephasgm.org/og-image.jpg">
+<meta property="og:url" content="https://cephasgm.github.io/cephasgm-portal/portaldownloads.html">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Cephas GM Downloads">
+<meta name="twitter:description" content="Secure file downloads for enterprise clients.">
+
+<!-- Favicon -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%230b7a59'/%3E%3Ctext x='50' y='70' font-size='70' text-anchor='middle' fill='white' font-family='Arial'%3EC%3C/text%3E%3C/svg%3E">
+
+<!-- Firebase SDKs -->
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-body {
-  font-family: 'Poppins', sans-serif;
-  background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.9)), url('https://seeafricatoday.com/wp-content/uploads/2019/07/Namibrand-Nature-Reserve-Namibia-Africa-596398501-1.jpg');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-  color: #fff;
-  min-height: 100vh;
-}
-.nav {
-  background: rgba(0,0,0,0.95);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 30px;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  border-bottom: 2px solid #0b7a59;
-}
-.brand {
-  font-weight: 700;
-  color: #fff;
-  font-size: 1.2rem;
-}
-.nav-links {
-  display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
-  align-items: center;
-}
-.nav-links a {
-  color: #fff;
-  text-decoration: none;
-  padding: 8px 16px;
-  border-radius: 6px;
-  transition: 0.3s;
-}
-.nav-links a:hover,
-.nav-links a.active {
-  background: rgba(255,255,255,0.15);
-}
-.logout-btn {
-  background: #c0392b;
-  padding: 8px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-.logout-btn:hover {
-  background: #e74c3c;
-}
-.user-welcome {
-  color: #0b7a59;
-  font-weight: 500;
-  margin-right: 15px;
-}
-header {
-  text-align: center;
-  padding: 40px 20px;
-  background: rgba(0,0,0,0.6);
-  margin-bottom: 20px;
-}
-header h1 {
-  color: #0b7a59;
-  font-size: 2rem;
-  margin-bottom: 10px;
-}
-header p {
-  color: #ccc;
-}
-.downloads-container {
-  max-width: 800px;
-  margin: 40px auto;
-  padding: 20px;
-}
-.file-item {
-  background: rgba(255,255,255,0.1);
-  padding: 20px;
-  margin: 15px 0;
-  border-radius: 12px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 15px;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255,255,255,0.1);
-}
-.file-info {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-.file-icon {
-  font-size: 2rem;
-  color: #0b7a59;
-}
-.file-details h3 {
-  font-size: 1.1rem;
-  margin-bottom: 5px;
-}
-.file-details small {
-  color: #aaa;
-}
-.download-btn {
-  background: #0b7a59;
-  color: #fff;
-  border: none;
-  padding: 10px 25px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: 0.3s;
-}
-.download-btn:hover {
-  background: #099268;
-  transform: translateY(-2px);
-}
-footer {
-  background: rgba(0,0,0,0.95);
-  text-align: center;
-  padding: 1.5rem;
-  margin-top: 2rem;
-  color: #ccc;
-  border-top: 1px solid rgba(255,255,255,0.1);
-}
+  /* CSS Variables for Light/Dark Mode */
+  :root {
+    --bg-body: #f5f7fa;
+    --text-primary: #1e293b;
+    --text-secondary: #475569;
+    --card-bg: #ffffff;
+    --border-color: #e2e8f0;
+    --accent: #0b7a59;
+    --accent-hover: #099268;
+    --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  }
+  body.dark {
+    --bg-body: #0f172a;
+    --text-primary: #f1f5f9;
+    --text-secondary: #cbd5e1;
+    --card-bg: #1e293b;
+    --border-color: #334155;
+  }
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.9)), url('https://seeafricatoday.com/wp-content/uploads/2019/07/Namibrand-Nature-Reserve-Namibia-Africa-596398501-1.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    min-height: 100vh;
+    transition: background 0.3s, color 0.2s;
+  }
+  /* Liquid crystal overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(125deg, rgba(11,122,89,0.08) 0%, rgba(100,200,255,0.05) 25%, rgba(11,122,89,0.08) 50%, rgba(200,100,255,0.05) 75%, rgba(11,122,89,0.08) 100%);
+    background-size: 300% 300%;
+    animation: liquidCrystal 12s ease infinite;
+    pointer-events: none;
+    z-index: 0;
+  }
+  @keyframes liquidCrystal {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  .nav {
+    background: rgba(0,0,0,0.95);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 24px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 2px solid var(--accent);
+    backdrop-filter: blur(4px);
+  }
+  .brand { font-weight: 700; color: #fff; font-size: 1.2rem; }
+  .nav-links {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .nav-links a {
+    color: #fff;
+    text-decoration: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: 0.3s;
+  }
+  .nav-links a:hover, .nav-links a.active {
+    background: rgba(255,255,255,0.15);
+  }
+  .logout-btn {
+    background: #c0392b;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .logout-btn:hover { background: #e74c3c; }
+  .user-welcome { color: var(--accent); font-weight: 500; margin-right: 15px; }
+  .theme-toggle {
+    background: rgba(255,255,255,0.2);
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 30px;
+    transition: 0.3s;
+  }
+  .theme-toggle:hover {
+    background: rgba(255,255,255,0.4);
+    transform: scale(1.05);
+  }
+  .container {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 20px;
+    position: relative;
+    z-index: 1;
+  }
+  .card {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+  }
+  .upload-area {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 10px;
+  }
+  .btn-upload {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: 0.2s;
+  }
+  .btn-upload:hover { background: var(--accent-hover); transform: translateY(-2px); }
+  .file-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+  }
+  .file-item {
+    background: rgba(255,255,255,0.05);
+    border-radius: 12px;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    border: 1px solid var(--border-color);
+    transition: 0.2s;
+  }
+  .file-item:hover { border-color: var(--accent); transform: translateX(5px); }
+  .file-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex: 1;
+  }
+  .file-icon { font-size: 1.8rem; color: var(--accent); }
+  .file-details h3 { font-size: 1rem; margin-bottom: 4px; color: var(--text-primary); }
+  .file-details small { color: var(--text-secondary); font-size: 0.75rem; }
+  .download-stats { font-size: 0.7rem; color: var(--accent); margin-left: 10px; }
+  .download-btn {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: 0.2s;
+  }
+  .download-btn:hover { background: var(--accent-hover); transform: translateY(-2px); }
+  .delete-btn {
+    background: #c0392b;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-left: 8px;
+    font-size: 0.8rem;
+  }
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7);
+    z-index: 200;
+    justify-content: center;
+    align-items: center;
+  }
+  .modal-content {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 24px;
+    width: 90%;
+    max-width: 500px;
+    border: 1px solid var(--border-color);
+  }
+  .modal-content h3 { color: var(--accent); margin-bottom: 20px; }
+  .modal-content input {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0 16px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--card-bg);
+    color: var(--text-primary);
+  }
+  .modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  .modal-buttons button {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+  }
+  .btn-save { background: var(--accent); color: white; }
+  .btn-cancel { background: #95a5a6; color: white; }
+  .back-to-top {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: var(--accent);
+    color: white;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-size: 24px;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s;
+    z-index: 99;
+  }
+  .back-to-top.show {
+    opacity: 1;
+    visibility: visible;
+  }
+  footer {
+    background: rgba(0,0,0,0.95);
+    text-align: center;
+    padding: 1rem;
+    color: #ccc;
+    margin-top: 2rem;
+  }
+  @media (max-width: 768px) {
+    .container { padding: 12px; }
+    .file-item { flex-direction: column; align-items: flex-start; }
+    .download-btn, .delete-btn { width: 100%; text-align: center; margin-top: 5px; }
+    .nav-links { gap: 8px; }
+  }
 </style>
 </head>
 <body>
 
 <nav class="nav">
-  <div class="brand">Cephas GM Downloads</div>
+  <div class="brand">📁 Downloads Center</div>
   <div class="nav-links">
     <span class="user-welcome" id="welcomeMsg">Welcome!</span>
     <a href="portaldashboard.html">Dashboard</a>
@@ -161,11 +310,44 @@ footer {
     <a href="portalaccounting.html">Accounting</a>
     <a href="#" id="logoutBtn" class="logout-btn">Logout</a>
     <a href="https://cephasgm.github.io/cephasgm-site/" target="_blank">🌍 Main Site</a>
+    <button class="theme-toggle" id="themeToggle" aria-label="Dark/Light mode">🌓</button>
   </div>
 </nav>
 
+<div class="container">
+  <div class="card" id="uploadCard" style="display: none;">
+    <div class="upload-area">
+      <h3>📤 Upload New File</h3>
+      <button class="btn-upload" id="openUploadModalBtn">+ Upload File</button>
+    </div>
+    <p style="font-size: 0.8rem; color: var(--text-secondary);">Only administrators can upload files.</p>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-bottom: 15px;">📂 Available Downloads</h3>
+    <div id="fileListContainer" class="file-list">
+      <p style="text-align: center; padding: 20px;">Loading files...</p>
+    </div>
+  </div>
+</div>
+
+<!-- Upload Modal -->
+<div id="uploadModal" class="modal">
+  <div class="modal-content">
+    <h3>Upload File</h3>
+    <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.xlsx,.jpg,.png">
+    <div class="modal-buttons">
+      <button class="btn-save" id="confirmUploadBtn">Upload</button>
+      <button class="btn-cancel" id="cancelUploadBtn">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<footer>Copyright © 2025 Cephas GM | Enterprise Portal</footer>
+<a href="#" class="back-to-top" id="backToTop">↑</a>
+
 <script>
-  // Firebase Configuration
+  // Firebase Config
   const firebaseConfig = {
     apiKey: "AIzaSyA2vWoAkdbke0D_x8N1W3JAzDVj4vcsZSE",
     authDomain: "cephasgm-portal.firebaseapp.com",
@@ -175,101 +357,229 @@ footer {
     appId: "1:577322740819:web:da7bfaf387fb690bc96aa6",
     measurementId: "G-KC2XDEJPRV"
   };
-
-  // Initialize Firebase
-  if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-  }
+  if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
+  const db = firebase.firestore();
+  const storage = firebase.storage();
 
-  // Check authentication
-  auth.onAuthStateChanged((user) => {
+  let currentUser = null;
+  let isAdmin = false;
+  const ADMIN_EMAIL = "admin@cephasgm.org"; // Change to your admin email
+
+  // DOM elements
+  const welcomeMsg = document.getElementById('welcomeMsg');
+  const fileListContainer = document.getElementById('fileListContainer');
+  const uploadCard = document.getElementById('uploadCard');
+  const openUploadModalBtn = document.getElementById('openUploadModalBtn');
+  const uploadModal = document.getElementById('uploadModal');
+  const confirmUploadBtn = document.getElementById('confirmUploadBtn');
+  const cancelUploadBtn = document.getElementById('cancelUploadBtn');
+  const fileInput = document.getElementById('fileInput');
+
+  // Auth state
+  auth.onAuthStateChanged(async (user) => {
     if (!user) {
       window.location.href = 'index.html';
-    } else {
-      const displayName = user.email.split('@')[0];
-      document.getElementById('welcomeMsg').textContent = `Welcome, ${displayName}!`;
+      return;
+    }
+    currentUser = user;
+    welcomeMsg.textContent = `Welcome, ${user.email.split('@')[0]}!`;
+    isAdmin = (user.email === ADMIN_EMAIL);
+    if (isAdmin) {
+      uploadCard.style.display = 'block';
+    }
+    await loadFiles();
+  });
+
+  // Load files from Firestore
+  async function loadFiles() {
+    fileListContainer.innerHTML = '<p style="text-align: center;">Loading files...</p>';
+    try {
+      const snapshot = await db.collection('files').orderBy('uploadedAt', 'desc').get();
+      if (snapshot.empty) {
+        fileListContainer.innerHTML = '<p style="text-align: center;">No files available. Check back later.</p>';
+        return;
+      }
+      fileListContainer.innerHTML = '';
+      snapshot.forEach(doc => {
+        const file = doc.data();
+        renderFileItem(doc.id, file);
+      });
+    } catch (err) {
+      console.error(err);
+      fileListContainer.innerHTML = '<p style="text-align: center;">Error loading files.</p>';
+    }
+  }
+
+  function renderFileItem(id, file) {
+    const div = document.createElement('div');
+    div.className = 'file-item';
+    div.innerHTML = `
+      <div class="file-info">
+        <span class="file-icon">${getFileIcon(file.type)}</span>
+        <div class="file-details">
+          <h3>${escapeHtml(file.name)}</h3>
+          <small>${formatBytes(file.size)} • Uploaded: ${new Date(file.uploadedAt?.toDate()).toLocaleDateString()}</small>
+          <span class="download-stats">📥 ${file.downloads || 0} downloads</span>
+        </div>
+      </div>
+      <div>
+        <button class="download-btn" data-id="${id}" data-name="${file.name}">Download</button>
+        ${isAdmin ? `<button class="delete-btn" data-id="${id}">Delete</button>` : ''}
+      </div>
+    `;
+    fileListContainer.appendChild(div);
+
+    // Attach download event
+    const downloadBtn = div.querySelector('.download-btn');
+    downloadBtn.addEventListener('click', () => downloadFile(id, file.name, file.path, file.downloads || 0));
+    if (isAdmin) {
+      const deleteBtn = div.querySelector('.delete-btn');
+      deleteBtn.addEventListener('click', () => deleteFile(id, file.path));
+    }
+  }
+
+  async function downloadFile(id, fileName, storagePath, currentDownloads) {
+    try {
+      const fileRef = storage.ref(storagePath);
+      const url = await fileRef.getDownloadURL();
+      // Increment download counter
+      await db.collection('files').doc(id).update({ downloads: currentDownloads + 1 });
+      // Trigger download
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (err) {
+      console.error('Download error:', err);
+      alert('Failed to download file. Please try again.');
+    }
+  }
+
+  async function deleteFile(id, storagePath) {
+    if (!confirm('Delete this file permanently?')) return;
+    try {
+      const fileRef = storage.ref(storagePath);
+      await fileRef.delete();
+      await db.collection('files').doc(id).delete();
+      await loadFiles(); // refresh
+    } catch (err) {
+      console.error('Delete error:', err);
+      alert('Failed to delete file.');
+    }
+  }
+
+  // Upload logic (admin only)
+  openUploadModalBtn.addEventListener('click', () => {
+    fileInput.value = '';
+    uploadModal.style.display = 'flex';
+  });
+  cancelUploadBtn.addEventListener('click', () => {
+    uploadModal.style.display = 'none';
+  });
+  confirmUploadBtn.addEventListener('click', async () => {
+    const file = fileInput.files[0];
+    if (!file) {
+      alert('Please select a file.');
+      return;
+    }
+    if (!isAdmin) {
+      alert('Only administrators can upload files.');
+      return;
+    }
+    confirmUploadBtn.disabled = true;
+    confirmUploadBtn.textContent = 'Uploading...';
+    try {
+      const storagePath = `downloads/${Date.now()}_${file.name}`;
+      const storageRef = storage.ref(storagePath);
+      await storageRef.put(file);
+      const downloadURL = await storageRef.getDownloadURL();
+      await db.collection('files').add({
+        name: file.name,
+        size: file.size,
+        type: file.type || 'application/octet-stream',
+        path: storagePath,
+        url: downloadURL,
+        uploadedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        uploadedBy: currentUser.email,
+        downloads: 0
+      });
+      alert('File uploaded successfully!');
+      uploadModal.style.display = 'none';
+      await loadFiles();
+    } catch (err) {
+      console.error('Upload error:', err);
+      alert('Upload failed: ' + err.message);
+    } finally {
+      confirmUploadBtn.disabled = false;
+      confirmUploadBtn.textContent = 'Upload';
+      fileInput.value = '';
     }
   });
+
+  // Helper functions
+  function getFileIcon(mimeType) {
+    if (mimeType.includes('pdf')) return '📄';
+    if (mimeType.includes('word')) return '📘';
+    if (mimeType.includes('excel')) return '📊';
+    if (mimeType.includes('image')) return '🖼️';
+    return '📁';
+  }
+  function formatBytes(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  }
+  function escapeHtml(str) {
+    return str.replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    });
+  }
 
   // Logout
   document.getElementById('logoutBtn').addEventListener('click', (e) => {
     e.preventDefault();
-    auth.signOut().then(() => {
-      window.location.href = 'index.html';
-    }).catch((error) => {
-      console.error('Logout error:', error);
-    });
+    auth.signOut().then(() => window.location.href = 'index.html');
   });
-</script>
 
-<header>
-  <h1>📁 Downloads Center</h1>
-  <p>Access project documents, technical specs, and reports</p>
-</header>
+  // Dark mode
+  const themeToggle = document.getElementById('themeToggle');
+  const currentTheme = localStorage.getItem('portalTheme');
+  if (currentTheme === 'dark') document.body.classList.add('dark');
+  themeToggle.addEventListener('click', () => {
+    document.body.classList.toggle('dark');
+    localStorage.setItem('portalTheme', document.body.classList.contains('dark') ? 'dark' : 'light');
+  });
 
-<div class="downloads-container">
-  <div class="file-item">
-    <div class="file-info">
-      <span class="file-icon">📘</span>
-      <div class="file-details">
-        <h3>CephasGM-ERP System Architecture</h3>
-        <small>Version 2.1 | Updated: Mar 15, 2025 | 2.4 MB</small>
-      </div>
-    </div>
-    <button class="download-btn" onclick="downloadFile('ERP_Architecture.pdf')">Download</button>
-  </div>
-
-  <div class="file-item">
-    <div class="file-info">
-      <span class="file-icon">📗</span>
-      <div class="file-details">
-        <h3>Health-Safety-PWA Incident Report Q1</h3>
-        <small>Updated: Mar 18, 2025 | 1.8 MB</small>
-      </div>
-    </div>
-    <button class="download-btn" onclick="downloadFile('Safety_Report_Q1.pdf')">Download</button>
-  </div>
-
-  <div class="file-item">
-    <div class="file-info">
-      <span class="file-icon">📙</span>
-      <div class="file-details">
-        <h3>Smart Location Tracker API Documentation</h3>
-        <small>Updated: Mar 14, 2025 | 3.2 MB</small>
-      </div>
-    </div>
-    <button class="download-btn" onclick="downloadFile('Tracker_API.pdf')">Download</button>
-  </div>
-
-  <div class="file-item">
-    <div class="file-info">
-      <span class="file-icon">📕</span>
-      <div class="file-details">
-        <h3>Annual Corporate Strategy 2025</h3>
-        <small>Updated: Jan 10, 2025 | 4.1 MB</small>
-      </div>
-    </div>
-    <button class="download-btn" onclick="downloadFile('Strategy_2025.pdf')">Download</button>
-  </div>
-</div>
-
-<footer>Copyright © 2025 Cephas GM | Enterprise Portal</footer>
-
-<script>
-  function downloadFile(filename) {
-    alert(`📥 Download started: ${filename}\n\nIn a production environment, this would download the actual file.`);
-  }
+  // Back to top
+  const backToTop = document.getElementById('backToTop');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 300) backToTop.classList.add('show');
+    else backToTop.classList.remove('show');
+  });
+  backToTop.addEventListener('click', (e) => {
+    e.preventDefault();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
 
   // Service Worker
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('service-worker.js')
-        .then(reg => console.log('✅ Service Worker registered:', reg.scope))
-        .catch(err => console.error('❌ Service Worker registration failed:', err));
+      navigator.serviceWorker.register('service-worker.js').catch(err => console.error('SW failed:', err));
     });
   }
-</script>
 
+  // Close modal on outside click
+  window.onclick = function(e) {
+    if (e.target === uploadModal) uploadModal.style.display = 'none';
+  };
+</script>
 </body>
 </html>
