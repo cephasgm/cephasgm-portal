@@ -3,19 +3,46 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Assistant — Cephas GM</title>
+<title>AI Assistant — Cephas GM Portal</title>
 
 <!-- PWA Manifest -->
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="theme-color" content="#0b7a59">
 
-<!-- Firebase SDK -->
+<!-- SEO & Social Meta Tags -->
+<meta name="description" content="AI-powered assistant for Cephas GM portal – get real-time updates on projects, downloads, and accounting.">
+<meta property="og:title" content="AI Assistant — Cephas GM Portal">
+<meta property="og:description" content="Smart assistant that answers questions about your projects, files, and financial data.">
+<meta property="og:image" content="https://cephasgm.org/og-image.jpg">
+<meta property="og:url" content="https://cephasgm.github.io/cephasgm-portal/portalassistant.html">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Cephas AI Assistant">
+<meta name="twitter:description" content="Real‑time project insights and portal guidance.">
+
+<!-- Favicon -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%230b7a59'/%3E%3Ctext x='50' y='70' font-size='70' text-anchor='middle' fill='white' font-family='Arial'%3EC%3C/text%3E%3C/svg%3E">
+
+<!-- Firebase SDKs -->
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
 <style>
+  /* CSS Variables for Light/Dark Mode */
+  :root {
+    --bg-card: rgba(255,255,255,0.1);
+    --text-primary: #fff;
+    --text-secondary: #ccc;
+    --accent: #0b7a59;
+    --accent-hover: #099268;
+    --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  }
+  body.dark {
+    --bg-card: rgba(20,20,30,0.6);
+  }
   * {
     margin: 0;
     padding: 0;
@@ -27,25 +54,42 @@
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
-    color: #fff;
-    min-height: 100vh;
+    color: var(--text-primary);
+    transition: background 0.3s, color 0.2s;
+    position: relative;
+  }
+  /* Liquid crystal overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(125deg, rgba(11,122,89,0.08) 0%, rgba(100,200,255,0.05) 25%, rgba(11,122,89,0.08) 50%, rgba(200,100,255,0.05) 75%, rgba(11,122,89,0.08) 100%);
+    background-size: 300% 300%;
+    animation: liquidCrystal 12s ease infinite;
+    pointer-events: none;
+    z-index: 0;
+  }
+  @keyframes liquidCrystal {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
   }
   .nav {
     background: rgba(0,0,0,0.95);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 30px;
+    padding: 12px 24px;
     position: sticky;
     top: 0;
     z-index: 100;
-    border-bottom: 2px solid #0b7a59;
+    border-bottom: 2px solid var(--accent);
+    backdrop-filter: blur(4px);
   }
-  .brand {
-    font-weight: 700;
-    color: #fff;
-    font-size: 1.2rem;
-  }
+  .brand { font-weight: 700; color: #fff; font-size: 1.2rem; }
   .nav-links {
     display: flex;
     gap: 16px;
@@ -55,96 +99,168 @@
   .nav-links a {
     color: #fff;
     text-decoration: none;
-    padding: 8px 16px;
+    padding: 8px 12px;
     border-radius: 6px;
     transition: 0.3s;
   }
-  .nav-links a:hover,
-  .nav-links a.active {
+  .nav-links a:hover, .nav-links a.active {
     background: rgba(255,255,255,0.15);
   }
   .logout-btn {
     background: #c0392b;
-    padding: 8px 16px;
+    padding: 6px 14px;
     border-radius: 6px;
     cursor: pointer;
   }
-  .logout-btn:hover {
-    background: #e74c3c;
+  .logout-btn:hover { background: #e74c3c; }
+  .user-welcome { color: var(--accent); font-weight: 500; margin-right: 15px; }
+  .theme-toggle {
+    background: rgba(255,255,255,0.2);
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 30px;
+    transition: 0.3s;
   }
-  .user-welcome {
-    color: #0b7a59;
-    font-weight: 500;
-    margin-right: 15px;
+  .theme-toggle:hover {
+    background: rgba(255,255,255,0.4);
+    transform: scale(1.05);
   }
   .chat-container {
-    max-width: 800px;
-    margin: 50px auto;
+    max-width: 900px;
+    margin: 40px auto;
     padding: 20px;
+    position: relative;
+    z-index: 1;
   }
   .chat-box {
-    background: rgba(255,255,255,0.1);
-    border-radius: 16px;
+    background: var(--bg-card);
+    backdrop-filter: blur(10px);
+    border-radius: 24px;
     padding: 20px;
-    height: 400px;
+    height: 450px;
     overflow-y: auto;
     margin-bottom: 20px;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
   }
   .message {
-    margin: 10px 0;
-    padding: 10px 15px;
-    border-radius: 10px;
-    max-width: 70%;
+    margin: 12px 0;
+    padding: 12px 18px;
+    border-radius: 20px;
+    max-width: 80%;
+    word-wrap: break-word;
+    line-height: 1.5;
   }
   .user-message {
-    background: #0b7a59;
-    color: #fff;
+    background: var(--accent);
+    color: white;
     margin-left: auto;
+    border-bottom-right-radius: 4px;
   }
   .bot-message {
     background: rgba(255,255,255,0.2);
-    color: #fff;
+    color: var(--text-primary);
+    border-bottom-left-radius: 4px;
   }
   .input-area {
     display: flex;
-    gap: 10px;
+    gap: 12px;
+    background: var(--bg-card);
+    padding: 12px;
+    border-radius: 60px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2);
   }
   #userInput {
     flex: 1;
-    padding: 15px;
-    border: 1px solid rgba(255,255,255,0.2);
-    border-radius: 30px;
-    background: rgba(255,255,255,0.1);
-    color: #fff;
+    padding: 14px 20px;
+    border: none;
+    border-radius: 40px;
+    background: rgba(255,255,255,0.15);
+    color: white;
     font-family: 'Poppins', sans-serif;
+    font-size: 0.95rem;
   }
   #userInput:focus {
     outline: none;
-    border-color: #0b7a59;
+    background: rgba(255,255,255,0.25);
+  }
+  #userInput::placeholder {
+    color: rgba(255,255,255,0.6);
   }
   #sendBtn {
-    padding: 15px 30px;
+    padding: 12px 28px;
     border: none;
-    border-radius: 30px;
-    background: #0b7a59;
-    color: #fff;
+    border-radius: 40px;
+    background: var(--accent);
+    color: white;
     cursor: pointer;
-    font-family: 'Poppins', sans-serif;
-    font-weight: 500;
+    font-weight: 600;
+    transition: 0.2s;
   }
   #sendBtn:hover {
-    background: #099268;
+    background: var(--accent-hover);
     transform: translateY(-2px);
+  }
+  .typing-indicator {
+    display: flex;
+    gap: 5px;
+    padding: 8px 15px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 20px;
+    width: fit-content;
+    margin: 10px 0;
+  }
+  .typing-indicator span {
+    width: 8px;
+    height: 8px;
+    background: white;
+    border-radius: 50%;
+    animation: blink 1.4s infinite;
+  }
+  .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+  .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes blink {
+    0%, 60%, 100% { opacity: 0.4; transform: scale(0.8); }
+    30% { opacity: 1; transform: scale(1.2); }
   }
   footer {
     background: rgba(0,0,0,0.95);
     text-align: center;
-    padding: 1.5rem;
-    margin-top: 2rem;
+    padding: 1rem;
     color: #ccc;
-    border-top: 1px solid rgba(255,255,255,0.1);
+    margin-top: 2rem;
+  }
+  .back-to-top {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: var(--accent);
+    color: white;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-size: 24px;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s;
+    z-index: 99;
+  }
+  .back-to-top.show {
+    opacity: 1;
+    visibility: visible;
+  }
+  @media (max-width: 768px) {
+    .chat-container { margin: 20px auto; padding: 12px; }
+    .message { max-width: 95%; }
+    .nav-links { gap: 8px; }
+    .theme-toggle { font-size: 1rem; padding: 4px 10px; }
   }
 </style>
 </head>
@@ -160,11 +276,33 @@
     <a href="portalassistant.html" class="active">AI Assistant</a>
     <a href="#" id="logoutBtn" class="logout-btn">Logout</a>
     <a href="https://cephasgm.github.io/cephasgm-site/" target="_blank">🌍 Main Site</a>
+    <button class="theme-toggle" id="themeToggle" aria-label="Dark/Light mode">🌓</button>
   </div>
 </nav>
 
+<div class="chat-container">
+  <div class="chat-box" id="chatBox">
+    <div class="message bot-message">
+      👋 Hello! I'm CephasAI, your intelligent assistant.<br><br>
+      I can help you with:<br>
+      • Project status & completion<br>
+      • Download counts & file info<br>
+      • Accounting & budget questions<br>
+      • Portal navigation<br><br>
+      Ask me anything!
+    </div>
+  </div>
+  <div class="input-area">
+    <input type="text" id="userInput" placeholder="Type your message..." autocomplete="off">
+    <button id="sendBtn">Send</button>
+  </div>
+</div>
+
+<footer>Copyright © 2025 Cephas GM | Enterprise Portal</footer>
+<a href="#" class="back-to-top" id="backToTop">↑</a>
+
 <script>
-  // Firebase Configuration
+  // Firebase Config
   const firebaseConfig = {
     apiKey: "AIzaSyA2vWoAkdbke0D_x8N1W3JAzDVj4vcsZSE",
     authDomain: "cephasgm-portal.firebaseapp.com",
@@ -174,53 +312,125 @@
     appId: "1:577322740819:web:da7bfaf387fb690bc96aa6",
     measurementId: "G-KC2XDEJPRV"
   };
-
-  // Initialize Firebase
-  if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-  }
+  if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
+  const db = firebase.firestore();
 
-  // Check authentication
-  auth.onAuthStateChanged((user) => {
-    if (!user) {
-      window.location.href = 'index.html';
-    } else {
-      const displayName = user.email.split('@')[0];
-      document.getElementById('welcomeMsg').textContent = `Welcome, ${displayName}!`;
-    }
-  });
+  let currentUser = null;
+  let projectsData = [];
+  let filesData = [];
 
-  // Logout
-  document.getElementById('logoutBtn').addEventListener('click', (e) => {
-    e.preventDefault();
-    auth.signOut().then(() => {
-      window.location.href = 'index.html';
-    }).catch((error) => {
-      console.error('Logout error:', error);
-    });
-  });
-</script>
-
-<div class="chat-container">
-  <div class="chat-box" id="chatBox">
-    <div class="message bot-message">
-      👋 Hello! I'm CephasAI. How can I help you today?
-    </div>
-  </div>
-  <div class="input-area">
-    <input type="text" id="userInput" placeholder="Type your message...">
-    <button id="sendBtn">Send</button>
-  </div>
-</div>
-
-<footer>Copyright © 2025 Cephas GM | Enterprise Portal</footer>
-
-<script>
+  // DOM elements
   const chatBox = document.getElementById('chatBox');
   const userInput = document.getElementById('userInput');
   const sendBtn = document.getElementById('sendBtn');
+  const welcomeMsg = document.getElementById('welcomeMsg');
 
+  // Authentication
+  auth.onAuthStateChanged(async (user) => {
+    if (!user) {
+      window.location.href = 'index.html';
+      return;
+    }
+    currentUser = user;
+    welcomeMsg.textContent = `Welcome, ${user.email.split('@')[0]}!`;
+    // Load real-time data
+    await loadProjects();
+    await loadFiles();
+  });
+
+  // Fetch projects from Firestore (same as accounting)
+  async function loadProjects() {
+    if (!currentUser) return;
+    const snapshot = await db.collection('projects').where('userId', '==', currentUser.uid).get();
+    projectsData = [];
+    snapshot.forEach(doc => projectsData.push({ id: doc.id, ...doc.data() }));
+  }
+
+  // Fetch files from Firestore (downloads)
+  async function loadFiles() {
+    const snapshot = await db.collection('files').get();
+    filesData = [];
+    snapshot.forEach(doc => filesData.push(doc.data()));
+  }
+
+  // Helper: get project completion percentage
+  function getProjectCompletion(project) {
+    let completion = (project.actual / project.budget) * 100;
+    completion = Math.min(Math.round(completion), 100);
+    return isNaN(completion) ? 0 : completion;
+  }
+
+  // AI response generator using real Firestore data
+  async function getBotResponse(userMessage) {
+    const msg = userMessage.toLowerCase();
+    // Refresh data in case of updates
+    await loadProjects();
+    await loadFiles();
+
+    // Project-related queries
+    if (msg.match(/project|erp|safety|tracker|accounting|budget|completion|progress/i)) {
+      if (projectsData.length === 0) {
+        return "No projects found. You can add projects in the Accounting section.";
+      }
+      // Specific project name detection
+      const erpProject = projectsData.find(p => p.name.toLowerCase().includes('erp'));
+      const safetyProject = projectsData.find(p => p.name.toLowerCase().includes('safety') || p.name.toLowerCase().includes('pwa'));
+      const trackerProject = projectsData.find(p => p.name.toLowerCase().includes('tracker') || p.name.toLowerCase().includes('location'));
+      
+      if (msg.includes('erp')) {
+        if (erpProject) return `CephasGM-ERP: Budget = ${erpProject.budget.toLocaleString()} TZS, Actual = ${erpProject.actual.toLocaleString()} TZS, Completion = ${getProjectCompletion(erpProject)}%.`;
+        else return "ERP project not found in your list.";
+      }
+      if (msg.includes('safety') || msg.includes('pwa')) {
+        if (safetyProject) return `Health-Safety-PWA: Budget = ${safetyProject.budget.toLocaleString()} TZS, Actual = ${safetyProject.actual.toLocaleString()} TZS, Completion = ${getProjectCompletion(safetyProject)}%.`;
+        else return "Safety PWA project not found.";
+      }
+      if (msg.includes('tracker') || msg.includes('location')) {
+        if (trackerProject) return `Smart Location Tracker: Budget = ${trackerProject.budget.toLocaleString()} TZS, Actual = ${trackerProject.actual.toLocaleString()} TZS, Completion = ${getProjectCompletion(trackerProject)}%.`;
+        else return "Tracker project not found.";
+      }
+      // General summary
+      let response = `You have ${projectsData.length} active project(s).\n`;
+      projectsData.forEach(p => {
+        response += `• ${p.name}: ${getProjectCompletion(p)}% complete (Budget: ${p.budget.toLocaleString()} TZS, Actual: ${p.actual.toLocaleString()} TZS)\n`;
+      });
+      return response;
+    }
+    // Downloads & files
+    else if (msg.match(/download|file|document|report/i)) {
+      if (filesData.length === 0) {
+        return "No files available. Ask an admin to upload documents in the Downloads section.";
+      }
+      const totalDownloads = filesData.reduce((sum, f) => sum + (f.downloads || 0), 0);
+      let response = `📁 Total files: ${filesData.length}\n📥 Total downloads: ${totalDownloads}\n\nAvailable files:\n`;
+      filesData.slice(0, 5).forEach(f => {
+        response += `• ${f.name} (${(f.size / 1024).toFixed(1)} KB, downloaded ${f.downloads || 0} times)\n`;
+      });
+      if (filesData.length > 5) response += `...and ${filesData.length - 5} more.`;
+      return response;
+    }
+    // Accounting & budget
+    else if (msg.match(/budget|cost|spend|saving/i)) {
+      if (projectsData.length === 0) return "No projects to analyze. Add projects in Accounting first.";
+      const totalBudget = projectsData.reduce((s, p) => s + p.budget, 0);
+      const totalActual = projectsData.reduce((s, p) => s + p.actual, 0);
+      const savings = totalBudget - totalActual;
+      return `💰 Total Budget: ${totalBudget.toLocaleString()} TZS\n💸 Total Actual: ${totalActual.toLocaleString()} TZS\n✅ Savings: ${savings.toLocaleString()} TZS`;
+    }
+    // Help / navigation
+    else if (msg.match(/help|what can you do|menu/i)) {
+      return `I can assist with:\n• Project status (e.g., "ERP progress")\n• Downloads & file info\n• Budget & accounting summary\n• Portal features (Dashboard, Downloads, Admin, Accounting)\nJust ask!`;
+    }
+    else if (msg.match(/hello|hi|hey|greetings/i)) {
+      return `Hello ${currentUser.email.split('@')[0]}! How can I help you today?`;
+    }
+    else {
+      return "I'm your portal assistant. Try asking about project progress, downloads, or budget. Type 'help' for a list of things I can do.";
+    }
+  }
+
+  // UI: add message to chat
   function addMessage(message, isUser = false) {
     const messageDiv = document.createElement('div');
     messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
@@ -229,52 +439,81 @@
     chatBox.scrollTop = chatBox.scrollHeight;
   }
 
-  function getBotResponse(userMessage) {
-    const msg = userMessage.toLowerCase();
-    
-    if (msg.includes('erp')) {
-      return "CephasGM-ERP is at 85% completion. Financial and HR modules are on track for Q3 release.";
-    } else if (msg.includes('safety') || msg.includes('pwa')) {
-      return "Health-Safety-PWA is 92% complete. Incident tracking is live with 420+ incidents logged.";
-    } else if (msg.includes('tracker') || msg.includes('location')) {
-      return "Smart Location Tracker is 78% complete. Currently monitoring 252 assets across 3 sites.";
-    } else if (msg.includes('download')) {
-      return "You can find all project documents in the Downloads section.";
-    } else if (msg.includes('hello') || msg.includes('hi')) {
-      return "Hello! How can I assist you with your projects today?";
-    } else {
-      return "I can help with information about ERP, Safety PWA, Location Tracker, and downloads. What would you like to know?";
+  // Show typing indicator
+  let typingIndicator = null;
+  function showTyping() {
+    if (typingIndicator) return;
+    typingIndicator = document.createElement('div');
+    typingIndicator.className = 'typing-indicator';
+    for (let i = 0; i < 3; i++) {
+      const dot = document.createElement('span');
+      typingIndicator.appendChild(dot);
+    }
+    chatBox.appendChild(typingIndicator);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+  function hideTyping() {
+    if (typingIndicator) {
+      typingIndicator.remove();
+      typingIndicator = null;
     }
   }
 
-  sendBtn.addEventListener('click', () => {
+  // Send message handler
+  async function sendMessage() {
     const message = userInput.value.trim();
-    if (message) {
-      addMessage(message, true);
-      userInput.value = '';
-      
-      setTimeout(() => {
-        const response = getBotResponse(message);
-        addMessage(response, false);
-      }, 800);
+    if (!message) return;
+    addMessage(message, true);
+    userInput.value = '';
+    showTyping();
+    try {
+      const response = await getBotResponse(message);
+      hideTyping();
+      addMessage(response, false);
+    } catch (err) {
+      hideTyping();
+      addMessage("Sorry, I encountered an error. Please try again.", false);
+      console.error(err);
     }
+  }
+
+  sendBtn.addEventListener('click', sendMessage);
+  userInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') sendMessage();
   });
 
-  userInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-      sendBtn.click();
-    }
+  // Logout
+  document.getElementById('logoutBtn').addEventListener('click', (e) => {
+    e.preventDefault();
+    auth.signOut().then(() => window.location.href = 'index.html');
+  });
+
+  // Dark mode toggle
+  const themeToggle = document.getElementById('themeToggle');
+  const currentTheme = localStorage.getItem('portalTheme');
+  if (currentTheme === 'dark') document.body.classList.add('dark');
+  themeToggle.addEventListener('click', () => {
+    document.body.classList.toggle('dark');
+    localStorage.setItem('portalTheme', document.body.classList.contains('dark') ? 'dark' : 'light');
+  });
+
+  // Back to top button
+  const backToTop = document.getElementById('backToTop');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 300) backToTop.classList.add('show');
+    else backToTop.classList.remove('show');
+  });
+  backToTop.addEventListener('click', (e) => {
+    e.preventDefault();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 
   // Service Worker
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('service-worker.js')
-        .then(reg => console.log('✅ Service Worker registered:', reg.scope))
-        .catch(err => console.error('❌ Service Worker registration failed:', err));
+      navigator.serviceWorker.register('service-worker.js').catch(err => console.error('SW failed:', err));
     });
   }
 </script>
-
 </body>
 </html>
