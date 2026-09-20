@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cephas GM Portal — Access Gateway</title>
 
+  <!-- SEO -->
+  <meta name="description" content="Secure access gateway to the Cephas GM client and admin portal — unified control plane for projects, accounting, documents, and analytics across all 12 systems.">
+
   <!-- PWA Manifest -->
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icon-192.png">
@@ -35,20 +38,48 @@
       min-height: 100vh;
       position: relative;
     }
+
+    /* Gateway content wrapper — keeps things centred above the footer */
+    .gateway {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 4rem 1rem 6rem;
+      flex: 1;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
     h1 { 
       font-size: 2.4rem; 
       font-weight: 700; 
       margin-bottom: 1rem; 
       color: #0b7a59; 
       text-shadow: 0 2px 4px rgba(0,0,0,0.5); 
+      line-height: 1.25;
+    }
+    .eyebrow {
+      display: inline-block;
+      font-size: 0.72rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #34d399;
+      font-weight: 700;
+      margin-bottom: 1.2rem;
+      background: rgba(11,122,89,0.22);
+      padding: 6px 16px;
+      border-radius: 30px;
+      border: 1px solid rgba(52,211,153,0.35);
     }
     p { 
-      font-size: 1.1rem; 
-      max-width: 600px; 
+      font-size: 1.05rem; 
+      max-width: 620px; 
       margin-bottom: 2rem; 
       color: #f0f0f0; 
       text-shadow: 0 1px 3px rgba(0,0,0,0.5); 
-      line-height: 1.6;
+      line-height: 1.7;
       padding: 0 1rem;
     }
     .buttons { 
@@ -80,6 +111,28 @@
     .btn.alt:hover { 
       background: #34495e; 
     }
+
+    /* Features strip */
+    .features {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 2.5rem;
+      padding: 0 1rem;
+      max-width: 640px;
+    }
+    .feature-tag {
+      font-size: 0.72rem;
+      letter-spacing: 0.4px;
+      padding: 5px 12px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: #ddd;
+    }
+
+    /* User info bar (shown when authenticated) */
     .user-info {
       position: absolute;
       top: 20px;
@@ -91,10 +144,12 @@
       align-items: center;
       gap: 15px;
       border: 1px solid rgba(255,255,255,0.1);
+      backdrop-filter: blur(6px);
     }
     .user-info span {
-      color: #0b7a59;
+      color: #34d399;
       font-weight: 500;
+      font-size: 0.9rem;
     }
     .logout-btn {
       background: #c0392b;
@@ -103,21 +158,34 @@
       padding: 5px 15px;
       border-radius: 20px;
       cursor: pointer;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: 0.3s;
     }
     .logout-btn:hover {
       background: #e74c3c;
+      transform: translateY(-1px);
     }
+
+    /* Footer */
     footer {
       background: rgba(0,0,0,0.9);
       text-align: center;
-      padding: 1rem;
+      padding: 1.2rem;
       font-size: 0.9rem;
       position: absolute;
       bottom: 0;
       width: 100%;
       color: #ccc;
       border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 1.9rem; }
+      p { font-size: 0.98rem; }
+      .btn { padding: 0.8rem 1.4rem; font-size: 0.9rem; }
+      .user-info { top: 12px; right: 12px; padding: 8px 14px; }
+      .user-info span { font-size: 0.8rem; }
     }
   </style>
 </head>
@@ -128,16 +196,31 @@
     <button class="logout-btn" onclick="logout()">Logout</button>
   </div>
 
-  <h1>Cephas GM Secure Portal</h1>
-  <p>Welcome to the dedicated gateway for clients and staff. Access real-time dashboards, project documents (ERP, Safety PWA, Location Tracker), and system updates.</p>
+  <div class="gateway">
+    <span class="eyebrow">Secure Access Gateway</span>
+    <h1>Cephas GM Portal</h1>
+    <p>One control plane for every project. Access real-time dashboards, project tracking, accounting, document management, and analytics across all 12 systems — enterprise ERP, AI platforms, OHS, secure connectivity, hardware-integrated defence, and infrastructure optimisation.</p>
 
-  <div class="buttons" id="mainButtons">
-    <a href="portallogin.html" class="btn" id="loginBtn">🔐 Login</a>
-    <a href="portaldashboard.html" class="btn alt" id="dashboardBtn" style="display:none;">📊 Go to Dashboard</a>
-    <a href="https://cephasgm.github.io/cephasgm-site/" class="btn alt" target="_blank">🌍 Visit Main Site</a>
+    <div class="buttons" id="mainButtons">
+      <a href="portallogin.html" class="btn" id="loginBtn">🔐 Login</a>
+      <a href="portaldashboard.html" class="btn alt" id="dashboardBtn" style="display:none;">📊 Go to Dashboard</a>
+      <a href="https://cephasgm.org/" class="btn alt" target="_blank" rel="noopener">🌍 Visit Main Site</a>
+    </div>
+
+    <div class="features">
+      <span class="feature-tag">Enterprise ERP</span>
+      <span class="feature-tag">Multimodal AI</span>
+      <span class="feature-tag">OHS System</span>
+      <span class="feature-tag">Secure VPN</span>
+      <span class="feature-tag">Location Tracker</span>
+      <span class="feature-tag">Water-Energy IoT</span>
+      <span class="feature-tag">EchoShield</span>
+      <span class="feature-tag">SatTrack</span>
+      <span class="feature-tag">SIGNAID</span>
+    </div>
   </div>
 
-  <footer>Copyright © 2025 Cephas GM | Enterprise Portal</footer>
+  <footer>Copyright © 2025 Cephas GM | Innovating for Tomorrow</footer>
 
   <script>
     // Firebase Configuration
@@ -163,7 +246,7 @@
       const loginBtn = document.getElementById('loginBtn');
       const dashboardBtn = document.getElementById('dashboardBtn');
       const userEmailSpan = document.getElementById('userEmail');
-      
+
       if (user) {
         // User is logged in
         userInfo.style.display = 'flex';
