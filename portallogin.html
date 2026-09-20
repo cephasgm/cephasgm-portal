@@ -10,185 +10,262 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="theme-color" content="#0b7a59">
 
+<!-- SEO -->
+<meta name="description" content="Secure login to the Cephas GM Portal — unified control plane for enterprise projects, OHS systems, AI platforms, and infrastructure optimisation.">
+<meta name="robots" content="noindex, nofollow">
+
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-body {
-  font-family: 'Poppins', sans-serif;
-  color: #fff;
-  background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1470&q=80');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  position: relative;
-}
-.login-box {
-  background: rgba(255,255,255,0.1);
-  padding: 2.5rem;
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-  backdrop-filter: blur(10px);
-  width: 90%;
-  max-width: 400px;
-  border: 1px solid rgba(255,255,255,0.1);
-}
-h1 {
-  color: #0b7a59;
-  margin-bottom: 1.5rem;
-  font-size: 2rem;
-  text-align: center;
-}
-input {
-  display: block;
-  width: 100%;
-  margin: 0.7rem 0;
-  padding: 0.8rem 1rem;
-  border: 1px solid rgba(255,255,255,0.2);
-  border-radius: 8px;
-  background: rgba(255,255,255,0.1);
-  color: #fff;
-  font-family: 'Poppins', sans-serif;
-  font-size: 1rem;
-}
-input::placeholder {
-  color: rgba(255,255,255,0.6);
-}
-input:focus {
-  outline: none;
-  border-color: #0b7a59;
-  background: rgba(255,255,255,0.15);
-}
-button {
-  width: 100%;
-  padding: 0.8rem;
-  margin-top: 1rem;
-  background: #0b7a59;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s;
-  font-size: 1rem;
-  font-family: 'Poppins', sans-serif;
-}
-button:hover {
-  background: #099268;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(11,122,89,0.3);
-}
-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
-}
-a {
-  color: #ddd;
-  text-decoration: none;
-  font-size: 0.9rem;
-  display: block;
-  margin-top: 1rem;
-  text-align: center;
-}
-a:hover {
-  color: #fff;
-}
-footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  text-align: center;
-  padding: 1rem;
-  background: rgba(0,0,0,0.9);
-  color: #ccc;
-  font-size: 0.9rem;
-  border-top: 1px solid rgba(255,255,255,0.1);
-}
-.error-message {
-  color: #ff6b6b;
-  margin-top: 0.5rem;
-  font-size: 0.9rem;
-  display: none;
-  background: rgba(255,107,107,0.1);
-  padding: 0.5rem;
-  border-radius: 4px;
-  text-align: center;
-}
-.success-message {
-  color: #0b7a59;
-  margin-top: 0.5rem;
-  font-size: 0.9rem;
-  display: none;
-  background: rgba(11,122,89,0.1);
-  padding: 0.5rem;
-  border-radius: 4px;
-  text-align: center;
-}
-.loading-message {
-  color: #ccc;
-  margin-top: 0.5rem;
-  font-size: 0.9rem;
-  display: none;
-  text-align: center;
-}
-.demo-credentials {
-  margin-top: 2rem;
-  padding: 1rem;
-  background: rgba(255,255,255,0.05);
-  border-radius: 8px;
-  font-size: 0.85rem;
-  color: #ccc;
-  border: 1px solid rgba(255,255,255,0.1);
-}
-.demo-credentials p {
-  margin: 0.3rem 0;
-}
-.demo-credentials strong {
-  color: #0b7a59;
-}
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  body {
+    font-family: 'Poppins', sans-serif;
+    color: #fff;
+    background: linear-gradient(rgba(0,0,0,0.72), rgba(0,0,0,0.85)), url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1470&q=80');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    position: relative;
+    padding: 20px 0 80px;
+  }
+  /* Liquid crystal overlay — unchanged */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(125deg, rgba(11,122,89,0.08) 0%, rgba(100,200,255,0.05) 25%, rgba(11,122,89,0.08) 50%, rgba(200,100,255,0.05) 75%, rgba(11,122,89,0.08) 100%);
+    background-size: 300% 300%;
+    animation: liquidCrystal 12s ease infinite;
+    pointer-events: none;
+    z-index: 0;
+  }
+  @keyframes liquidCrystal {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* ---------- Login box ---------- */
+  .login-box {
+    background: rgba(255,255,255,0.08);
+    padding: 2.5rem 2rem;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    backdrop-filter: blur(14px);
+    width: 100%;
+    max-width: 420px;
+    border: 1px solid rgba(255,255,255,0.12);
+    position: relative;
+    z-index: 1;
+    animation: boxIn .4s ease;
+  }
+  @keyframes boxIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .brand-link {
+    display: inline-block;
+    font-size: .82rem;
+    color: #34d399;
+    text-decoration: none;
+    padding: 5px 12px;
+    border-radius: 20px;
+    background: rgba(11,122,89,0.18);
+    border: 1px solid rgba(52,211,153,0.3);
+    margin-bottom: 1.2rem;
+    font-weight: 500;
+    transition: .3s;
+  }
+  .brand-link:hover {
+    background: rgba(11,122,89,0.35);
+    color: #fff;
+  }
+
+  h1 {
+    color: #34d399;
+    margin-bottom: 0.4rem;
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1.25;
+  }
+  .subtitle {
+    color: #ccc;
+    font-size: .9rem;
+    margin-bottom: 1.6rem;
+    line-height: 1.5;
+  }
+
+  label {
+    display: block;
+    font-size: .82rem;
+    color: #ccc;
+    margin-bottom: 6px;
+    margin-top: 10px;
+    font-weight: 500;
+  }
+
+  input {
+    display: block;
+    width: 100%;
+    padding: 0.85rem 1rem;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 8px;
+    background: rgba(255,255,255,0.06);
+    color: #fff;
+    font-family: 'Poppins', sans-serif;
+    font-size: .95rem;
+    transition: border-color .2s, background .2s, box-shadow .2s;
+  }
+  input::placeholder {
+    color: rgba(255,255,255,0.45);
+  }
+  input:focus {
+    outline: none;
+    border-color: #0b7a59;
+    background: rgba(255,255,255,0.1);
+    box-shadow: 0 0 0 3px rgba(11,122,89,0.15);
+  }
+
+  button {
+    width: 100%;
+    padding: 0.85rem;
+    margin-top: 1.4rem;
+    background: #0b7a59;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: .98rem;
+    font-family: 'Poppins', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  button:hover {
+    background: #099268;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(11,122,89,0.35);
+  }
+  button:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+  .btn-spinner {
+    width: 15px; height: 15px;
+    border: 2px solid rgba(255,255,255,0.4);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin .6s linear infinite;
+    display: inline-block;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .back-link {
+    color: #ccc;
+    text-decoration: none;
+    font-size: .88rem;
+    display: block;
+    margin-top: 1.2rem;
+    text-align: center;
+    transition: color .2s;
+  }
+  .back-link:hover {
+    color: #34d399;
+  }
+
+  /* ---------- Messages ---------- */
+  .error-message,
+  .success-message {
+    margin-top: 12px;
+    font-size: .87rem;
+    display: none;
+    padding: 10px 12px;
+    border-radius: 8px;
+    text-align: center;
+    line-height: 1.5;
+  }
+  .error-message {
+    color: #ffb3b3;
+    background: rgba(192,57,43,0.18);
+    border: 1px solid rgba(192,57,43,0.4);
+  }
+  .success-message {
+    color: #a7f3d0;
+    background: rgba(11,122,89,0.2);
+    border: 1px solid rgba(52,211,153,0.4);
+  }
+
+  /* ---------- Footer ---------- */
+  footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    padding: 1.1rem;
+    background: rgba(0,0,0,0.9);
+    color: #ccc;
+    font-size: .88rem;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    position: fixed;
+    left: 0;
+    z-index: 2;
+  }
+
+  @media (max-width: 500px) {
+    .login-box {
+      padding: 2rem 1.5rem;
+    }
+    h1 { font-size: 1.5rem; }
+    .subtitle { font-size: .85rem; }
+  }
 </style>
 </head>
 <body>
 
 <div class="login-box">
+  <a href="index.html" class="brand-link">← Cephas GM Portal</a>
   <h1>🔐 Portal Login</h1>
-  
-  <form id="loginForm">
-    <input type="email" id="email" placeholder="Email address" required value="***">
-    <input type="password" id="password" placeholder="Password" required value="***">
-    
+  <p class="subtitle">Sign in to access your projects, downloads, accounting, and admin tools.</p>
+
+  <form id="loginForm" autocomplete="on">
+    <label for="email">Email address</label>
+    <input type="email" id="email" placeholder="you@example.com" required autocomplete="email" autofocus>
+
+    <label for="password">Password</label>
+    <input type="password" id="password" placeholder="••••••••" required autocomplete="current-password">
+
     <div class="error-message" id="loginError"></div>
-    <div class="success-message" id="loginSuccess">Login successful! Redirecting...</div>
-    <div class="loading-message" id="loginLoading">Authenticating...</div>
-    
+    <div class="success-message" id="loginSuccess">Login successful — redirecting...</div>
+
     <button type="submit" id="loginBtn">Sign In</button>
   </form>
-  
-  <a href="index.html">← Back to Portal Home</a>
-  
-  <div class="demo-credentials">
-    <p><strong>Demo Credentials:</strong></p>
-    <p>👤 Client: *** / ***</p>
-    <p>👨‍💼 Admin: *** / ***</p>
-  </div>
+
+  <a href="index.html" class="back-link">← Back to Portal Home</a>
 </div>
 
-<footer>Copyright © 2025 Cephas GM | Enterprise Portal</footer>
+<footer>Copyright © 2025 Cephas GM | Innovating for Tomorrow</footer>
 
 <script>
-  // Firebase Configuration
+  /* ============================================================
+     FIREBASE CONFIG — unchanged
+  ============================================================ */
   const firebaseConfig = {
     apiKey: "AIzaSyA2vWoAkdbke0D_x8N1W3JAzDVj4vcsZSE",
     authDomain: "cephasgm-portal.firebaseapp.com",
@@ -198,92 +275,128 @@ footer {
     appId: "1:577322740819:web:da7bfaf387fb690bc96aa6",
     measurementId: "G-KC2XDEJPRV"
   };
-
-  // Initialize Firebase
-  if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-  }
+  if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
 
-  // Get URL parameters
-  const urlParams = new URLSearchParams(window.location.search);
-  const mode = urlParams.get('mode');
-  
-  // Set default values based on mode
-  if (mode === 'staff') {
-    document.getElementById('email').value = '***';
-    document.getElementById('password').value = '***';
-  }
+  /* ============================================================
+     CONSTANTS
+  ============================================================ */
+  const ADMIN_EMAILS = ["admin@cephasgm.org", "admin@cephasgm.com"];
 
-  // Handle login form submission
-  document.getElementById('loginForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    const loginBtn = document.getElementById('loginBtn');
-    const errorDiv = document.getElementById('loginError');
-    const successDiv = document.getElementById('loginSuccess');
-    const loadingDiv = document.getElementById('loginLoading');
-    
-    // Reset displays
-    errorDiv.style.display = 'none';
-    successDiv.style.display = 'none';
-    loadingDiv.style.display = 'block';
-    loginBtn.disabled = true;
-    
-    try {
-      // Sign in with Firebase
-      const userCredential = await auth.signInWithEmailAndPassword(email, password);
-      const user = userCredential.user;
-      
-      // Determine role based on email
-      const isStaff = email.includes('admin');
-      
-      // Show success message
-      loadingDiv.style.display = 'none';
-      successDiv.style.display = 'block';
-      
-      // Redirect based on role after brief delay
-      setTimeout(() => {
-        if (isStaff) {
-          window.location.href = 'portaladmin.html';
-        } else {
-          window.location.href = 'portaldashboard.html';
-        }
-      }, 1500);
-      
-    } catch (error) {
-      loadingDiv.style.display = 'none';
-      loginBtn.disabled = false;
-      
-      console.error('Login error:', error.code, error.message);
-      
-      // Handle specific error codes
-      let errorMessage = 'Login failed. Please try again.';
-      switch(error.code) {
-        case 'auth/user-not-found':
-          errorMessage = 'User not found. Please check your email.';
-          break;
-        case 'auth/wrong-password':
-          errorMessage = 'Incorrect password. Please try again.';
-          break;
-        case 'auth/invalid-email':
-          errorMessage = 'Invalid email format.';
-          break;
-        case 'auth/too-many-requests':
-          errorMessage = 'Too many failed attempts. Please try again later.';
-          break;
-        default:
-          errorMessage = error.message;
-      }
-      
-      errorDiv.textContent = errorMessage;
-      errorDiv.style.display = 'block';
+  /* ============================================================
+     DOM
+  ============================================================ */
+  const loginForm = document.getElementById('loginForm');
+  const emailInput = document.getElementById('email');
+  const passwordInput = document.getElementById('password');
+  const loginBtn = document.getElementById('loginBtn');
+  const errorDiv = document.getElementById('loginError');
+  const successDiv = document.getElementById('loginSuccess');
+
+  /* ============================================================
+     ALREADY LOGGED IN — auto-redirect
+  ============================================================ */
+  auth.onAuthStateChanged((user) => {
+    if (user && !sessionStorage.getItem('login_just_completed')) {
+      const isAdmin = ADMIN_EMAILS.includes(user.email.toLowerCase());
+      window.location.href = isAdmin ? 'portaladmin.html' : 'portaldashboard.html';
     }
   });
 
-  // Service Worker
+  /* ============================================================
+     HELPERS
+  ============================================================ */
+  function showError(message) {
+    errorDiv.textContent = message;
+    errorDiv.style.display = 'block';
+    successDiv.style.display = 'none';
+  }
+  function hideMessages() {
+    errorDiv.style.display = 'none';
+    successDiv.style.display = 'none';
+  }
+
+  /* ============================================================
+     LOGIN
+  ============================================================ */
+  loginForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    hideMessages();
+
+    const email = emailInput.value.trim();
+    const password = passwordInput.value;
+
+    if (!email || !password) {
+      showError('Please enter both email and password.');
+      return;
+    }
+
+    // Disable button + show spinner
+    loginBtn.disabled = true;
+    const originalText = loginBtn.textContent;
+    loginBtn.innerHTML = '<span class="btn-spinner"></span> Authenticating...';
+
+    try {
+      const userCredential = await auth.signInWithEmailAndPassword(email, password);
+      const user = userCredential.user;
+
+      // Mark session so onAuthStateChanged doesn't double-redirect
+      sessionStorage.setItem('login_just_completed', '1');
+
+      // Show success
+      successDiv.style.display = 'block';
+
+      // Determine redirect target
+      const isAdmin = ADMIN_EMAILS.includes(user.email.toLowerCase());
+      const destination = isAdmin ? 'portaladmin.html' : 'portaldashboard.html';
+
+      // Brief delay so the user sees the success state
+      setTimeout(() => {
+        sessionStorage.removeItem('login_just_completed');
+        window.location.href = destination;
+      }, 900);
+
+    } catch (error) {
+      console.error('Login error:', error.code, error.message);
+
+      // Map Firebase error codes to friendly messages
+      let errorMessage = 'Login failed. Please try again.';
+      switch (error.code) {
+        case 'auth/invalid-email':
+          errorMessage = 'That email address does not look valid.';
+          break;
+        case 'auth/user-disabled':
+          errorMessage = 'This account has been disabled. Contact admin@cephasgm.org.';
+          break;
+        case 'auth/user-not-found':
+          errorMessage = 'No account found with that email.';
+          break;
+        case 'auth/wrong-password':
+        case 'auth/invalid-credential':
+        case 'auth/invalid-login-credentials':
+          errorMessage = 'Incorrect email or password.';
+          break;
+        case 'auth/too-many-requests':
+          errorMessage = 'Too many failed attempts. Please try again in a few minutes.';
+          break;
+        case 'auth/network-request-failed':
+          errorMessage = 'Network error. Check your connection and try again.';
+          break;
+        default:
+          errorMessage = error.message || errorMessage;
+      }
+
+      showError(errorMessage);
+      loginBtn.disabled = false;
+      loginBtn.textContent = originalText;
+      passwordInput.value = '';
+      passwordInput.focus();
+    }
+  });
+
+  /* ============================================================
+     SERVICE WORKER
+  ============================================================ */
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('service-worker.js')
@@ -295,5 +408,3 @@ footer {
 
 </body>
 </html>
-
-
