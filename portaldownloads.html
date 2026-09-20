@@ -11,7 +11,7 @@
 <meta name="theme-color" content="#0b7a59">
 
 <!-- SEO & Social Meta Tags -->
-<meta name="description" content="Secure file downloads for Cephas GM clients and staff – reports, documentation, architecture specs.">
+<meta name="description" content="Secure file downloads for Cephas GM clients and staff — reports, documentation, architecture specs, and project deliverables.">
 <meta property="og:title" content="Downloads — Cephas GM Portal">
 <meta property="og:description" content="Access project documents, technical specs, and reports securely.">
 <meta property="og:image" content="https://cephasgm.org/og-image.jpg">
@@ -20,6 +20,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Cephas GM Downloads">
 <meta name="twitter:description" content="Secure file downloads for enterprise clients.">
+<meta name="twitter:image" content="https://cephasgm.org/og-image.jpg">
 
 <!-- Favicon -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%230b7a59'/%3E%3Ctext x='50' y='70' font-size='70' text-anchor='middle' fill='white' font-family='Arial'%3EC%3C/text%3E%3C/svg%3E">
@@ -32,46 +33,36 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
 <style>
-  /* CSS Variables for Light/Dark Mode */
   :root {
-    --bg-body: #f5f7fa;
-    --text-primary: #1e293b;
-    --text-secondary: #475569;
-    --card-bg: #ffffff;
-    --border-color: #e2e8f0;
+    --bg-card: rgba(255,255,255,0.08);
+    --bg-card-solid: rgba(20,25,32,0.7);
+    --text-primary: #fff;
+    --text-secondary: #ccc;
+    --text-muted: #999;
     --accent: #0b7a59;
     --accent-hover: #099268;
-    --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    --accent-light: #34d399;
+    --danger: #c0392b;
+    --danger-hover: #e74c3c;
+    --border: rgba(255,255,255,0.12);
+    --shadow: 0 8px 24px rgba(0,0,0,0.3);
   }
-  body.dark {
-    --bg-body: #0f172a;
-    --text-primary: #f1f5f9;
-    --text-secondary: #cbd5e1;
-    --card-bg: #1e293b;
-    --border-color: #334155;
-  }
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
+  * { margin:0; padding:0; box-sizing:border-box; }
   body {
     font-family: 'Poppins', sans-serif;
-    background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.9)), url('https://seeafricatoday.com/wp-content/uploads/2019/07/Namibrand-Nature-Reserve-Namibia-Africa-596398501-1.jpg');
+    background: linear-gradient(rgba(0,0,0,0.82), rgba(0,0,0,0.92)), url('https://seeafricatoday.com/wp-content/uploads/2019/07/Namibrand-Nature-Reserve-Namibia-Africa-596398501-1.jpg');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
+    color: var(--text-primary);
     min-height: 100vh;
-    transition: background 0.3s, color 0.2s;
+    position: relative;
   }
-  /* Liquid crystal overlay */
+  /* Liquid crystal overlay — unchanged */
   body::before {
     content: '';
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 0; left: 0; width: 100%; height: 100%;
     background: linear-gradient(125deg, rgba(11,122,89,0.08) 0%, rgba(100,200,255,0.05) 25%, rgba(11,122,89,0.08) 50%, rgba(200,100,255,0.05) 75%, rgba(11,122,89,0.08) 100%);
     background-size: 300% 300%;
     animation: liquidCrystal 12s ease infinite;
@@ -83,6 +74,8 @@
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
   }
+
+  /* ---------- Navigation ---------- */
   .nav {
     background: rgba(0,0,0,0.95);
     display: flex;
@@ -93,110 +86,206 @@
     top: 0;
     z-index: 100;
     border-bottom: 2px solid var(--accent);
-    backdrop-filter: blur(4px);
+    backdrop-filter: blur(8px);
+    gap: 14px;
+    flex-wrap: wrap;
   }
-  .brand { font-weight: 700; color: #fff; font-size: 1.2rem; }
+  .brand {
+    font-weight: 700;
+    color: #fff;
+    font-size: 1.15rem;
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.08);
+    transition: .3s;
+    letter-spacing: .3px;
+  }
+  .brand:hover { background: rgba(255,255,255,0.15); }
   .nav-links {
     display: flex;
-    gap: 16px;
+    gap: 6px;
     flex-wrap: wrap;
     align-items: center;
   }
   .nav-links a {
     color: #fff;
     text-decoration: none;
-    padding: 8px 12px;
+    padding: 7px 11px;
     border-radius: 6px;
     transition: 0.3s;
+    font-size: .9rem;
   }
-  .nav-links a:hover, .nav-links a.active {
+  .nav-links a:hover,
+  .nav-links a.active {
     background: rgba(255,255,255,0.15);
   }
+  .nav-links .admin-link { background: rgba(11,122,89,0.5); }
   .logout-btn {
-    background: #c0392b;
+    background: var(--danger);
     padding: 6px 14px;
     border-radius: 6px;
     cursor: pointer;
-  }
-  .logout-btn:hover { background: #e74c3c; }
-  .user-welcome { color: var(--accent); font-weight: 500; margin-right: 15px; }
-  .theme-toggle {
-    background: rgba(255,255,255,0.2);
+    color: #fff;
     border: none;
-    color: white;
-    font-size: 1.2rem;
-    cursor: pointer;
-    padding: 6px 12px;
-    border-radius: 30px;
-    transition: 0.3s;
+    font-family: inherit;
+    font-size: .88rem;
   }
-  .theme-toggle:hover {
-    background: rgba(255,255,255,0.4);
-    transform: scale(1.05);
+  .logout-btn:hover { background: var(--danger-hover); }
+  .user-welcome {
+    color: var(--accent-light);
+    font-weight: 500;
+    font-size: .88rem;
+    margin-right: 8px;
   }
+  .admin-badge {
+    background: var(--accent);
+    color: #fff;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+  }
+
+  /* ---------- Container ---------- */
   .container {
     max-width: 900px;
-    margin: 20px auto;
+    margin: 24px auto;
     padding: 20px;
     position: relative;
     z-index: 1;
   }
+  .page-header {
+    text-align: center;
+    padding: 8px 0 24px;
+    color: #fff;
+  }
+  .page-header h1 {
+    color: var(--accent-light);
+    font-size: 1.9rem;
+    margin-bottom: 8px;
+    line-height: 1.25;
+  }
+  .page-header p {
+    color: var(--text-secondary);
+    max-width: 640px;
+    margin: 0 auto;
+    line-height: 1.6;
+    font-size: .95rem;
+  }
+
+  /* ---------- Cards ---------- */
   .card {
-    background: var(--card-bg);
+    background: var(--bg-card);
+    backdrop-filter: blur(12px);
     border-radius: 16px;
-    padding: 20px;
+    padding: 22px;
     margin-bottom: 20px;
     box-shadow: var(--shadow);
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--border);
   }
+  .card h3 {
+    color: var(--accent-light);
+    font-size: 1.1rem;
+    margin-bottom: 6px;
+  }
+  .card-hint {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-top: 6px;
+    line-height: 1.5;
+  }
+
+  /* ---------- Upload bar ---------- */
   .upload-area {
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
     gap: 15px;
-    margin-bottom: 10px;
   }
   .btn-upload {
     background: var(--accent);
-    color: white;
+    color: #fff;
     border: none;
-    padding: 8px 16px;
+    padding: 9px 18px;
     border-radius: 8px;
     cursor: pointer;
+    font-family: inherit;
+    font-size: .88rem;
     font-weight: 500;
     transition: 0.2s;
   }
-  .btn-upload:hover { background: var(--accent-hover); transform: translateY(-2px); }
+  .btn-upload:hover {
+    background: var(--accent-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(11,122,89,0.35);
+  }
+
+  /* ---------- File list ---------- */
   .file-list {
     display: flex;
     flex-direction: column;
     gap: 12px;
-    margin-top: 20px;
+    margin-top: 16px;
   }
   .file-item {
     background: rgba(255,255,255,0.05);
     border-radius: 12px;
-    padding: 15px;
+    padding: 15px 18px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
     gap: 12px;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--border);
     transition: 0.2s;
   }
-  .file-item:hover { border-color: var(--accent); transform: translateX(5px); }
+  .file-item:hover {
+    border-color: var(--accent);
+    transform: translateX(4px);
+  }
   .file-info {
     display: flex;
     align-items: center;
     gap: 15px;
     flex: 1;
+    min-width: 0;
   }
-  .file-icon { font-size: 1.8rem; color: var(--accent); }
-  .file-details h3 { font-size: 1rem; margin-bottom: 4px; color: var(--text-primary); }
-  .file-details small { color: var(--text-secondary); font-size: 0.75rem; }
-  .download-stats { font-size: 0.7rem; color: var(--accent); margin-left: 10px; }
+  .file-icon {
+    font-size: 1.8rem;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+  .file-details { min-width: 0; flex: 1; }
+  .file-details h3 {
+    font-size: .98rem;
+    margin-bottom: 4px;
+    color: var(--text-primary);
+    word-break: break-word;
+    line-height: 1.35;
+  }
+  .file-details small {
+    color: var(--text-secondary);
+    font-size: .75rem;
+    display: block;
+    line-height: 1.5;
+  }
+  .download-stats {
+    font-size: .72rem;
+    color: var(--accent-light);
+    display: inline-block;
+    margin-top: 4px;
+    font-weight: 500;
+  }
+  .file-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+  }
   .download-btn {
     background: var(--accent);
     color: white;
@@ -205,46 +294,125 @@
     border-radius: 6px;
     cursor: pointer;
     font-weight: 500;
+    font-family: inherit;
+    font-size: .85rem;
     transition: 0.2s;
   }
-  .download-btn:hover { background: var(--accent-hover); transform: translateY(-2px); }
+  .download-btn:hover {
+    background: var(--accent-hover);
+    transform: translateY(-2px);
+  }
+  .download-btn:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+    transform: none;
+  }
   .delete-btn {
-    background: #c0392b;
+    background: var(--danger);
     color: white;
     border: none;
-    padding: 6px 12px;
+    padding: 8px 14px;
     border-radius: 6px;
     cursor: pointer;
-    margin-left: 8px;
-    font-size: 0.8rem;
+    font-family: inherit;
+    font-size: .82rem;
+    transition: 0.2s;
   }
+  .delete-btn:hover { background: var(--danger-hover); }
+
+  /* ---------- Empty state ---------- */
+  .empty-state {
+    text-align: center;
+    padding: 32px 16px;
+    color: var(--text-muted);
+    font-size: .9rem;
+  }
+  .empty-state strong {
+    display: block;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    font-size: 1rem;
+  }
+
+  /* ---------- Loading spinner ---------- */
+  .spinner {
+    display: inline-block;
+    width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,0.25);
+    border-top-color: var(--accent-light);
+    border-radius: 50%;
+    animation: spin .6s linear infinite;
+    vertical-align: middle;
+    margin-right: 6px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-row {
+    text-align: center;
+    padding: 24px;
+    color: var(--text-muted);
+    font-size: .9rem;
+  }
+
+  /* ---------- Modal ---------- */
   .modal {
     display: none;
     position: fixed;
     top: 0; left: 0;
     width: 100%; height: 100%;
-    background: rgba(0,0,0,0.7);
+    background: rgba(0,0,0,0.75);
     z-index: 200;
     justify-content: center;
     align-items: center;
+    backdrop-filter: blur(4px);
+    padding: 16px;
   }
   .modal-content {
-    background: var(--card-bg);
+    background: var(--bg-card-solid);
+    backdrop-filter: blur(16px);
     border-radius: 16px;
-    padding: 24px;
-    width: 90%;
-    max-width: 500px;
-    border: 1px solid var(--border-color);
-  }
-  .modal-content h3 { color: var(--accent); margin-bottom: 20px; }
-  .modal-content input {
+    padding: 26px;
     width: 100%;
-    padding: 10px;
-    margin: 8px 0 16px;
-    border: 1px solid var(--border-color);
+    max-width: 480px;
+    border: 1px solid var(--border);
+    animation: modalIn .25s ease;
+  }
+  @keyframes modalIn {
+    from { opacity: 0; transform: translateY(-10px) scale(.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .modal-content h3 {
+    color: var(--accent-light);
+    margin-bottom: 16px;
+    font-size: 1.15rem;
+  }
+  .modal-content input[type="file"] {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0 8px;
+    border: 1px dashed var(--border);
     border-radius: 8px;
-    background: var(--card-bg);
-    color: var(--text-primary);
+    background: rgba(255,255,255,0.04);
+    color: var(--text-secondary);
+    font-family: inherit;
+    font-size: .88rem;
+    cursor: pointer;
+  }
+  .modal-content input[type="file"]::file-selector-button {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: .82rem;
+    margin-right: 10px;
+  }
+  .modal-hint {
+    font-size: .75rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin-bottom: 4px;
   }
   .modal-buttons {
     display: flex;
@@ -253,101 +421,139 @@
     margin-top: 20px;
   }
   .modal-buttons button {
-    padding: 8px 16px;
+    padding: 9px 20px;
     border-radius: 8px;
     border: none;
     cursor: pointer;
+    font-family: inherit;
+    font-size: .88rem;
+    font-weight: 500;
+    transition: .2s;
   }
   .btn-save { background: var(--accent); color: white; }
-  .btn-cancel { background: #95a5a6; color: white; }
+  .btn-save:hover { background: var(--accent-hover); }
+  .btn-save:disabled { opacity: .6; cursor: not-allowed; }
+  .btn-cancel {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border) !important;
+  }
+  .btn-cancel:hover { background: rgba(255,255,255,0.08); color: #fff; }
+
+  /* ---------- Footer ---------- */
+  footer {
+    background: rgba(0,0,0,0.95);
+    text-align: center;
+    padding: 1.2rem;
+    color: #ccc;
+    margin-top: 2rem;
+    font-size: .88rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ---------- Back to top ---------- */
   .back-to-top {
     position: fixed;
-    bottom: 30px;
-    right: 30px;
+    bottom: 28px;
+    right: 28px;
     background: var(--accent);
     color: white;
-    width: 48px;
-    height: 48px;
+    width: 46px;
+    height: 46px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     text-decoration: none;
-    font-size: 24px;
+    font-size: 22px;
     opacity: 0;
     visibility: hidden;
     transition: all 0.3s;
     z-index: 99;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
   }
-  .back-to-top.show {
-    opacity: 1;
-    visibility: visible;
-  }
-  footer {
-    background: rgba(0,0,0,0.95);
-    text-align: center;
-    padding: 1rem;
-    color: #ccc;
-    margin-top: 2rem;
-  }
+  .back-to-top.show { opacity: 1; visibility: visible; }
+  .back-to-top:hover { background: var(--accent-hover); transform: translateY(-4px); }
+
   @media (max-width: 768px) {
-    .container { padding: 12px; }
-    .file-item { flex-direction: column; align-items: flex-start; }
-    .download-btn, .delete-btn { width: 100%; text-align: center; margin-top: 5px; }
-    .nav-links { gap: 8px; }
+    .container { padding: 14px; margin: 14px auto; }
+    .file-item { flex-direction: column; align-items: stretch; }
+    .file-actions { width: 100%; }
+    .download-btn, .delete-btn { flex: 1; text-align: center; }
+    .nav { padding: 10px 14px; }
+    .nav-links a { font-size: .82rem; padding: 6px 8px; }
+    .page-header h1 { font-size: 1.5rem; }
+    .card { padding: 18px; }
   }
 </style>
 </head>
 <body>
 
 <nav class="nav">
-  <div class="brand">📁 Downloads Center</div>
+  <a href="portaldashboard.html" class="brand">Cephas GM Portal</a>
   <div class="nav-links">
     <span class="user-welcome" id="welcomeMsg">Welcome!</span>
+    <span class="admin-badge" id="adminBadge" style="display:none;">Admin</span>
     <a href="portaldashboard.html">Dashboard</a>
     <a href="portaldownloads.html" class="active">Downloads</a>
-    <a href="portaladmin.html">Admin</a>
     <a href="portalaccounting.html">Accounting</a>
-    <a href="#" id="logoutBtn" class="logout-btn">Logout</a>
-    <a href="https://cephasgm.github.io/cephasgm-site/" target="_blank">🌍 Main Site</a>
-    <button class="theme-toggle" id="themeToggle" aria-label="Dark/Light mode">🌓</button>
+    <a href="portalassistant.html">AI Assistant</a>
+    <a href="portaladmin.html" id="adminLink" class="admin-link" style="display:none;">Admin Panel</a>
+    <a href="https://cephasgm.org/" target="_blank" rel="noopener">🌍 Main Site</a>
+    <button class="logout-btn" id="logoutBtn">Logout</button>
   </div>
 </nav>
 
 <div class="container">
-  <div class="card" id="uploadCard" style="display: none;">
-    <div class="upload-area">
-      <h3>📤 Upload New File</h3>
-      <button class="btn-upload" id="openUploadModalBtn">+ Upload File</button>
-    </div>
-    <p style="font-size: 0.8rem; color: var(--text-secondary);">Only administrators can upload files.</p>
+
+  <div class="page-header">
+    <h1>📁 Downloads Center</h1>
+    <p>Secure file access for Cephas GM clients and staff — reports, documentation, architecture specs, and project deliverables.</p>
   </div>
 
-  <div class="card">
-    <h3 style="margin-bottom: 15px;">📂 Available Downloads</h3>
-    <div id="fileListContainer" class="file-list">
-      <p style="text-align: center; padding: 20px;">Loading files...</p>
+  <!-- Upload card (admin only) -->
+  <div class="card" id="uploadCard" style="display: none;">
+    <div class="upload-area">
+      <div>
+        <h3>📤 Upload New File</h3>
+        <p class="card-hint">Supported: PDF, Word, Excel, images. Only administrators can upload.</p>
+      </div>
+      <button class="btn-upload" id="openUploadModalBtn">+ Upload File</button>
     </div>
   </div>
+
+  <!-- File list -->
+  <div class="card">
+    <h3 style="margin-bottom: 6px;">📂 Available Downloads</h3>
+    <p class="card-hint">Every file you download increments the counter visible to admins.</p>
+    <div id="fileListContainer" class="file-list">
+      <p class="loading-row"><span class="spinner"></span> Loading files...</p>
+    </div>
+  </div>
+
 </div>
 
 <!-- Upload Modal -->
 <div id="uploadModal" class="modal">
   <div class="modal-content">
     <h3>Upload File</h3>
-    <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.xlsx,.jpg,.png">
+    <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.webp,.txt,.csv,.zip">
+    <p class="modal-hint">Files are stored securely in Firebase Storage and linked to a Firestore record with an audit trail.</p>
     <div class="modal-buttons">
-      <button class="btn-save" id="confirmUploadBtn">Upload</button>
       <button class="btn-cancel" id="cancelUploadBtn">Cancel</button>
+      <button class="btn-save" id="confirmUploadBtn">Upload</button>
     </div>
   </div>
 </div>
 
-<footer>Copyright © 2025 Cephas GM | Enterprise Portal</footer>
-<a href="#" class="back-to-top" id="backToTop">↑</a>
+<footer>Copyright © 2025 Cephas GM | Innovating for Tomorrow</footer>
+<a href="#" class="back-to-top" id="backToTop" aria-label="Back to top">↑</a>
 
 <script>
-  // Firebase Config
+  // ============================================================
+  // FIREBASE CONFIG — unchanged
+  // ============================================================
   const firebaseConfig = {
     apiKey: "AIzaSyA2vWoAkdbke0D_x8N1W3JAzDVj4vcsZSE",
     authDomain: "cephasgm-portal.firebaseapp.com",
@@ -362,12 +568,18 @@
   const db = firebase.firestore();
   const storage = firebase.storage();
 
+  /* ============================================================
+     CONSTANTS
+  ============================================================ */
+  const ADMIN_EMAILS = ["admin@cephasgm.org", "admin@cephasgm.com"];
+
   let currentUser = null;
   let isAdmin = false;
-  const ADMIN_EMAIL = "admin@cephasgm.org"; // Change to your admin email
 
-  // DOM elements
+  // DOM
   const welcomeMsg = document.getElementById('welcomeMsg');
+  const adminBadge = document.getElementById('adminBadge');
+  const adminLink = document.getElementById('adminLink');
   const fileListContainer = document.getElementById('fileListContainer');
   const uploadCard = document.getElementById('uploadCard');
   const openUploadModalBtn = document.getElementById('openUploadModalBtn');
@@ -376,7 +588,9 @@
   const cancelUploadBtn = document.getElementById('cancelUploadBtn');
   const fileInput = document.getElementById('fileInput');
 
-  // Auth state
+  /* ============================================================
+     AUTH
+  ============================================================ */
   auth.onAuthStateChanged(async (user) => {
     if (!user) {
       window.location.href = 'index.html';
@@ -384,67 +598,97 @@
     }
     currentUser = user;
     welcomeMsg.textContent = `Welcome, ${user.email.split('@')[0]}!`;
-    isAdmin = (user.email === ADMIN_EMAIL);
+    isAdmin = ADMIN_EMAILS.includes(user.email.toLowerCase());
+
     if (isAdmin) {
       uploadCard.style.display = 'block';
+      adminBadge.style.display = 'inline-block';
+      adminLink.style.display = 'inline-block';
     }
+
     await loadFiles();
   });
 
-  // Load files from Firestore
+  /* ============================================================
+     LOAD FILES
+  ============================================================ */
   async function loadFiles() {
-    fileListContainer.innerHTML = '<p style="text-align: center;">Loading files...</p>';
+    fileListContainer.innerHTML = '<p class="loading-row"><span class="spinner"></span> Loading files...</p>';
     try {
       const snapshot = await db.collection('files').orderBy('uploadedAt', 'desc').get();
       if (snapshot.empty) {
-        fileListContainer.innerHTML = '<p style="text-align: center;">No files available. Check back later.</p>';
+        fileListContainer.innerHTML = '<div class="empty-state"><strong>No files available yet.</strong>Check back later or contact your administrator.</div>';
         return;
       }
       fileListContainer.innerHTML = '';
       snapshot.forEach(doc => {
-        const file = doc.data();
-        renderFileItem(doc.id, file);
+        renderFileItem(doc.id, doc.data());
       });
     } catch (err) {
-      console.error(err);
-      fileListContainer.innerHTML = '<p style="text-align: center;">Error loading files.</p>';
+      console.error('loadFiles error:', err);
+      fileListContainer.innerHTML = '<div class="empty-state"><strong>Could not load files.</strong>' + escapeHtml(err.message || '') + '</div>';
     }
   }
 
+  /* ============================================================
+     RENDER FILE ITEM
+  ============================================================ */
   function renderFileItem(id, file) {
     const div = document.createElement('div');
     div.className = 'file-item';
+
+    const uploadedDate = file.uploadedAt?.toDate
+      ? new Date(file.uploadedAt.toDate()).toLocaleDateString()
+      : '—';
+
     div.innerHTML = `
       <div class="file-info">
-        <span class="file-icon">${getFileIcon(file.type)}</span>
+        <span class="file-icon">${getFileIcon(file.type || '')}</span>
         <div class="file-details">
-          <h3>${escapeHtml(file.name)}</h3>
-          <small>${formatBytes(file.size)} • Uploaded: ${new Date(file.uploadedAt?.toDate()).toLocaleDateString()}</small>
+          <h3>${escapeHtml(file.name || 'Untitled')}</h3>
+          <small>${formatBytes(file.size || 0)} • Uploaded: ${uploadedDate}</small>
           <span class="download-stats">📥 ${file.downloads || 0} downloads</span>
         </div>
       </div>
-      <div>
-        <button class="download-btn" data-id="${id}" data-name="${file.name}">Download</button>
+      <div class="file-actions">
+        <button class="download-btn" data-id="${id}">Download</button>
         ${isAdmin ? `<button class="delete-btn" data-id="${id}">Delete</button>` : ''}
       </div>
     `;
+
     fileListContainer.appendChild(div);
 
     // Attach download event
-    const downloadBtn = div.querySelector('.download-btn');
-    downloadBtn.addEventListener('click', () => downloadFile(id, file.name, file.path, file.downloads || 0));
+    div.querySelector('.download-btn').addEventListener('click', () =>
+      downloadFile(id, file.name, file.path, file.downloads || 0)
+    );
+
+    // Attach delete event (admin)
     if (isAdmin) {
-      const deleteBtn = div.querySelector('.delete-btn');
-      deleteBtn.addEventListener('click', () => deleteFile(id, file.path));
+      div.querySelector('.delete-btn').addEventListener('click', () =>
+        deleteFile(id, file.path)
+      );
     }
   }
 
+  /* ============================================================
+     DOWNLOAD
+  ============================================================ */
   async function downloadFile(id, fileName, storagePath, currentDownloads) {
+    const btn = document.querySelector(`.download-btn[data-id="${id}"]`);
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = 'Preparing...';
+    }
     try {
       const fileRef = storage.ref(storagePath);
       const url = await fileRef.getDownloadURL();
-      // Increment download counter
-      await db.collection('files').doc(id).update({ downloads: currentDownloads + 1 });
+
+      // Increment counter (fire-and-forget)
+      db.collection('files').doc(id).update({
+        downloads: currentDownloads + 1
+      }).catch(err => console.warn('Counter update failed:', err));
+
       // Trigger download
       const link = document.createElement('a');
       link.href = url;
@@ -452,26 +696,47 @@
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+
+      // Optimistically update UI counter
+      const statEl = btn?.closest('.file-item')?.querySelector('.download-stats');
+      if (statEl) statEl.textContent = `📥 ${currentDownloads + 1} downloads`;
     } catch (err) {
       console.error('Download error:', err);
       alert('Failed to download file. Please try again.');
+    } finally {
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = 'Download';
+      }
     }
   }
 
+  /* ============================================================
+     DELETE (admin)
+  ============================================================ */
   async function deleteFile(id, storagePath) {
-    if (!confirm('Delete this file permanently?')) return;
+    if (!confirm('Delete this file permanently? This action cannot be undone.')) return;
     try {
-      const fileRef = storage.ref(storagePath);
-      await fileRef.delete();
+      // Delete from Storage (if path exists)
+      if (storagePath) {
+        try {
+          await storage.ref(storagePath).delete();
+        } catch (storageErr) {
+          console.warn('Storage delete failed (file may already be gone):', storageErr);
+        }
+      }
+      // Delete from Firestore
       await db.collection('files').doc(id).delete();
-      await loadFiles(); // refresh
+      await loadFiles();
     } catch (err) {
       console.error('Delete error:', err);
       alert('Failed to delete file.');
     }
   }
 
-  // Upload logic (admin only)
+  /* ============================================================
+     UPLOAD (admin only)
+  ============================================================ */
   openUploadModalBtn.addEventListener('click', () => {
     fileInput.value = '';
     uploadModal.style.display = 'flex';
@@ -479,23 +744,22 @@
   cancelUploadBtn.addEventListener('click', () => {
     uploadModal.style.display = 'none';
   });
+
   confirmUploadBtn.addEventListener('click', async () => {
     const file = fileInput.files[0];
-    if (!file) {
-      alert('Please select a file.');
-      return;
-    }
-    if (!isAdmin) {
-      alert('Only administrators can upload files.');
-      return;
-    }
+    if (!file) { alert('Please select a file.'); return; }
+    if (!isAdmin) { alert('Only administrators can upload files.'); return; }
+
     confirmUploadBtn.disabled = true;
+    const originalText = confirmUploadBtn.textContent;
     confirmUploadBtn.textContent = 'Uploading...';
+
     try {
       const storagePath = `downloads/${Date.now()}_${file.name}`;
       const storageRef = storage.ref(storagePath);
       await storageRef.put(file);
       const downloadURL = await storageRef.getDownloadURL();
+
       await db.collection('files').add({
         name: file.name,
         size: file.size,
@@ -506,6 +770,7 @@
         uploadedBy: currentUser.email,
         downloads: 0
       });
+
       alert('File uploaded successfully!');
       uploadModal.style.display = 'none';
       await loadFiles();
@@ -514,51 +779,52 @@
       alert('Upload failed: ' + err.message);
     } finally {
       confirmUploadBtn.disabled = false;
-      confirmUploadBtn.textContent = 'Upload';
+      confirmUploadBtn.textContent = originalText;
       fileInput.value = '';
     }
   });
 
-  // Helper functions
+  /* ============================================================
+     HELPERS
+  ============================================================ */
   function getFileIcon(mimeType) {
+    if (!mimeType) return '📁';
     if (mimeType.includes('pdf')) return '📄';
-    if (mimeType.includes('word')) return '📘';
-    if (mimeType.includes('excel')) return '📊';
+    if (mimeType.includes('word') || mimeType.includes('document')) return '📘';
+    if (mimeType.includes('excel') || mimeType.includes('spreadsheet')) return '📊';
+    if (mimeType.includes('csv')) return '📊';
     if (mimeType.includes('image')) return '🖼️';
+    if (mimeType.includes('zip') || mimeType.includes('compressed')) return '🗜️';
+    if (mimeType.includes('text')) return '📝';
     return '📁';
   }
+
   function formatBytes(bytes) {
-    if (bytes === 0) return '0 Bytes';
+    if (!bytes || bytes === 0) return '0 Bytes';
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   }
+
   function escapeHtml(str) {
-    return str.replace(/[&<>]/g, function(m) {
-      if (m === '&') return '&amp;';
-      if (m === '<') return '&lt;';
-      if (m === '>') return '&gt;';
-      return m;
-    });
+    if (str === null || str === undefined) return '';
+    return String(str).replace(/[&<>"']/g, m => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[m]));
   }
 
-  // Logout
+  /* ============================================================
+     LOGOUT
+  ============================================================ */
   document.getElementById('logoutBtn').addEventListener('click', (e) => {
     e.preventDefault();
     auth.signOut().then(() => window.location.href = 'index.html');
   });
 
-  // Dark mode
-  const themeToggle = document.getElementById('themeToggle');
-  const currentTheme = localStorage.getItem('portalTheme');
-  if (currentTheme === 'dark') document.body.classList.add('dark');
-  themeToggle.addEventListener('click', () => {
-    document.body.classList.toggle('dark');
-    localStorage.setItem('portalTheme', document.body.classList.contains('dark') ? 'dark' : 'light');
-  });
-
-  // Back to top
+  /* ============================================================
+     BACK TO TOP
+  ============================================================ */
   const backToTop = document.getElementById('backToTop');
   window.addEventListener('scroll', () => {
     if (window.scrollY > 300) backToTop.classList.add('show');
@@ -569,17 +835,26 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 
-  // Service Worker
+  /* ============================================================
+     SERVICE WORKER
+  ============================================================ */
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('service-worker.js').catch(err => console.error('SW failed:', err));
     });
   }
 
-  // Close modal on outside click
-  window.onclick = function(e) {
+  /* ============================================================
+     MODAL BACKGROUND CLOSE
+  ============================================================ */
+  window.addEventListener('click', (e) => {
     if (e.target === uploadModal) uploadModal.style.display = 'none';
-  };
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && uploadModal.style.display === 'flex') {
+      uploadModal.style.display = 'none';
+    }
+  });
 </script>
 </body>
 </html>
