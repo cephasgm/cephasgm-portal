@@ -1,0 +1,35 @@
+rules_version = '2';
+
+// ============================================================
+// Cephas GM Portal — Firebase Storage Rules
+// ============================================================
+// Admin email list — keep in sync with firestore.rules
+// ============================================================
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isAdmin() {
+      return request.auth != null &&
+        request.auth.token.email in [
+          'admin@cephasgm.org',
+          'admin@cephasgm.com'
+        ];
+    }
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // --- Downloads folder ---
+    // Admins upload, any authenticated user downloads.
+    match /downloads/{fileName} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin()
+        && request.resource.size < 25 * 1024 * 1024   // 25 MB cap
+        && request.resource.contentType.matches('^(application|image|text|video)/.*');
+    }
+
+    // Everything else denied by default
+  }
+}
