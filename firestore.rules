@@ -1,0 +1,243 @@
+rules_version = '2';
+
+// ============================================================
+// Cephas GM Portal — Firestore Security Rules
+// ============================================================
+// Role model:
+//   • admin  — full read/write across all collections
+//   • client — read/write own projects, read all files
+//   • anon   — no access (must authenticate)
+//
+// Data isolation:
+//   • Projects scoped by userId (each client sees only their own)
+//   • Files are company-wide (any authenticated user can download)
+//   • Users collection: owner + admin only
+//   • Audit logs: append-only, admin-readable
+//
+// Last updated: 2026-09-20
+// ============================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ============================================================
+    // ADMIN IDENTIFICATION
+    // ============================================================
+    // Two options — pick ONE and remove the other.
+    //
+    // OPTION A (current, zero-setup): hardcoded email list.
+    // Works immediately. To add an admin, edit this list and redeploy.
+    //
+    // OPTION B (recommended long-term): custom claims.
+    // Set via Admin SDK: admin.auth().setCustomUserClaims(uid, { admin: true })
+    // No database read needed per request — fastest possible evaluation.
+
+    // --- OPTION A: email list (active) ---
+    function isAdmin() {
+      return isAuthenticated() &&
+        request.auth.token.email in [
+          'admin@cephasgm.org',
+          'admin@cephasgm.com'
+        ];
+    }
+
+    // --- OPTION B: custom claims (uncomment and remove Option A) ---
+    // function isAdmin() {
+    //   return isAuthenticated() && request.auth.token.admin == true;
+    // }
+
+    // ============================================================
+    // CORE HELPERS
+    // ============================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isEmailVerified() {
+      return isAuthenticated() && request.auth.token.email_verified == true;
+    }
+
+    // ============================================================
+    // PROJECTS COLLECTION
+    // ============================================================
+    // Schema: { name, budget, actual, userId, createdAt, updatedAt }
+    //
+    // Client: read/create/update/delete ONLY their own projects
+    // Admin:  read/update/delete ANY project
+    // ============================================================
+    match /projects/{projectId} {
+
+      // READ — owner or admin
+      allow read: if isOwner(resource.data.userId) || isAdmin();
+
+      // CREATE — authenticated, must stamp userId = own UID, valid fields
+      allow create: if isAuthenticated()
+        && request.resource.data.userId == request.auth.uid
+        && isValidProject(request.resource.data);
+
+      // UPDATE — owner or admin, but ownership cannot be reassigned
+      allow update: if (isOwner(resource.data.userId) || isAdmin())
+        && request.resource.data.userId == resource.data.userId
+        && isValidProject(request.resource.data);
+
+      // DELETE — owner or admin
+      allow delete: if isOwner(resource.data.userId) || isAdmin();
+
+      // --- Validation function ---
+      function isValidProject(data) {
+        return data.keys().hasAll(['name', 'budget', 'actual', 'userId'])
+          && data.name is string
+          && data.name.size() > 0
+          && data.name.size() <= 200
+          && data.budget is number
+          && data.budget >= 0
+          && data.actual is number
+          && data.actual >= 0;
+      }
+    }
+
+    // ============================================================
+    // FILES COLLECTION
+    // ============================================================
+    // Schema: { name, size, type, path, url, uploadedAt, uploadedBy, downloads }
+    //
+    // Client: read ALL files + increment downloads counter
+    // Admin:  upload, delete, and modify any field
+    // ============================================================
+    match /files/{fileId} {
+
+      // READ — any authenticated user (files are company-wide downloads)
+      allow read: if isAuthenticated();
+
+      // CREATE — admin only, with validation
+      allow create: if isAdmin()
+        && isValidFile(request.resource.data);
+
+      // UPDATE — admin (any field), OR authenticated user (downloads only)
+      allow update: if isAdmin()
+        || (isAuthenticated()
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['downloads'])
+            && request.resource.data.downloads is number
+            && request.resource.data.downloads >= 0);
+
+      // DELETE — admin only
+      allow delete: if isAdmin();
+
+      // --- Validation function ---
+      function isValidFile(data) {
+        return data.keys().hasAll([
+            'name', 'size', 'type', 'path', 'url',
+            'uploadedAt', 'uploadedBy', 'downloads'
+          ])
+          && data.name is string
+          && data.size is number
+          && data.size > 0
+          && data.uploadedBy == request.auth.token.email
+          && data.downloads == 0;
+      }
+    }
+
+    // ============================================================
+    // USERS COLLECTION
+    // ============================================================
+    // Optional user metadata. Currently unused by the portal but
+    // reserved for future role/org assignment.
+    // Schema: { email, role, orgId, createdAt }
+    // ============================================================
+    match /users/{userId} {
+
+      // READ — owner or admin
+      allow read: if isOwner(userId) || isAdmin();
+
+      // WRITE — admin only. Clients cannot self-assign roles.
+      // (Use Cloud Functions or Admin SDK for provisioning.)
+      allow write: if isAdmin();
+    }
+
+    // ============================================================
+    // PRESENCE COLLECTION
+    // ============================================================
+    // Live "staff online" indicator. Each user writes their own
+    // heartbeat document; all authenticated users can read the count.
+    // ============================================================
+    match /presence/{userId} {
+
+      // READ — any authenticated user (for live count)
+      allow read: if isAuthenticated();
+
+      // WRITE — owner only
+      allow write: if isOwner(userId);
+    }
+
+    // ============================================================
+    // AUDIT LOGS COLLECTION
+    // ============================================================
+    // Append-only. Any authenticated user can create an entry that
+    // references their own UID. No one can update or delete.
+    // Only admins can read the log.
+    // ============================================================
+    match /auditLogs/{logId} {
+
+      // READ — admin only
+      allow read: if isAdmin();
+
+      // CREATE — authenticated, must reference own UID and timestamp
+      allow create: if isAuthenticated()
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.keys().hasAll(['action', 'userId', 'email', 'timestamp'])
+        && request.resource.data.action is string;
+
+      // UPDATE / DELETE — never. Audit logs are immutable.
+      allow update, delete: if false;
+    }
+
+    // ============================================================
+    // DEFAULT DENY
+    // ============================================================
+    // Any collection NOT matched above is denied by default.
+    // This is Firestore's built-in behaviour when no match exists.
+    // Add explicit `match` blocks as new collections are introduced.
+  }
+}
+
+// ============================================================
+// EXTENSION TEMPLATES — Multi-Tenancy & Organization Isolation
+// ============================================================
+// When the portal moves to true multi-tenancy (each client
+// organisation having isolated data), replace the userId-based
+// isolation above with orgId-based isolation.
+//
+// Step 1 — Add orgId to each user's doc in /users/{uid}
+//   { email, role: "owner" | "member", orgId: "org_abc123" }
+//
+// Step 2 — Replace the projects rules with:
+//
+//   function userOrgId() {
+//     return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.orgId;
+//   }
+//   function isOrgMember(orgId) {
+//     return isAuthenticated() && userOrgId() == orgId;
+//   }
+//
+//   match /orgs/{orgId}/projects/{projectId} {
+//     allow read:   if isOrgMember(orgId) || isAdmin();
+//     allow create: if isOrgMember(orgId)
+//       && request.resource.data.orgId == orgId;
+//     allow update: if isOrgMember(orgId) || isAdmin();
+//     allow delete: if isAdmin();
+//   }
+//
+// Step 3 — Similarly nest files, presence, and audit logs under
+//   /orgs/{orgId}/... for complete tenant isolation.
+//
+// Cost note: each `get()` call counts as a document read against
+// the 10-per-request rules quota. For high-volume operations,
+// replicate the orgId into a custom claim instead:
+//   admin.auth().setCustomUserClaims(uid, { orgId: "org_abc123" })
+//   then reference it as: request.auth.token.orgId
+// ============================================================
