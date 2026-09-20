@@ -11,15 +11,16 @@
 <meta name="theme-color" content="#0b7a59">
 
 <!-- SEO & Social Meta Tags -->
-<meta name="description" content="AI-powered assistant for Cephas GM portal – get real-time updates on projects, downloads, and accounting.">
+<meta name="description" content="CephasAI — intelligent assistant for the Cephas GM portal. Real-time answers on projects, downloads, accounting, and the full 12-system portfolio.">
 <meta property="og:title" content="AI Assistant — Cephas GM Portal">
-<meta property="og:description" content="Smart assistant that answers questions about your projects, files, and financial data.">
+<meta property="og:description" content="Smart assistant that answers questions about your projects, files, financial data, and the Cephas GM portfolio.">
 <meta property="og:image" content="https://cephasgm.org/og-image.jpg">
 <meta property="og:url" content="https://cephasgm.github.io/cephasgm-portal/portalassistant.html">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Cephas AI Assistant">
-<meta name="twitter:description" content="Real‑time project insights and portal guidance.">
+<meta name="twitter:description" content="Real-time project insights and portal guidance.">
+<meta name="twitter:image" content="https://cephasgm.org/og-image.jpg">
 
 <!-- Favicon -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%230b7a59'/%3E%3Ctext x='50' y='70' font-size='70' text-anchor='middle' fill='white' font-family='Arial'%3EC%3C/text%3E%3C/svg%3E">
@@ -31,41 +32,36 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
 <style>
-  /* CSS Variables for Light/Dark Mode */
   :root {
-    --bg-card: rgba(255,255,255,0.1);
+    --bg-card: rgba(255,255,255,0.08);
+    --bg-card-solid: rgba(20,25,32,0.7);
     --text-primary: #fff;
     --text-secondary: #ccc;
+    --text-muted: #999;
     --accent: #0b7a59;
     --accent-hover: #099268;
-    --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    --accent-light: #34d399;
+    --danger: #c0392b;
+    --danger-hover: #e74c3c;
+    --border: rgba(255,255,255,0.12);
+    --shadow: 0 8px 24px rgba(0,0,0,0.3);
   }
-  body.dark {
-    --bg-card: rgba(20,20,30,0.6);
-  }
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
+  * { margin:0; padding:0; box-sizing:border-box; }
   body {
     font-family: 'Poppins', sans-serif;
-    background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.9)), url('https://images.unsplash.com/photo-1557264337-e8a93017fe92?auto=format&fit=crop&w=1600&q=80');
+    background: linear-gradient(rgba(0,0,0,0.82), rgba(0,0,0,0.92)), url('https://images.unsplash.com/photo-1557264337-e8a93017fe92?auto=format&fit=crop&w=1600&q=80');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
     color: var(--text-primary);
-    transition: background 0.3s, color 0.2s;
     position: relative;
+    min-height: 100vh;
   }
-  /* Liquid crystal overlay */
+  /* Liquid crystal overlay — unchanged */
   body::before {
     content: '';
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 0; left: 0; width: 100%; height: 100%;
     background: linear-gradient(125deg, rgba(11,122,89,0.08) 0%, rgba(100,200,255,0.05) 25%, rgba(11,122,89,0.08) 50%, rgba(200,100,255,0.05) 75%, rgba(11,122,89,0.08) 100%);
     background-size: 300% 300%;
     animation: liquidCrystal 12s ease infinite;
@@ -77,6 +73,8 @@
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
   }
+
+  /* ---------- Navigation ---------- */
   .nav {
     background: rgba(0,0,0,0.95);
     display: flex;
@@ -87,47 +85,63 @@
     top: 0;
     z-index: 100;
     border-bottom: 2px solid var(--accent);
-    backdrop-filter: blur(4px);
-  }
-  .brand { font-weight: 700; color: #fff; font-size: 1.2rem; }
-  .nav-links {
-    display: flex;
-    gap: 16px;
+    backdrop-filter: blur(8px);
+    gap: 14px;
     flex-wrap: wrap;
-    align-items: center;
   }
+  .brand {
+    font-weight: 700;
+    color: #fff;
+    font-size: 1.15rem;
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.08);
+    transition: .3s;
+    letter-spacing: .3px;
+  }
+  .brand:hover { background: rgba(255,255,255,0.15); }
+  .nav-links { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
   .nav-links a {
     color: #fff;
     text-decoration: none;
-    padding: 8px 12px;
+    padding: 7px 11px;
     border-radius: 6px;
     transition: 0.3s;
+    font-size: .9rem;
   }
-  .nav-links a:hover, .nav-links a.active {
-    background: rgba(255,255,255,0.15);
-  }
+  .nav-links a:hover,
+  .nav-links a.active { background: rgba(255,255,255,0.15); }
+  .nav-links .admin-link { background: rgba(11,122,89,0.5); }
   .logout-btn {
-    background: #c0392b;
+    background: var(--danger);
     padding: 6px 14px;
     border-radius: 6px;
     cursor: pointer;
-  }
-  .logout-btn:hover { background: #e74c3c; }
-  .user-welcome { color: var(--accent); font-weight: 500; margin-right: 15px; }
-  .theme-toggle {
-    background: rgba(255,255,255,0.2);
+    color: #fff;
     border: none;
-    color: white;
-    font-size: 1.2rem;
-    cursor: pointer;
-    padding: 6px 12px;
-    border-radius: 30px;
-    transition: 0.3s;
+    font-family: inherit;
+    font-size: .88rem;
   }
-  .theme-toggle:hover {
-    background: rgba(255,255,255,0.4);
-    transform: scale(1.05);
+  .logout-btn:hover { background: var(--danger-hover); }
+  .user-welcome {
+    color: var(--accent-light);
+    font-weight: 500;
+    font-size: .88rem;
+    margin-right: 8px;
   }
+  .admin-badge {
+    background: var(--accent);
+    color: #fff;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+  }
+
+  /* ---------- Chat container ---------- */
   .chat-container {
     max-width: 900px;
     margin: 40px auto;
@@ -135,61 +149,126 @@
     position: relative;
     z-index: 1;
   }
+  .chat-header {
+    text-align: center;
+    margin-bottom: 18px;
+    color: #fff;
+  }
+  .chat-header h1 {
+    color: var(--accent-light);
+    font-size: 1.7rem;
+    margin-bottom: 6px;
+    line-height: 1.25;
+  }
+  .chat-header p {
+    color: var(--text-secondary);
+    font-size: .92rem;
+    max-width: 560px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
   .chat-box {
     background: var(--bg-card);
-    backdrop-filter: blur(10px);
-    border-radius: 24px;
+    backdrop-filter: blur(12px);
+    border-radius: 20px;
     padding: 20px;
-    height: 450px;
+    height: 480px;
     overflow-y: auto;
-    margin-bottom: 20px;
-    border: 1px solid rgba(255,255,255,0.2);
+    margin-bottom: 16px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    scroll-behavior: smooth;
   }
+  .chat-box::-webkit-scrollbar { width: 8px; }
+  .chat-box::-webkit-scrollbar-track { background: transparent; }
+  .chat-box::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.15);
+    border-radius: 4px;
+  }
+  .chat-box::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
+
   .message {
     margin: 12px 0;
     padding: 12px 18px;
-    border-radius: 20px;
-    max-width: 80%;
+    border-radius: 18px;
+    max-width: 82%;
     word-wrap: break-word;
-    line-height: 1.5;
+    line-height: 1.55;
+    font-size: .92rem;
+    white-space: pre-wrap;
+    animation: msgIn .25s ease;
+  }
+  @keyframes msgIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
   }
   .user-message {
     background: var(--accent);
     color: white;
     margin-left: auto;
     border-bottom-right-radius: 4px;
+    box-shadow: 0 4px 12px rgba(11,122,89,0.25);
   }
   .bot-message {
-    background: rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.1);
     color: var(--text-primary);
     border-bottom-left-radius: 4px;
+    border: 1px solid var(--border);
   }
+
+  /* ---------- Quick suggestions ---------- */
+  .suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .suggestion-chip {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-family: inherit;
+    font-size: .8rem;
+    cursor: pointer;
+    transition: .25s;
+  }
+  .suggestion-chip:hover {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  /* ---------- Input area ---------- */
   .input-area {
     display: flex;
-    gap: 12px;
+    gap: 10px;
     background: var(--bg-card);
-    padding: 12px;
+    padding: 10px;
     border-radius: 60px;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.2);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
   }
   #userInput {
     flex: 1;
-    padding: 14px 20px;
+    padding: 13px 20px;
     border: none;
     border-radius: 40px;
-    background: rgba(255,255,255,0.15);
-    color: white;
+    background: rgba(255,255,255,0.06);
+    color: #fff;
     font-family: 'Poppins', sans-serif;
-    font-size: 0.95rem;
+    font-size: .95rem;
+    transition: background .2s;
   }
   #userInput:focus {
     outline: none;
-    background: rgba(255,255,255,0.25);
+    background: rgba(255,255,255,0.12);
   }
-  #userInput::placeholder {
-    color: rgba(255,255,255,0.6);
-  }
+  #userInput::placeholder { color: rgba(255,255,255,0.5); }
   #sendBtn {
     padding: 12px 28px;
     border: none;
@@ -198,25 +277,37 @@
     color: white;
     cursor: pointer;
     font-weight: 600;
+    font-family: inherit;
+    font-size: .92rem;
     transition: 0.2s;
   }
   #sendBtn:hover {
     background: var(--accent-hover);
     transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(11,122,89,0.35);
   }
+  #sendBtn:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* ---------- Typing indicator ---------- */
   .typing-indicator {
     display: flex;
     gap: 5px;
-    padding: 8px 15px;
-    background: rgba(255,255,255,0.2);
-    border-radius: 20px;
+    padding: 12px 18px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 18px;
+    border-bottom-left-radius: 4px;
     width: fit-content;
     margin: 10px 0;
+    border: 1px solid var(--border);
   }
   .typing-indicator span {
     width: 8px;
     height: 8px;
-    background: white;
+    background: var(--accent-light);
     border-radius: 50%;
     animation: blink 1.4s infinite;
   }
@@ -226,83 +317,114 @@
     0%, 60%, 100% { opacity: 0.4; transform: scale(0.8); }
     30% { opacity: 1; transform: scale(1.2); }
   }
+
+  /* ---------- Footer ---------- */
   footer {
     background: rgba(0,0,0,0.95);
     text-align: center;
-    padding: 1rem;
+    padding: 1.2rem;
     color: #ccc;
     margin-top: 2rem;
+    font-size: .88rem;
+    position: relative;
+    z-index: 1;
   }
+
+  /* ---------- Back to top ---------- */
   .back-to-top {
     position: fixed;
-    bottom: 30px;
-    right: 30px;
+    bottom: 28px;
+    right: 28px;
     background: var(--accent);
     color: white;
-    width: 48px;
-    height: 48px;
+    width: 46px;
+    height: 46px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     text-decoration: none;
-    font-size: 24px;
+    font-size: 22px;
     opacity: 0;
     visibility: hidden;
     transition: all 0.3s;
     z-index: 99;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
   }
-  .back-to-top.show {
-    opacity: 1;
-    visibility: visible;
-  }
+  .back-to-top.show { opacity: 1; visibility: visible; }
+  .back-to-top:hover { background: var(--accent-hover); transform: translateY(-4px); }
+
   @media (max-width: 768px) {
-    .chat-container { margin: 20px auto; padding: 12px; }
-    .message { max-width: 95%; }
-    .nav-links { gap: 8px; }
-    .theme-toggle { font-size: 1rem; padding: 4px 10px; }
+    .chat-container { margin: 18px auto; padding: 12px; }
+    .message { max-width: 95%; font-size: .88rem; }
+    .chat-box { height: 400px; padding: 14px; }
+    .nav { padding: 10px 14px; }
+    .nav-links a { font-size: .82rem; padding: 6px 8px; }
+    .chat-header h1 { font-size: 1.4rem; }
+    #sendBtn { padding: 11px 20px; }
+    .suggestion-chip { font-size: .74rem; padding: 5px 11px; }
   }
 </style>
 </head>
 <body>
 
 <nav class="nav">
-  <div class="brand">🤖 CephasAI</div>
+  <a href="portaldashboard.html" class="brand">Cephas GM Portal</a>
   <div class="nav-links">
     <span class="user-welcome" id="welcomeMsg">Welcome!</span>
+    <span class="admin-badge" id="adminBadge" style="display:none;">Admin</span>
     <a href="portaldashboard.html">Dashboard</a>
     <a href="portaldownloads.html">Downloads</a>
-    <a href="portaladmin.html">Admin</a>
+    <a href="portalaccounting.html">Accounting</a>
     <a href="portalassistant.html" class="active">AI Assistant</a>
-    <a href="#" id="logoutBtn" class="logout-btn">Logout</a>
-    <a href="https://cephasgm.github.io/cephasgm-site/" target="_blank">🌍 Main Site</a>
-    <button class="theme-toggle" id="themeToggle" aria-label="Dark/Light mode">🌓</button>
+    <a href="portaladmin.html" id="adminLink" class="admin-link" style="display:none;">Admin Panel</a>
+    <a href="https://cephasgm.org/" target="_blank" rel="noopener">🌍 Main Site</a>
+    <button class="logout-btn" id="logoutBtn">Logout</button>
   </div>
 </nav>
 
 <div class="chat-container">
-  <div class="chat-box" id="chatBox">
-    <div class="message bot-message">
-      👋 Hello! I'm CephasAI, your intelligent assistant.<br><br>
-      I can help you with:<br>
-      • Project status & completion<br>
-      • Download counts & file info<br>
-      • Accounting & budget questions<br>
-      • Portal navigation<br><br>
-      Ask me anything!
-    </div>
+
+  <div class="chat-header">
+    <h1>🤖 CephasAI Assistant</h1>
+    <p>Your intelligent portal assistant — real-time answers on projects, downloads, accounting, and the full Cephas GM portfolio.</p>
   </div>
+
+  <div class="chat-box" id="chatBox">
+    <div class="message bot-message">👋 Hello! I'm CephasAI, your intelligent assistant.
+
+I can help you with:
+• Project status & completion
+• Download counts & file info
+• Accounting & budget summaries
+• Portal navigation (Dashboard, Downloads, Accounting, Admin)
+• The full Cephas GM portfolio — 12 systems across 6 domains
+
+Ask me anything, or tap a suggestion below.</div>
+  </div>
+
+  <div class="suggestions" id="suggestions">
+    <button class="suggestion-chip" data-query="Show me all my projects">📊 All projects</button>
+    <button class="suggestion-chip" data-query="What is my total budget and savings?">💰 Budget summary</button>
+    <button class="suggestion-chip" data-query="List available files and downloads">📁 Files & downloads</button>
+    <button class="suggestion-chip" data-query="Tell me about the full Cephas GM portfolio">🌍 Portfolio overview</button>
+    <button class="suggestion-chip" data-query="help">❓ What can you do?</button>
+  </div>
+
   <div class="input-area">
-    <input type="text" id="userInput" placeholder="Type your message..." autocomplete="off">
+    <input type="text" id="userInput" placeholder="Ask about projects, files, budgets, or the portfolio..." autocomplete="off">
     <button id="sendBtn">Send</button>
   </div>
+
 </div>
 
-<footer>Copyright © 2025 Cephas GM | Enterprise Portal</footer>
-<a href="#" class="back-to-top" id="backToTop">↑</a>
+<footer>Copyright © 2025 Cephas GM | Innovating for Tomorrow</footer>
+<a href="#" class="back-to-top" id="backToTop" aria-label="Back to top">↑</a>
 
 <script>
-  // Firebase Config
+  /* ============================================================
+     FIREBASE CONFIG — unchanged
+  ============================================================ */
   const firebaseConfig = {
     apiKey: "AIzaSyA2vWoAkdbke0D_x8N1W3JAzDVj4vcsZSE",
     authDomain: "cephasgm-portal.firebaseapp.com",
@@ -316,188 +438,275 @@
   const auth = firebase.auth();
   const db = firebase.firestore();
 
+  /* ============================================================
+     CONSTANTS
+  ============================================================ */
+  const ADMIN_EMAILS = ["admin@cephasgm.org", "admin@cephasgm.com"];
+
+  /* Full portfolio reference — used by the assistant */
+  const PORTFOLIO = [
+    { name: "Cephas GM Platform", domain: "Web", status: "Live", url: "https://cephasgm.org/" },
+    { name: "Sports Betting Platform", domain: "Web", status: "Live", url: "https://bet.cephasgm.org/" },
+    { name: "Secure VPN Service", domain: "Security", status: "Live", url: "https://vpn.cephasgm.org/" },
+    { name: "Client Portal & Admin Dashboard", domain: "Enterprise", status: "Beta", url: "https://cephasgm.github.io/cephasgm-portal/" },
+    { name: "OHS System", domain: "Safety", status: "Beta", url: "https://cephasgm.github.io/Health-Safety-PWA-for-Metal-Management/" },
+    { name: "Multimodal AI Platform", domain: "AI", status: "Beta", url: "https://cephasgm-ai.onrender.com" },
+    { name: "Smart Location Tracker", domain: "Tracking", status: "Beta", url: "https://cephasgm.github.io/smart-location-tracker/" },
+    { name: "Cephas GM ERP", domain: "Enterprise", status: "Beta", url: "https://cephasgm.github.io/CephasGM-ERP/" },
+    { name: "Smart Integrated Water-Energy", domain: "IoT", status: "Beta", url: "https://cephasgm.github.io/Smart-Intergrated-Water_Energy/" },
+    { name: "SIGNAID", domain: "Accessibility", status: "Beta", url: "https://cephasgm.github.io/signaid/" },
+    { name: "SatTrack", domain: "Aerospace", status: "R&D", url: "https://cephasgm.org/sattrack" },
+    { name: "EchoShield", domain: "Defence", status: "R&D", url: "https://echoshield.cephasgm.org/" }
+  ];
+
   let currentUser = null;
+  let isAdmin = false;
   let projectsData = [];
   let filesData = [];
 
-  // DOM elements
+  /* DOM */
   const chatBox = document.getElementById('chatBox');
   const userInput = document.getElementById('userInput');
   const sendBtn = document.getElementById('sendBtn');
   const welcomeMsg = document.getElementById('welcomeMsg');
+  const adminBadge = document.getElementById('adminBadge');
+  const adminLink = document.getElementById('adminLink');
 
-  // Authentication
+  /* ============================================================
+     AUTH
+  ============================================================ */
   auth.onAuthStateChanged(async (user) => {
-    if (!user) {
-      window.location.href = 'index.html';
-      return;
-    }
+    if (!user) { window.location.href = 'index.html'; return; }
     currentUser = user;
     welcomeMsg.textContent = `Welcome, ${user.email.split('@')[0]}!`;
-    // Load real-time data
+    isAdmin = ADMIN_EMAILS.includes(user.email.toLowerCase());
+    if (isAdmin) {
+      adminBadge.style.display = 'inline-block';
+      adminLink.style.display = 'inline-block';
+    }
     await loadProjects();
     await loadFiles();
   });
 
-  // Fetch projects from Firestore (same as accounting)
+  /* ============================================================
+     DATA LOADING
+  ============================================================ */
   async function loadProjects() {
     if (!currentUser) return;
-    const snapshot = await db.collection('projects').where('userId', '==', currentUser.uid).get();
-    projectsData = [];
-    snapshot.forEach(doc => projectsData.push({ id: doc.id, ...doc.data() }));
+    try {
+      const snapshot = await db.collection('projects').where('userId', '==', currentUser.uid).get();
+      projectsData = [];
+      snapshot.forEach(doc => projectsData.push({ id: doc.id, ...doc.data() }));
+    } catch (err) {
+      console.error('loadProjects error:', err);
+    }
   }
 
-  // Fetch files from Firestore (downloads)
   async function loadFiles() {
-    const snapshot = await db.collection('files').get();
-    filesData = [];
-    snapshot.forEach(doc => filesData.push(doc.data()));
+    try {
+      const snapshot = await db.collection('files').get();
+      filesData = [];
+      snapshot.forEach(doc => filesData.push(doc.data()));
+    } catch (err) {
+      console.error('loadFiles error:', err);
+    }
   }
 
-  // Helper: get project completion percentage
+  /* ============================================================
+     HELPERS
+  ============================================================ */
   function getProjectCompletion(project) {
+    if (!project.budget) return 0;
     let completion = (project.actual / project.budget) * 100;
     completion = Math.min(Math.round(completion), 100);
     return isNaN(completion) ? 0 : completion;
   }
 
-  // AI response generator using real Firestore data
+  function formatBytes(bytes) {
+    if (!bytes || bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  }
+
+  /* ============================================================
+     BOT RESPONSE ENGINE
+  ============================================================ */
   async function getBotResponse(userMessage) {
-    const msg = userMessage.toLowerCase();
-    // Refresh data in case of updates
+    const msg = userMessage.toLowerCase().trim();
+
+    // Refresh data on each query
     await loadProjects();
     await loadFiles();
 
-    // Project-related queries
-    if (msg.match(/project|erp|safety|tracker|accounting|budget|completion|progress/i)) {
-      if (projectsData.length === 0) {
-        return "No projects found. You can add projects in the Accounting section.";
-      }
-      // Specific project name detection
-      const erpProject = projectsData.find(p => p.name.toLowerCase().includes('erp'));
-      const safetyProject = projectsData.find(p => p.name.toLowerCase().includes('safety') || p.name.toLowerCase().includes('pwa'));
-      const trackerProject = projectsData.find(p => p.name.toLowerCase().includes('tracker') || p.name.toLowerCase().includes('location'));
-      
+    // ---- Portfolio overview ----
+    if (msg.match(/portfolio|all systems|systems|twelve|12 systems|what do you build|what does cephas/)) {
+      let r = `Cephas GM builds ${PORTFOLIO.length} systems across 6 domains:\n\n`;
+      PORTFOLIO.forEach((p, i) => {
+        r += `${i + 1}. ${p.name} [${p.status}] — ${p.domain}\n`;
+      });
+      r += `\nVisit the Gallery or Projects page on the main site for full details.`;
+      return r;
+    }
+
+    // ---- Project queries ----
+    if (msg.match(/project|erp|safety|ohs|tracker|completion|progress|status/i)) {
+      // Specific project matches
       if (msg.includes('erp')) {
-        if (erpProject) return `CephasGM-ERP: Budget = ${erpProject.budget.toLocaleString()} TZS, Actual = ${erpProject.actual.toLocaleString()} TZS, Completion = ${getProjectCompletion(erpProject)}%.`;
-        else return "ERP project not found in your list.";
+        const p = projectsData.find(x => (x.name || '').toLowerCase().includes('erp'));
+        if (p) return `Cephas GM ERP — Budget: ${(p.budget || 0).toLocaleString()} TZS\nActual: ${(p.actual || 0).toLocaleString()} TZS\nCompletion: ${getProjectCompletion(p)}%`;
+        return "You don't have an ERP project in your account. The live ERP demo is at cephasgm.github.io/CephasGM-ERP/";
       }
-      if (msg.includes('safety') || msg.includes('pwa')) {
-        if (safetyProject) return `Health-Safety-PWA: Budget = ${safetyProject.budget.toLocaleString()} TZS, Actual = ${safetyProject.actual.toLocaleString()} TZS, Completion = ${getProjectCompletion(safetyProject)}%.`;
-        else return "Safety PWA project not found.";
+      if (msg.includes('safety') || msg.includes('ohs')) {
+        const p = projectsData.find(x => (x.name || '').toLowerCase().match(/safety|ohs/));
+        if (p) return `OHS System — Budget: ${(p.budget || 0).toLocaleString()} TZS\nActual: ${(p.actual || 0).toLocaleString()} TZS\nCompletion: ${getProjectCompletion(p)}%`;
+        return "You don't have an OHS project in your account. The live OHS System is at cephasgm.github.io/Health-Safety-PWA-for-Metal-Management/";
       }
       if (msg.includes('tracker') || msg.includes('location')) {
-        if (trackerProject) return `Smart Location Tracker: Budget = ${trackerProject.budget.toLocaleString()} TZS, Actual = ${trackerProject.actual.toLocaleString()} TZS, Completion = ${getProjectCompletion(trackerProject)}%.`;
-        else return "Tracker project not found.";
+        const p = projectsData.find(x => (x.name || '').toLowerCase().match(/tracker|location/));
+        if (p) return `Smart Location Tracker — Budget: ${(p.budget || 0).toLocaleString()} TZS\nActual: ${(p.actual || 0).toLocaleString()} TZS\nCompletion: ${getProjectCompletion(p)}%`;
+        return "You don't have a tracker project in your account.";
       }
-      // General summary
-      let response = `You have ${projectsData.length} active project(s).\n`;
+      if (msg.includes('water') || msg.includes('energy')) {
+        const p = projectsData.find(x => (x.name || '').toLowerCase().match(/water|energy/));
+        if (p) return `Water-Energy System — Budget: ${(p.budget || 0).toLocaleString()} TZS\nActual: ${(p.actual || 0).toLocaleString()} TZS\nCompletion: ${getProjectCompletion(p)}%`;
+        return "You don't have a water-energy project. The live system is at cephasgm.github.io/Smart-Intergrated-Water_Energy/";
+      }
+
+      // General project summary
+      if (projectsData.length === 0) {
+        return "You have no projects in your account yet. Admins can add projects via the Accounting page.";
+      }
+      let r = `You have ${projectsData.length} active project(s):\n\n`;
       projectsData.forEach(p => {
-        response += `• ${p.name}: ${getProjectCompletion(p)}% complete (Budget: ${p.budget.toLocaleString()} TZS, Actual: ${p.actual.toLocaleString()} TZS)\n`;
+        r += `• ${p.name || 'Untitled'}\n  Budget: ${(p.budget || 0).toLocaleString()} TZS · Actual: ${(p.actual || 0).toLocaleString()} TZS · ${getProjectCompletion(p)}% complete\n`;
       });
-      return response;
+      return r;
     }
-    // Downloads & files
-    else if (msg.match(/download|file|document|report/i)) {
+
+    // ---- Downloads & files ----
+    if (msg.match(/download|file|document|report/i)) {
       if (filesData.length === 0) {
-        return "No files available. Ask an admin to upload documents in the Downloads section.";
+        return "No files available yet. An admin can upload documents from the Downloads section.";
       }
       const totalDownloads = filesData.reduce((sum, f) => sum + (f.downloads || 0), 0);
-      let response = `📁 Total files: ${filesData.length}\n📥 Total downloads: ${totalDownloads}\n\nAvailable files:\n`;
-      filesData.slice(0, 5).forEach(f => {
-        response += `• ${f.name} (${(f.size / 1024).toFixed(1)} KB, downloaded ${f.downloads || 0} times)\n`;
+      let r = `📁 ${filesData.length} files available\n📥 ${totalDownloads} total downloads\n\n`;
+      filesData.slice(0, 8).forEach(f => {
+        r += `• ${f.name} — ${formatBytes(f.size || 0)} · ${f.downloads || 0} downloads\n`;
       });
-      if (filesData.length > 5) response += `...and ${filesData.length - 5} more.`;
-      return response;
+      if (filesData.length > 8) r += `\n...and ${filesData.length - 8} more. See the Downloads page.`;
+      return r;
     }
-    // Accounting & budget
-    else if (msg.match(/budget|cost|spend|saving/i)) {
-      if (projectsData.length === 0) return "No projects to analyze. Add projects in Accounting first.";
-      const totalBudget = projectsData.reduce((s, p) => s + p.budget, 0);
-      const totalActual = projectsData.reduce((s, p) => s + p.actual, 0);
+
+    // ---- Accounting summary ----
+    if (msg.match(/budget|cost|spend|saving|accounting|financial|money/i)) {
+      if (projectsData.length === 0) {
+        return "No projects to analyse yet. Add projects in the Accounting section to see summaries here.";
+      }
+      const totalBudget = projectsData.reduce((s, p) => s + (p.budget || 0), 0);
+      const totalActual = projectsData.reduce((s, p) => s + (p.actual || 0), 0);
       const savings = totalBudget - totalActual;
-      return `💰 Total Budget: ${totalBudget.toLocaleString()} TZS\n💸 Total Actual: ${totalActual.toLocaleString()} TZS\n✅ Savings: ${savings.toLocaleString()} TZS`;
+      const savingsPct = totalBudget ? ((savings / totalBudget) * 100).toFixed(1) : 0;
+      return `💰 Total Budget: ${totalBudget.toLocaleString()} TZS\n💸 Total Actual: ${totalActual.toLocaleString()} TZS\n✅ Savings: ${savings.toLocaleString()} TZS (${savingsPct}%)`;
     }
-    // Help / navigation
-    else if (msg.match(/help|what can you do|menu/i)) {
-      return `I can assist with:\n• Project status (e.g., "ERP progress")\n• Downloads & file info\n• Budget & accounting summary\n• Portal features (Dashboard, Downloads, Admin, Accounting)\nJust ask!`;
+
+    // ---- Portal help / navigation ----
+    if (msg.match(/help|what can you do|menu|features|what can/i)) {
+      return `I can assist with:\n\n• Project status — try "ERP progress" or "show my projects"\n• Downloads — "list files" or "downloads summary"\n• Accounting — "budget summary" or "savings"\n• Portfolio — "full portfolio" or "all systems"\n• Navigation — Dashboard, Downloads, Accounting, Admin Panel\n• Greetings and general questions\n\nJust type what you need.`;
     }
-    else if (msg.match(/hello|hi|hey|greetings/i)) {
-      return `Hello ${currentUser.email.split('@')[0]}! How can I help you today?`;
+
+    // ---- Greetings ----
+    if (msg.match(/^(hello|hi|hey|greetings|good morning|good afternoon|good evening)/)) {
+      const name = currentUser?.email?.split('@')[0] || 'there';
+      return `Hello ${name}! How can I help today?\n\nYou can ask about projects, downloads, budgets, or the Cephas GM portfolio.`;
     }
-    else {
-      return "I'm your portal assistant. Try asking about project progress, downloads, or budget. Type 'help' for a list of things I can do.";
+
+    // ---- Thanks ----
+    if (msg.match(/thank|thanks|appreciate/)) {
+      return "You're welcome! Anything else I can help with?";
     }
+
+    // ---- Who are you ----
+    if (msg.match(/who are you|what are you|your name/i)) {
+      return "I'm CephasAI — the intelligent assistant built into the Cephas GM Portal. I answer questions about your projects, files, accounting, and the wider portfolio using live Firestore data.";
+    }
+
+    // ---- Fallback ----
+    return "I'm your portal assistant. Try asking about:\n• Projects — \"show my projects\"\n• Downloads — \"list files\"\n• Accounting — \"budget summary\"\n• Portfolio — \"full portfolio\"\n• Or type \"help\" for a full list.";
   }
 
-  // UI: add message to chat
+  /* ============================================================
+     UI: message rendering
+  ============================================================ */
   function addMessage(message, isUser = false) {
-    const messageDiv = document.createElement('div');
-    messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
-    messageDiv.textContent = message;
-    chatBox.appendChild(messageDiv);
+    const div = document.createElement('div');
+    div.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+    div.textContent = message;
+    chatBox.appendChild(div);
     chatBox.scrollTop = chatBox.scrollHeight;
   }
 
-  // Show typing indicator
   let typingIndicator = null;
   function showTyping() {
     if (typingIndicator) return;
     typingIndicator = document.createElement('div');
     typingIndicator.className = 'typing-indicator';
-    for (let i = 0; i < 3; i++) {
-      const dot = document.createElement('span');
-      typingIndicator.appendChild(dot);
-    }
+    for (let i = 0; i < 3; i++) typingIndicator.appendChild(document.createElement('span'));
     chatBox.appendChild(typingIndicator);
     chatBox.scrollTop = chatBox.scrollHeight;
   }
   function hideTyping() {
-    if (typingIndicator) {
-      typingIndicator.remove();
-      typingIndicator = null;
-    }
+    if (typingIndicator) { typingIndicator.remove(); typingIndicator = null; }
   }
 
-  // Send message handler
-  async function sendMessage() {
-    const message = userInput.value.trim();
+  /* ============================================================
+     SEND
+  ============================================================ */
+  async function sendMessage(forcedMessage = null) {
+    const message = forcedMessage || userInput.value.trim();
     if (!message) return;
+
     addMessage(message, true);
     userInput.value = '';
+    sendBtn.disabled = true;
     showTyping();
+
     try {
       const response = await getBotResponse(message);
       hideTyping();
       addMessage(response, false);
     } catch (err) {
       hideTyping();
-      addMessage("Sorry, I encountered an error. Please try again.", false);
-      console.error(err);
+      addMessage("Sorry, I ran into an error. Please try again.", false);
+      console.error('Bot error:', err);
+    } finally {
+      sendBtn.disabled = false;
+      userInput.focus();
     }
   }
 
-  sendBtn.addEventListener('click', sendMessage);
-  userInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') sendMessage();
+  sendBtn.addEventListener('click', () => sendMessage());
+  userInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); sendMessage(); }
   });
 
-  // Logout
+  /* Suggestion chips */
+  document.querySelectorAll('.suggestion-chip').forEach(chip => {
+    chip.addEventListener('click', () => sendMessage(chip.dataset.query));
+  });
+
+  /* ============================================================
+     LOGOUT
+  ============================================================ */
   document.getElementById('logoutBtn').addEventListener('click', (e) => {
     e.preventDefault();
     auth.signOut().then(() => window.location.href = 'index.html');
   });
 
-  // Dark mode toggle
-  const themeToggle = document.getElementById('themeToggle');
-  const currentTheme = localStorage.getItem('portalTheme');
-  if (currentTheme === 'dark') document.body.classList.add('dark');
-  themeToggle.addEventListener('click', () => {
-    document.body.classList.toggle('dark');
-    localStorage.setItem('portalTheme', document.body.classList.contains('dark') ? 'dark' : 'light');
-  });
-
-  // Back to top button
+  /* ============================================================
+     BACK TO TOP
+  ============================================================ */
   const backToTop = document.getElementById('backToTop');
   window.addEventListener('scroll', () => {
     if (window.scrollY > 300) backToTop.classList.add('show');
@@ -508,7 +717,9 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 
-  // Service Worker
+  /* ============================================================
+     SERVICE WORKER
+  ============================================================ */
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('service-worker.js').catch(err => console.error('SW failed:', err));
