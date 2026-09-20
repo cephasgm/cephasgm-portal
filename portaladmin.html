@@ -5,70 +5,62 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin Analytics — Cephas GM Portal</title>
 
-<!-- PWA Manifest -->
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="theme-color" content="#0b7a59">
 
-<!-- SEO & Social Meta Tags -->
-<meta name="description" content="Admin analytics dashboard for Cephas GM – project completion, downloads, user activity, and system health.">
+<meta name="description" content="Admin analytics dashboard for Cephas GM — portfolio-wide project completion, downloads, user activity, and accounting across all clients.">
 <meta property="og:title" content="Admin Analytics — Cephas GM Portal">
-<meta property="og:description" content="Real‑time metrics for project progress, downloads, and staff activity.">
+<meta property="og:description" content="Real-time metrics across every project, file, and user in the Cephas GM Portal.">
 <meta property="og:image" content="https://cephasgm.org/og-image.jpg">
 <meta property="og:url" content="https://cephasgm.github.io/cephasgm-portal/portaladmin.html">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Cephas GM Admin Analytics">
 <meta name="twitter:description" content="Monitor project performance and user engagement.">
+<meta name="twitter:image" content="https://cephasgm.org/og-image.jpg">
 
-<!-- Favicon -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%230b7a59'/%3E%3Ctext x='50' y='70' font-size='70' text-anchor='middle' fill='white' font-family='Arial'%3EC%3C/text%3E%3C/svg%3E">
 
-<!-- Firebase SDKs -->
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-
-<!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
 <style>
-  /* CSS Variables for Light/Dark Mode */
   :root {
-    --card-bg-light: rgba(0,0,0,0.7);
-    --text-light: #fff;
-    --text-dark: #ccc;
+    --bg-card: rgba(255,255,255,0.08);
+    --bg-card-solid: rgba(20,25,32,0.75);
+    --text-primary: #fff;
+    --text-secondary: #ccc;
+    --text-muted: #999;
     --accent: #0b7a59;
     --accent-hover: #099268;
-    --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    --accent-light: #34d399;
+    --danger: #c0392b;
+    --danger-hover: #e74c3c;
+    --warning: #f39c12;
+    --info: #3498db;
+    --success: #10b981;
+    --border: rgba(255,255,255,0.12);
+    --shadow: 0 8px 24px rgba(0,0,0,0.3);
   }
-  body.dark {
-    --card-bg-light: rgba(20,20,30,0.9);
-  }
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
+  * { margin:0; padding:0; box-sizing:border-box; }
   body {
     font-family: 'Poppins', sans-serif;
-    background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.9)), url('https://scx2.b-cdn.net/gfx/news/hires/2019/2-nature.jpg');
+    background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.92)), url('https://scx2.b-cdn.net/gfx/news/hires/2019/2-nature.jpg');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
-    color: var(--text-light);
-    transition: background 0.3s, color 0.2s;
+    color: var(--text-primary);
+    min-height: 100vh;
     position: relative;
   }
-  /* Liquid crystal overlay */
   body::before {
     content: '';
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 0; left: 0; width: 100%; height: 100%;
     background: linear-gradient(125deg, rgba(11,122,89,0.08) 0%, rgba(100,200,255,0.05) 25%, rgba(11,122,89,0.08) 50%, rgba(200,100,255,0.05) 75%, rgba(11,122,89,0.08) 100%);
     background-size: 300% 300%;
     animation: liquidCrystal 12s ease infinite;
@@ -80,6 +72,8 @@
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
   }
+
+  /* ---------- Navigation ---------- */
   .nav {
     background: rgba(0,0,0,0.95);
     display: flex;
@@ -90,175 +84,480 @@
     top: 0;
     z-index: 100;
     border-bottom: 2px solid var(--accent);
-    backdrop-filter: blur(4px);
-  }
-  .brand { font-weight: 700; color: #fff; font-size: 1.2rem; }
-  .nav-links {
-    display: flex;
-    gap: 16px;
+    backdrop-filter: blur(8px);
+    gap: 14px;
     flex-wrap: wrap;
-    align-items: center;
   }
+  .brand {
+    font-weight: 700;
+    color: #fff;
+    font-size: 1.15rem;
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.08);
+    transition: .3s;
+    letter-spacing: .3px;
+  }
+  .brand:hover { background: rgba(255,255,255,0.15); }
+  .nav-links { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
   .nav-links a {
     color: #fff;
     text-decoration: none;
-    padding: 8px 12px;
+    padding: 7px 11px;
     border-radius: 6px;
     transition: 0.3s;
+    font-size: .9rem;
   }
-  .nav-links a:hover, .nav-links a.active {
-    background: rgba(255,255,255,0.15);
-  }
+  .nav-links a:hover,
+  .nav-links a.active { background: rgba(255,255,255,0.15); }
+  .nav-links .admin-link { background: rgba(11,122,89,0.5); }
   .logout-btn {
-    background: #c0392b;
+    background: var(--danger);
     padding: 6px 14px;
     border-radius: 6px;
     cursor: pointer;
-  }
-  .logout-btn:hover { background: #e74c3c; }
-  .user-welcome { color: var(--accent); font-weight: 500; margin-right: 15px; }
-  .theme-toggle {
-    background: rgba(255,255,255,0.2);
+    color: #fff;
     border: none;
-    color: white;
-    font-size: 1.2rem;
-    cursor: pointer;
-    padding: 6px 12px;
-    border-radius: 30px;
-    transition: 0.3s;
+    font-family: inherit;
+    font-size: .88rem;
   }
-  .theme-toggle:hover {
-    background: rgba(255,255,255,0.4);
-    transform: scale(1.05);
+  .logout-btn:hover { background: var(--danger-hover); }
+  .user-welcome {
+    color: var(--accent-light);
+    font-weight: 500;
+    font-size: .88rem;
+    margin-right: 8px;
   }
+  .admin-badge {
+    background: var(--accent);
+    color: #fff;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+  }
+
+  /* ---------- Header ---------- */
   header {
     text-align: center;
-    padding: 40px 20px;
-    background: rgba(0,0,0,0.6);
-    margin-bottom: 20px;
+    padding: 32px 20px 24px;
+    background: rgba(0,0,0,0.5);
     position: relative;
     z-index: 1;
   }
-  header h1 { color: var(--accent); font-size: 2rem; margin-bottom: 10px; }
-  header p { color: var(--text-dark); }
-  .main-container {
+  header h1 {
+    color: var(--accent-light);
+    font-size: 1.95rem;
+    margin-bottom: 8px;
+    line-height: 1.25;
+  }
+  header p {
+    color: var(--text-secondary);
+    max-width: 720px;
+    margin: 0 auto;
+    line-height: 1.6;
+    font-size: .95rem;
+  }
+
+  /* ---------- Access denied ---------- */
+  .access-denied {
+    max-width: 560px;
+    margin: 60px auto;
+    padding: 40px 30px;
+    background: rgba(192,57,43,0.12);
+    border: 1px solid rgba(192,57,43,0.4);
+    border-radius: 16px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    backdrop-filter: blur(10px);
+  }
+  .access-denied h2 { color: #f5a5a0; margin-bottom: 12px; font-size: 1.4rem; }
+  .access-denied p { color: var(--text-secondary); line-height: 1.6; margin-bottom: 18px; }
+  .access-denied a {
+    background: var(--accent); color: #fff;
+    padding: 10px 22px; border-radius: 40px;
+    text-decoration: none; font-weight: 600;
+    display: inline-block; transition: .3s;
+  }
+  .access-denied a:hover { background: var(--accent-hover); transform: translateY(-2px); }
+
+  /* ---------- Main ---------- */
+  main {
     max-width: 1400px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 24px 20px;
     position: relative;
     z-index: 1;
   }
-  .dashboard {
-    background: var(--card-bg-light);
-    border-radius: 16px;
-    padding: 25px;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.1);
-  }
-  .cards {
+
+  /* ---------- Stats grid ---------- */
+  .stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 20px;
-    margin-bottom: 30px;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 26px;
   }
   .stat-card {
-    background: rgba(255,255,255,0.1);
-    border-radius: 16px;
-    padding: 20px;
-    text-align: center;
-    transition: transform 0.2s, border-color 0.2s;
-    border: 1px solid transparent;
+    background: var(--bg-card);
+    backdrop-filter: blur(12px);
+    border-radius: 14px;
+    padding: 20px 16px;
+    border: 1px solid var(--border);
+    transition: transform 0.22s, border-color 0.22s;
+    position: relative;
+    overflow: hidden;
   }
-  .stat-card:hover {
-    transform: translateY(-5px);
-    border-color: var(--accent);
+  .stat-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 3px;
+    background: var(--accent);
+    opacity: 0.65;
   }
-  .stat-card h3 { font-size: 2rem; color: var(--accent); margin-bottom: 8px; }
-  .stat-card p { color: var(--text-dark); font-size: 0.9rem; }
+  .stat-card:hover { transform: translateY(-4px); border-color: var(--accent); }
+  .stat-card h3 {
+    font-size: .8rem;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    font-weight: 500;
+    letter-spacing: .3px;
+  }
+  .stat-card .value {
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: var(--accent-light);
+    line-height: 1.15;
+    word-break: break-all;
+  }
+  .stat-card .sub {
+    font-size: .74rem;
+    color: var(--text-muted);
+    margin-top: 6px;
+  }
+  .stat-card.info::after { background: var(--info); }
+  .stat-card.info .value { color: #7fc4f5; }
+  .stat-card.warning::after { background: var(--warning); }
+  .stat-card.warning .value { color: #f5c66a; }
+
+  /* ---------- Cards ---------- */
+  .card {
+    background: var(--bg-card);
+    backdrop-filter: blur(12px);
+    border-radius: 18px;
+    padding: 22px;
+    margin-bottom: 24px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+  }
+  .card h2 {
+    color: var(--accent-light);
+    font-size: 1.15rem;
+    margin-bottom: 16px;
+    border-left: 4px solid var(--accent);
+    padding-left: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .card h2 .card-actions { display: flex; gap: 8px; }
+
+  /* ---------- Charts ---------- */
+  .charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 20px;
+    margin-bottom: 24px;
+  }
   .chart-container {
-    background: rgba(0,0,0,0.5);
-    border-radius: 16px;
-    padding: 20px;
-    margin-top: 10px;
+    position: relative;
+    height: 320px;
   }
-  canvas { max-height: 350px; width: 100%; }
+
+  /* ---------- Table ---------- */
+  .data-table {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: 10px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 700px;
+  }
+  th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-primary);
+    font-size: .87rem;
+  }
+  th {
+    color: var(--accent-light);
+    font-weight: 600;
+    font-size: .78rem;
+    letter-spacing: .4px;
+    text-transform: uppercase;
+    background: rgba(11,122,89,0.08);
+  }
+  tr:hover td { background: rgba(255,255,255,0.03); }
+  td.num { font-variant-numeric: tabular-nums; }
+  .status-pill {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: .72rem;
+    font-weight: 600;
+    letter-spacing: .3px;
+  }
+  .status-pill.good { background: rgba(16,185,129,0.18); color: #34d399; }
+  .status-pill.warn { background: rgba(243,156,18,0.18); color: #f5c66a; }
+  .status-pill.bad { background: rgba(192,57,43,0.18); color: #f5a5a0; }
+
+  /* ---------- Buttons ---------- */
+  .btn-sm {
+    background: var(--accent); color:#fff; border:none;
+    padding: 6px 14px; border-radius: 20px;
+    font-family: inherit; font-size: .78rem; font-weight: 500;
+    cursor: pointer; transition: .3s; text-decoration:none;
+    display: inline-flex; align-items: center; gap: 5px;
+  }
+  .btn-sm:hover { background: var(--accent-hover); transform: translateY(-1px); }
+  .btn-sm.ghost { background: transparent; border: 1px solid var(--border); color:#ddd; }
+  .btn-sm.ghost:hover { background: rgba(255,255,255,0.1); }
+
+  /* ---------- Empty / loading ---------- */
+  .empty-state {
+    text-align: center;
+    padding: 28px 16px;
+    color: var(--text-muted);
+    font-size: .88rem;
+  }
+  .empty-state strong {
+    display: block;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    font-size: .96rem;
+  }
+  .spinner {
+    display: inline-block;
+    width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,0.25);
+    border-top-color: var(--accent-light);
+    border-radius: 50%;
+    animation: spin .6s linear infinite;
+    vertical-align: middle;
+    margin-right: 6px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-row {
+    text-align: center;
+    padding: 24px;
+    color: var(--text-muted);
+    font-size: .88rem;
+  }
+
+  /* ---------- Footer ---------- */
   footer {
     background: rgba(0,0,0,0.95);
     text-align: center;
-    padding: 1rem;
+    padding: 1.2rem;
     color: #ccc;
     margin-top: 2rem;
+    font-size: .88rem;
+    position: relative;
+    z-index: 1;
   }
+
+  /* ---------- Back to top ---------- */
   .back-to-top {
     position: fixed;
-    bottom: 30px;
-    right: 30px;
+    bottom: 28px;
+    right: 28px;
     background: var(--accent);
     color: white;
-    width: 48px;
-    height: 48px;
+    width: 46px;
+    height: 46px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     text-decoration: none;
-    font-size: 24px;
+    font-size: 22px;
     opacity: 0;
     visibility: hidden;
     transition: all 0.3s;
     z-index: 99;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
   }
-  .back-to-top.show {
-    opacity: 1;
-    visibility: visible;
-  }
+  .back-to-top.show { opacity: 1; visibility: visible; }
+  .back-to-top:hover { background: var(--accent-hover); transform: translateY(-4px); }
+
   @media (max-width: 768px) {
-    .nav-links { gap: 8px; }
-    .stat-card h3 { font-size: 1.5rem; }
-    .dashboard { padding: 15px; }
+    header h1 { font-size: 1.5rem; }
+    .stats-grid { gap: 10px; }
+    .stat-card .value { font-size: 1.4rem; }
+    .nav { padding: 10px 14px; }
+    .nav-links a { font-size: .82rem; padding: 6px 8px; }
+    main { padding: 14px; }
+    .card { padding: 16px; }
+    .chart-container { height: 260px; }
   }
 </style>
 </head>
 <body>
 
 <nav class="nav">
-  <div class="brand">Cephas GM Admin</div>
+  <a href="portaldashboard.html" class="brand">Cephas GM Portal</a>
   <div class="nav-links">
-    <span class="user-welcome" id="welcomeMsg">Welcome, Admin!</span>
+    <span class="user-welcome" id="welcomeMsg">Welcome!</span>
+    <span class="admin-badge" id="adminBadge" style="display:none;">Admin</span>
     <a href="portaldashboard.html">Dashboard</a>
     <a href="portaldownloads.html">Downloads</a>
     <a href="portalaccounting.html">Accounting</a>
-    <a href="portaladmin.html" class="active">Admin</a>
-    <a href="#" id="logoutBtn" class="logout-btn">Logout</a>
-    <a href="https://cephasgm.github.io/cephasgm-site/" target="_blank">🌍 Main Site</a>
-    <button class="theme-toggle" id="themeToggle" aria-label="Dark/Light mode">🌓</button>
+    <a href="portalassistant.html">AI Assistant</a>
+    <a href="portaladmin.html" class="active">Admin Analytics</a>
+    <a href="https://cephasgm.org/" target="_blank" rel="noopener">🌍 Main Site</a>
+    <button class="logout-btn" id="logoutBtn">Logout</button>
   </div>
 </nav>
 
-<header>
-  <h1>📊 Admin Analytics Dashboard</h1>
-  <p>Real‑time metrics from projects, downloads, and user activity</p>
-</header>
-
-<div class="main-container">
-  <section class="dashboard">
-    <div class="cards" id="statsContainer">
-      <div class="stat-card"><h3 id="activeProjectsCount">0</h3><p>Active Projects</p></div>
-      <div class="stat-card"><h3 id="totalDownloadsCount">0</h3><p>Total Downloads</p></div>
-      <div class="stat-card"><h3 id="staffOnlineCount">0</h3><p>Staff Online</p></div>
-      <div class="stat-card"><h3 id="uptimeValue">99.8%</h3><p>Uptime</p></div>
-    </div>
-    <div class="chart-container">
-      <canvas id="projectChart"></canvas>
-    </div>
-  </section>
+<!-- Access denied screen (hidden by default) -->
+<div id="accessDenied" class="access-denied" style="display:none;">
+  <h2>🔒 Access Restricted</h2>
+  <p>This page is reserved for Cephas GM administrators. If you believe you should have access, please contact <a href="mailto:admin@cephasgm.org" style="color:var(--accent-light);">admin@cephasgm.org</a>.</p>
+  <a href="portaldashboard.html">← Return to Dashboard</a>
 </div>
 
-<footer>Copyright © 2025 Cephas GM | Enterprise Portal</footer>
-<a href="#" class="back-to-top" id="backToTop">↑</a>
+<!-- Admin content (hidden until verified) -->
+<div id="adminContent" style="display:none;">
+
+  <header>
+    <h1>🛠️ Admin Analytics Dashboard</h1>
+    <p>Portfolio-wide metrics across every client project, file, and user — real-time from Firestore.</p>
+  </header>
+
+  <main>
+
+    <div class="stats-grid" id="statsContainer">
+      <div class="stat-card">
+        <h3>📋 Total Projects</h3>
+        <div class="value" id="totalProjectsCount">—</div>
+        <div class="sub">All users combined</div>
+      </div>
+      <div class="stat-card">
+        <h3>👥 Total Users</h3>
+        <div class="value" id="totalUsersCount">—</div>
+        <div class="sub">Registered portal accounts</div>
+      </div>
+      <div class="stat-card info">
+        <h3>📁 Files Hosted</h3>
+        <div class="value" id="totalFilesCount">—</div>
+        <div class="sub">In Firebase Storage</div>
+      </div>
+      <div class="stat-card info">
+        <h3>📥 Total Downloads</h3>
+        <div class="value" id="totalDownloadsCount">—</div>
+        <div class="sub">Across all files</div>
+      </div>
+      <div class="stat-card">
+        <h3>💰 Total Budget</h3>
+        <div class="value" id="totalBudgetCount">—</div>
+        <div class="sub">TZS — all projects</div>
+      </div>
+      <div class="stat-card warning">
+        <h3>💸 Total Actual</h3>
+        <div class="value" id="totalActualCount">—</div>
+        <div class="sub">TZS — all projects</div>
+      </div>
+      <div class="stat-card">
+        <h3>✅ Net Savings</h3>
+        <div class="value" id="totalSavingsCount">—</div>
+        <div class="sub">TZS — budget − actual</div>
+      </div>
+      <div class="stat-card info">
+        <h3>📊 Avg Completion</h3>
+        <div class="value" id="avgCompletion">—</div>
+        <div class="sub">Across all projects</div>
+      </div>
+    </div>
+
+    <div class="charts-grid">
+      <div class="card">
+        <h2>📈 Project Completion (%)</h2>
+        <div class="chart-container">
+          <canvas id="completionChart"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <h2>💰 Budget vs Actual by Project</h2>
+        <div class="chart-container">
+          <canvas id="budgetChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>
+        📋 All Projects
+        <div class="card-actions">
+          <button class="btn-sm ghost" onclick="refreshAll()">↻ Refresh</button>
+        </div>
+      </h2>
+      <div class="data-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Project Name</th>
+              <th>Owner (UID)</th>
+              <th>Budget (TZS)</th>
+              <th>Actual (TZS)</th>
+              <th>Variance</th>
+              <th>Completion</th>
+            </tr>
+          </thead>
+          <tbody id="projectsTableBody">
+            <tr><td colspan="6" class="loading-row"><span class="spinner"></span> Loading projects...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>📁 Files Overview</h2>
+      <div class="data-table">
+        <table>
+          <thead>
+            <tr>
+              <th>File Name</th>
+              <th>Size</th>
+              <th>Uploaded By</th>
+              <th>Downloads</th>
+            </tr>
+          </thead>
+          <tbody id="filesTableBody">
+            <tr><td colspan="4" class="loading-row"><span class="spinner"></span> Loading files...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+</div>
+
+<footer>Copyright © 2025 Cephas GM | Innovating for Tomorrow</footer>
+<a href="#" class="back-to-top" id="backToTop" aria-label="Back to top">↑</a>
 
 <script>
-  // Firebase Config
+  /* ============================================================
+     FIREBASE CONFIG — unchanged
+  ============================================================ */
   const firebaseConfig = {
     apiKey: "AIzaSyA2vWoAkdbke0D_x8N1W3JAzDVj4vcsZSE",
     authDomain: "cephasgm-portal.firebaseapp.com",
@@ -272,135 +571,335 @@
   const auth = firebase.auth();
   const db = firebase.firestore();
 
+  /* ============================================================
+     CONSTANTS
+  ============================================================ */
+  const ADMIN_EMAILS = ["admin@cephasgm.org", "admin@cephasgm.com"];
+
   let currentUser = null;
-  let chart = null;
+  let completionChart = null;
+  let budgetChart = null;
+  let allProjects = [];
+  let allFiles = [];
+  let allUsers = [];
 
-  // Admin email check (update to your admin email or use custom claim)
-  const ADMIN_EMAIL = "admin@cephasgm.org";
-
-  // DOM elements
+  /* DOM */
   const welcomeMsg = document.getElementById('welcomeMsg');
-  const activeProjectsEl = document.getElementById('activeProjectsCount');
-  const totalDownloadsEl = document.getElementById('totalDownloadsCount');
-  const staffOnlineEl = document.getElementById('staffOnlineCount');
+  const adminBadge = document.getElementById('adminBadge');
+  const accessDenied = document.getElementById('accessDenied');
+  const adminContent = document.getElementById('adminContent');
+  const projectsTableBody = document.getElementById('projectsTableBody');
+  const filesTableBody = document.getElementById('filesTableBody');
 
-  // Presence tracking reference (optional, can be removed if not needed)
-  let presenceRef = null;
-
-  // Auth state
+  /* ============================================================
+     AUTH + ACCESS CONTROL
+  ============================================================ */
   auth.onAuthStateChanged(async (user) => {
     if (!user) {
       window.location.href = 'index.html';
       return;
     }
     currentUser = user;
-    welcomeMsg.textContent = `Welcome, ${user.email}!`;
-    if (user.email !== ADMIN_EMAIL) {
-      alert('Access denied. Admin privileges required.');
-      window.location.href = 'portaldashboard.html';
+    welcomeMsg.textContent = `Welcome, ${user.email.split('@')[0]}!`;
+
+    const isAdmin = ADMIN_EMAILS.includes(user.email.toLowerCase());
+
+    if (!isAdmin) {
+      // Show access denied panel, no jarring alert popup
+      accessDenied.style.display = 'block';
+      adminContent.style.display = 'none';
       return;
     }
-    // Set up real-time listeners
-    loadProjectStats();
-    loadDownloadStats();
-    setupPresenceTracking();
+
+    adminBadge.style.display = 'inline-block';
+    adminContent.style.display = 'block';
+    accessDenied.style.display = 'none';
+
+    await loadAllData();
   });
 
-  // Load project completion from Firestore 'projects' collection (same as accounting)
-  async function loadProjectStats() {
-    if (!currentUser) return;
-    const snapshot = await db.collection('projects').where('userId', '==', currentUser.uid).get();
-    const projects = [];
-    snapshot.forEach(doc => projects.push({ id: doc.id, ...doc.data() }));
-    // Update active projects count
-    activeProjectsEl.textContent = projects.length;
-    // Prepare chart data
-    const projectNames = projects.map(p => p.name);
-    const completionData = projects.map(p => {
-      // Assume completion = (actual / budget) * 100, capped at 100
-      let completion = (p.actual / p.budget) * 100;
-      completion = Math.min(Math.round(completion), 100);
-      return isNaN(completion) ? 0 : completion;
-    });
-    updateChart(projectNames, completionData);
+  /* ============================================================
+     LOAD EVERYTHING
+  ============================================================ */
+  async function loadAllData() {
+    await Promise.allSettled([
+      loadAllProjects(),
+      loadAllFiles(),
+      loadAllUsers()
+    ]);
+    renderStats();
+    renderCharts();
+    renderProjectsTable();
+    renderFilesTable();
   }
 
-  async function loadDownloadStats() {
-    // Count total downloads from 'files' collection
-    const snapshot = await db.collection('files').get();
-    let total = 0;
-    snapshot.forEach(doc => {
-      total += doc.data().downloads || 0;
-    });
-    totalDownloadsEl.textContent = total;
+  async function refreshAll() {
+    projectsTableBody.innerHTML = '<tr><td colspan="6" class="loading-row"><span class="spinner"></span> Refreshing...</td></tr>';
+    filesTableBody.innerHTML = '<tr><td colspan="4" class="loading-row"><span class="spinner"></span> Refreshing...</td></tr>';
+    await loadAllData();
   }
 
-  // Presence tracking: staff online (users with active session in Firestore)
-  async function setupPresenceTracking() {
-    // Create a presence document for current user (optional, requires Firestore security rules)
-    // For simplicity, we'll query a 'presence' collection if it exists, else fallback to mock
+  async function loadAllProjects() {
     try {
-      // Check if presence collection exists
-      const presenceSnapshot = await db.collection('presence').get();
-      if (!presenceSnapshot.empty) {
-        staffOnlineEl.textContent = presenceSnapshot.size;
-        // Listen for real-time changes
-        db.collection('presence').onSnapshot((snap) => {
-          staffOnlineEl.textContent = snap.size;
-        });
-        return;
-      }
-    } catch(e) { console.warn("Presence collection not available"); }
-    // Fallback: show a static or use dummy data
-    staffOnlineEl.textContent = "4";
+      // Admin sees ALL projects — no userId filter
+      const snapshot = await db.collection('projects').get();
+      allProjects = [];
+      snapshot.forEach(doc => allProjects.push({ id: doc.id, ...doc.data() }));
+    } catch (err) {
+      console.error('loadAllProjects error:', err);
+      allProjects = [];
+    }
   }
 
-  function updateChart(labels, data) {
-    const ctx = document.getElementById('projectChart').getContext('2d');
-    if (chart) chart.destroy();
-    chart = new Chart(ctx, {
+  async function loadAllFiles() {
+    try {
+      const snapshot = await db.collection('files').orderBy('uploadedAt', 'desc').get();
+      allFiles = [];
+      snapshot.forEach(doc => allFiles.push({ id: doc.id, ...doc.data() }));
+    } catch (err) {
+      console.error('loadAllFiles error:', err);
+      allFiles = [];
+    }
+  }
+
+  async function loadAllUsers() {
+    // Try a users collection if it exists; otherwise derive from projects
+    try {
+      const snapshot = await db.collection('users').get();
+      allUsers = [];
+      snapshot.forEach(doc => allUsers.push({ id: doc.id, ...doc.data() }));
+    } catch (err) {
+      console.warn('users collection unavailable — deriving user count from projects');
+      allUsers = [];
+    }
+    // Fallback: derive unique user IDs from projects
+    if (allUsers.length === 0) {
+      const uniqueIds = new Set();
+      allProjects.forEach(p => { if (p.userId) uniqueIds.add(p.userId); });
+      allUsers = Array.from(uniqueIds).map(id => ({ id }));
+    }
+  }
+
+  /* ============================================================
+     STATS
+  ============================================================ */
+  function renderStats() {
+    const totalProjects = allProjects.length;
+    const totalUsers = allUsers.length;
+    const totalFiles = allFiles.length;
+    const totalDownloads = allFiles.reduce((s, f) => s + (f.downloads || 0), 0);
+    const totalBudget = allProjects.reduce((s, p) => s + (p.budget || 0), 0);
+    const totalActual = allProjects.reduce((s, p) => s + (p.actual || 0), 0);
+    const totalSavings = totalBudget - totalActual;
+
+    const completions = allProjects.map(p => {
+      if (!p.budget) return 0;
+      return Math.min(Math.round(((p.actual || 0) / p.budget) * 100), 100);
+    });
+    const avg = completions.length ? Math.round(completions.reduce((a, b) => a + b, 0) / completions.length) : 0;
+
+    document.getElementById('totalProjectsCount').textContent = totalProjects;
+    document.getElementById('totalUsersCount').textContent = totalUsers;
+    document.getElementById('totalFilesCount').textContent = totalFiles;
+    document.getElementById('totalDownloadsCount').textContent = totalDownloads.toLocaleString();
+    document.getElementById('totalBudgetCount').textContent = totalBudget.toLocaleString();
+    document.getElementById('totalActualCount').textContent = totalActual.toLocaleString();
+    document.getElementById('totalSavingsCount').textContent = totalSavings.toLocaleString();
+    document.getElementById('avgCompletion').textContent = avg + '%';
+  }
+
+  /* ============================================================
+     CHARTS
+  ============================================================ */
+  function renderCharts() {
+    const labels = allProjects.map(p => p.name || 'Untitled');
+    const completions = allProjects.map(p => {
+      if (!p.budget) return 0;
+      return Math.min(Math.round(((p.actual || 0) / p.budget) * 100), 100);
+    });
+    const budgets = allProjects.map(p => p.budget || 0);
+    const actuals = allProjects.map(p => p.actual || 0);
+
+    const gridColor = 'rgba(255,255,255,0.08)';
+    const tickColor = '#ccc';
+
+    const compCtx = document.getElementById('completionChart').getContext('2d');
+    if (completionChart) completionChart.destroy();
+    completionChart = new Chart(compCtx, {
       type: 'bar',
       data: {
-        labels: labels,
+        labels: labels.length ? labels : ['No projects yet'],
         datasets: [{
           label: 'Completion %',
-          data: data,
-          backgroundColor: '#0b7a59',
-          borderRadius: 6,
-          borderColor: '#fff',
-          borderWidth: 1
+          data: completions.length ? completions : [0],
+          backgroundColor: 'rgba(52,211,153,0.85)',
+          borderColor: '#34d399',
+          borderWidth: 1,
+          borderRadius: 6
         }]
       },
       options: {
         responsive: true,
-        maintainAspectRatio: true,
-        scales: {
-          y: { beginAtZero: true, max: 100, grid: { color: 'rgba(255,255,255,0.1)' }, ticks: { color: '#fff' } },
-          x: { ticks: { color: '#fff' } }
-        },
+        maintainAspectRatio: false,
         plugins: {
-          legend: { labels: { color: '#fff' } }
+          legend: { labels: { color: tickColor, font: { family: 'Poppins', size: 12 } } },
+          tooltip: {
+            backgroundColor: 'rgba(0,0,0,0.9)',
+            titleFont: { family: 'Poppins' },
+            bodyFont: { family: 'Poppins' },
+            callbacks: { label: c => c.dataset.label + ': ' + c.parsed.y + '%' }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true, max: 100,
+            ticks: { color: tickColor, font: { family: 'Poppins', size: 11 }, callback: v => v + '%' },
+            grid: { color: gridColor }
+          },
+          x: {
+            ticks: { color: tickColor, font: { family: 'Poppins', size: 11 } },
+            grid: { color: gridColor }
+          }
+        }
+      }
+    });
+
+    const budgetCtx = document.getElementById('budgetChart').getContext('2d');
+    if (budgetChart) budgetChart.destroy();
+    budgetChart = new Chart(budgetCtx, {
+      type: 'bar',
+      data: {
+        labels: labels.length ? labels : ['No projects yet'],
+        datasets: [
+          {
+            label: 'Budget (TZS)',
+            data: budgets.length ? budgets : [0],
+            backgroundColor: 'rgba(11,122,89,0.85)',
+            borderColor: '#0b7a59',
+            borderWidth: 1,
+            borderRadius: 6
+          },
+          {
+            label: 'Actual (TZS)',
+            data: actuals.length ? actuals : [0],
+            backgroundColor: 'rgba(230,126,34,0.85)',
+            borderColor: '#e67e22',
+            borderWidth: 1,
+            borderRadius: 6
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { labels: { color: tickColor, font: { family: 'Poppins', size: 12 } } },
+          tooltip: {
+            backgroundColor: 'rgba(0,0,0,0.9)',
+            titleFont: { family: 'Poppins' },
+            bodyFont: { family: 'Poppins' },
+            callbacks: {
+              label: c => c.dataset.label + ': ' + Number(c.parsed.y).toLocaleString() + ' TZS'
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              color: tickColor,
+              font: { family: 'Poppins', size: 11 },
+              callback: v => Number(v).toLocaleString()
+            },
+            grid: { color: gridColor }
+          },
+          x: {
+            ticks: { color: tickColor, font: { family: 'Poppins', size: 11 } },
+            grid: { color: gridColor }
+          }
         }
       }
     });
   }
 
-  // Logout
+  /* ============================================================
+     PROJECTS TABLE
+  ============================================================ */
+  function renderProjectsTable() {
+    if (!allProjects.length) {
+      projectsTableBody.innerHTML = '<tr><td colspan="6" class="empty-state"><strong>No projects in Firestore yet.</strong>Projects added via the Accounting page will appear here.</td></tr>';
+      return;
+    }
+    projectsTableBody.innerHTML = '';
+    allProjects.forEach(p => {
+      const budget = p.budget || 0;
+      const actual = p.actual || 0;
+      const variance = budget - actual;
+      const completion = budget ? Math.min(Math.round((actual / budget) * 100), 100) : 0;
+      const statusClass = completion >= 90 ? 'bad' : completion >= 50 ? 'warn' : 'good';
+
+      const row = projectsTableBody.insertRow();
+      row.insertCell(0).textContent = p.name || 'Untitled';
+
+      const ownerCell = row.insertCell(1);
+      const uid = p.userId || '—';
+      ownerCell.textContent = uid.length > 12 ? uid.slice(0, 8) + '…' : uid;
+      ownerCell.title = uid;
+
+      const c2 = row.insertCell(2); c2.textContent = budget.toLocaleString(); c2.className = 'num';
+      const c3 = row.insertCell(3); c3.textContent = actual.toLocaleString(); c3.className = 'num';
+
+      const c4 = row.insertCell(4);
+      c4.innerHTML = variance >= 0
+        ? `<span style="color:var(--success); font-weight:600;">+${variance.toLocaleString()}</span>`
+        : `<span style="color:var(--danger); font-weight:600;">${variance.toLocaleString()}</span>`;
+      c4.className = 'num';
+
+      const c5 = row.insertCell(5);
+      c5.innerHTML = `<span class="status-pill ${statusClass}">${completion}%</span>`;
+    });
+  }
+
+  /* ============================================================
+     FILES TABLE
+  ============================================================ */
+  function renderFilesTable() {
+    if (!allFiles.length) {
+      filesTableBody.innerHTML = '<tr><td colspan="4" class="empty-state"><strong>No files uploaded yet.</strong>Files added via the Downloads page will appear here.</td></tr>';
+      return;
+    }
+    filesTableBody.innerHTML = '';
+    allFiles.slice(0, 20).forEach(f => {
+      const row = filesTableBody.insertRow();
+      row.insertCell(0).textContent = f.name || 'Untitled';
+      const c1 = row.insertCell(1); c1.textContent = formatBytes(f.size || 0); c1.className = 'num';
+      row.insertCell(2).textContent = f.uploadedBy || '—';
+      const c3 = row.insertCell(3); c3.textContent = (f.downloads || 0).toLocaleString(); c3.className = 'num';
+    });
+  }
+
+  /* ============================================================
+     HELPERS
+  ============================================================ */
+  function formatBytes(bytes) {
+    if (!bytes || bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  }
+
+  /* ============================================================
+     LOGOUT
+  ============================================================ */
   document.getElementById('logoutBtn').addEventListener('click', (e) => {
     e.preventDefault();
     auth.signOut().then(() => window.location.href = 'index.html');
   });
 
-  // Dark mode
-  const themeToggle = document.getElementById('themeToggle');
-  const currentTheme = localStorage.getItem('portalTheme');
-  if (currentTheme === 'dark') document.body.classList.add('dark');
-  themeToggle.addEventListener('click', () => {
-    document.body.classList.toggle('dark');
-    localStorage.setItem('portalTheme', document.body.classList.contains('dark') ? 'dark' : 'light');
-  });
-
-  // Back to top
+  /* ============================================================
+     BACK TO TOP
+  ============================================================ */
   const backToTop = document.getElementById('backToTop');
   window.addEventListener('scroll', () => {
     if (window.scrollY > 300) backToTop.classList.add('show');
@@ -411,7 +910,9 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 
-  // Service Worker
+  /* ============================================================
+     SERVICE WORKER
+  ============================================================ */
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('service-worker.js').catch(err => console.error('SW failed:', err));
